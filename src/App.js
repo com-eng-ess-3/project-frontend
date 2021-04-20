@@ -1,7 +1,7 @@
 import './App.css'
 import { Box, makeStyles, Typography } from '@material-ui/core'
 import { green, grey } from '@material-ui/core/colors'
-import { NavBar } from './components'
+import { NavBar } from 'components'
 
 const useStyle = makeStyles((theme) => ({
   container: {
