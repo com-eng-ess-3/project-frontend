@@ -1,4 +1,3 @@
-import { white } from '@material-ui/core/colors/common'
 import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles'
 
 let theme = createMuiTheme({
@@ -14,15 +13,16 @@ let theme = createMuiTheme({
       main: '#0784B5',
     },
     background: {
-      default: '#9BD4E4',
+      default: '#ECF6FF',
       dark: '#39ACE7',
+      light: '#9BD4E4',
     },
     success: {
       main: '#42B72A',
     },
     text: {
       primary: '#9BD4E4',
-      secondary: white,
+      secondary: '#39ACE7',
     },
   },
   typography: {

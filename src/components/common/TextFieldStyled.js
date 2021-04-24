@@ -1,6 +1,6 @@
 const { withStyles, TextField } = require('@material-ui/core')
 
-const TextFieldStyled = withStyles({
+const TextFieldStyled = withStyles((theme) => ({
   root: {
     '& .MuiOutlinedInput-root': {
       '& fieldset': {
@@ -20,6 +20,6 @@ const TextFieldStyled = withStyles({
       padding: 10,
     },
   },
-})(TextField)
+}))(TextField)
 
 export default TextFieldStyled
