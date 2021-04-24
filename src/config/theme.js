@@ -24,6 +24,7 @@ let theme = createMuiTheme({
       primary: '#9BD4E4',
       secondary: '#39ACE7',
     },
+    divider: '#39ACE7',
   },
   typography: {
     fontFamily: ['Roboto', 'sans-serif'],

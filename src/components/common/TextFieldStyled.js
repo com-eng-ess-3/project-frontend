@@ -18,6 +18,7 @@ const TextFieldStyled = withStyles((theme) => ({
     },
     '& .MuiOutlinedInput-input': {
       padding: 10,
+      color: theme.palette.common.black,
     },
   },
 }))(TextField)
