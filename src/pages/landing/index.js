@@ -1,11 +1,4 @@
-import {
-  Box,
-  Button,
-  InputBase,
-  makeStyles,
-  Paper,
-  Typography,
-} from '@material-ui/core'
+import { Box, Button, makeStyles, Paper, Typography } from '@material-ui/core'
 import { grey } from '@material-ui/core/colors'
 import { AccountCircleOutlined } from '@material-ui/icons'
 import { CardPost, NavBar } from 'components'
