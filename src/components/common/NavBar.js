@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Box,
   Button,
   InputBase,
@@ -7,12 +6,15 @@ import {
   Paper,
   Typography,
 } from '@material-ui/core'
-import React from 'react'
+import React, { useState } from 'react'
 import SearchIcon from '@material-ui/icons/Search'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
+import { auth } from 'utils/firebaseUtil'
+import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 
 const useStyle = makeStyles((theme) => ({
   navBar: {
+    zIndex: 99,
     position: 'fixed',
     display: 'flex',
     backgroundColor: theme.palette.secondary.main,
@@ -41,6 +43,10 @@ const useStyle = makeStyles((theme) => ({
   },
   searchIcon: {
     color: theme.palette.common.black,
+    marginRight: theme.spacing(1),
+    '&:hover': {
+      cursor: 'pointer',
+    },
   },
   logoBox: {
     marginLeft: 20,
@@ -84,24 +90,44 @@ const useStyle = makeStyles((theme) => ({
 }))
 
 function NavBar({ user }) {
+  const history = useHistory()
   const classes = useStyle()
+  const [searchValue, setSearchValue] = useState('')
 
   return (
     <Box className={classes.navBar}>
       <Box className={classes.logoBox} name="logoName">
-        <Typography variant="h6">{'GoWrite'}</Typography>
+        <Typography
+          component={Button}
+          onClick={() => window.location.reload()}
+          variant="h6"
+        >
+          {'GoWrite'}
+        </Typography>
       </Box>
-      <Box className={classes.searchRoot} name="searchBar">
-        <Paper className={classes.searchPaper} component="form">
-          <SearchIcon className={classes.searchIcon} />
+      <Box className={classes.searchRoot}>
+        <Paper
+          className={classes.searchPaper}
+          component="form"
+          onSubmit={(e) => {
+            e.preventDefault()
+            if (searchValue === '') return
+            history.push(`/search?name=${searchValue}`)
+          }}
+        >
           <InputBase
             className={classes.searchInput}
+            onChange={(e) => setSearchValue(e.target.value)}
             placeholder="Search"
           ></InputBase>
+          <SearchIcon
+            className={classes.searchIcon}
+            onClick={() => history.push(`/search?name=${searchValue}`)}
+          />
         </Paper>
       </Box>
       <Box className={classes.userBox}>
-        {user ? (
+        {!user ? (
           <React.Fragment>
             <Link to="/login" className={classes.linkDecorator}>
               <Button className={classes.loginBtn}>{'Sign In'}</Button>
@@ -112,14 +138,15 @@ function NavBar({ user }) {
           </React.Fragment>
         ) : (
           <React.Fragment>
-            <Avatar
-              alt="Remy Sharp"
-              src="/broken-image.jpg"
-              className={classes.avatarImg}
+            <AccountCircleIcon fontSize="large" />
+            <Typography>{user.displayName}</Typography>
+            <Button
+              onClick={() => {
+                auth.signOut()
+              }}
             >
-              B
-            </Avatar>
-            <Typography>Hello World</Typography>
+              {'Sign out'}
+            </Button>
           </React.Fragment>
         )}
       </Box>
@@ -127,4 +154,4 @@ function NavBar({ user }) {
   )
 }
 
-export default NavBar
+export default React.memo(NavBar)

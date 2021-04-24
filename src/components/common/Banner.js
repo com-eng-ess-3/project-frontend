@@ -7,7 +7,7 @@ const useStyle = makeStyles((theme) => ({
     flexDirection: 'column',
     margin: 10,
     [theme.breakpoints.up('lg')]: {
-      marginRight: 200,
+      marginRight: theme.spacing(20),
     },
   },
   description: {
