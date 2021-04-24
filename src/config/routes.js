@@ -1,5 +1,7 @@
 import { Box, makeStyles } from '@material-ui/core'
 import { LandingPage, LoginPage, NotFound } from 'pages'
+import CreatePost from 'pages/createPost'
+import EditPost from 'pages/editPost'
 import RegisterPage from 'pages/register'
 import SearchResult from 'pages/search'
 import React from 'react'
@@ -19,6 +21,12 @@ function PageRouting() {
     <React.Fragment>
       <Box className={classes.root}>
         <Switch>
+          <Route path="/create">
+            <CreatePost />
+          </Route>
+          <Route path="/edit">
+            <EditPost />
+          </Route>
           <Route path="/search">
             <SearchResult name={query.get('name')} />
           </Route>

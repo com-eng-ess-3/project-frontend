@@ -98,12 +98,16 @@ const useStyle = makeStyles((theme) => ({
       fontSize: '0.75rem',
     },
   },
-  searchInput: {
+  description: {
+    color: theme.palette.secondary.main,
     paddingLeft: theme.spacing(1),
     fontWeight: 'bold',
     paddingRight: theme.spacing(1),
   },
   searchPaper: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginLeft: theme.spacing(1.5),
     marginRight: theme.spacing(1.5),
   },
@@ -150,10 +154,9 @@ function LandingPage() {
             <Paper className={classes.newPostContainer}>
               <AccountCircleOutlined fontSize="large" color="primary" />
               <Paper className={classes.searchPaper} component="form">
-                <InputBase
-                  className={classes.searchInput}
-                  placeholder="What’s on your mind ?"
-                ></InputBase>
+                <Typography className={classes.description}>
+                  {'What’s on your mind ?'}
+                </Typography>
               </Paper>
               <Button className={classes.createPostBtn} variant="outlined">
                 <CreateRoundedIcon className={classes.createIcon} />
