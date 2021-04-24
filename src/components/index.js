@@ -3,5 +3,15 @@ import TextFieldStyled from './common/TextFieldStyled'
 import Banner from './common/Banner'
 import CardPost from './common/CardPost'
 import ChipTag from './common/ChipTag'
+import PostModify from './postEdit/PostModify'
+import AuthComponent from './authPage/AuthComponent'
 
-export { NavBar, TextFieldStyled, Banner, CardPost, ChipTag }
+export {
+  NavBar,
+  TextFieldStyled,
+  Banner,
+  CardPost,
+  ChipTag,
+  PostModify,
+  AuthComponent,
+}
