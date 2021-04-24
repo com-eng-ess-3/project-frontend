@@ -5,7 +5,7 @@ import EditPost from 'pages/editPost'
 import RegisterPage from 'pages/register'
 import SearchResult from 'pages/search'
 import React from 'react'
-import { Route, Switch, useLocation } from 'react-router-dom'
+import { Route, Switch, useLocation, Redirect } from 'react-router-dom'
 
 const useStyle = makeStyles((theme) => ({
   root: {
@@ -21,13 +21,16 @@ function PageRouting() {
     <React.Fragment>
       <Box className={classes.root}>
         <Switch>
-          <Route path="/create">
+          <Route exact path="/create">
             <CreatePost />
           </Route>
-          <Route path="/edit">
+          <Route exact path="/edit">
+            <Redirect to="/" />
+          </Route>
+          <Route exact path="/edit/:id">
             <EditPost />
           </Route>
-          <Route path="/search">
+          <Route exact path="/search">
             <SearchResult name={query.get('name')} />
           </Route>
           <Route exact path="/register">
