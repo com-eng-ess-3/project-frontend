@@ -2,11 +2,13 @@ import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles'
 
 let theme = createMuiTheme({
   breakpoints: {
-    xs: 0,
-    sm: 480,
-    md: 768,
-    lg: 1280,
-    xl: 1920,
+    values: {
+      xs: 0,
+      sm: 480,
+      md: 768,
+      lg: 1280,
+      xl: 1920,
+    },
   },
   palette: {
     secondary: {

@@ -1,11 +1,13 @@
 import { Box, Typography } from '@material-ui/core'
 import React from 'react'
+import { useParams } from 'react-router'
 
-function ProfilePage({ name }) {
+function ProfilePage() {
+  const id = useParams().id
   return (
     <React.Fragment>
       <Box>
-        <Typography>{`Your query is ${name ? name : ''}`}</Typography>
+        <Typography>{`Your query is ${id ? id : ''}`}</Typography>
       </Box>
     </React.Fragment>
   )
