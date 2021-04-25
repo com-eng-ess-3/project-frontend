@@ -16,13 +16,18 @@ const useStyle = makeStyles((theme) => ({
   },
   contentContainer: {
     display: 'flex',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+      alignItems: 'center',
+      width: '100%',
+    },
   },
   authContainer: {
     display: 'flex',
     flexDirection: 'column',
     height: 'fit-content',
     backgroundColor: theme.palette.background.paper,
-    width: '40%',
+    width: '60%',
     borderRadius: 10,
     padding: theme.spacing(2),
   },
