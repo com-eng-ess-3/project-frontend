@@ -26,14 +26,20 @@ const useStyle = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
     padding: '10px',
-    width: '70%',
-    maxWidth: '800px',
     marginTop: '30px',
-    marginLeft: '50px',
-    marginBottom: '30px',
-    marginRight: '40%',
+    width: '90%',
+    [theme.breakpoints.up('md')]: {
+      width: '100%',
+      maxWidth: '800px',
+      marginLeft: '50px',
+      marginBottom: '30px',
+      marginRight: '40%',
+    },
   },
   notificationBox: {
+    [theme.breakpoints.down('sm')]: {
+      display: 'none',
+    },
     overflow: 'auto',
     backgroundColor: grey[500],
     position: 'fixed',
@@ -104,6 +110,11 @@ const useStyle = makeStyles((theme) => ({
     marginLeft: theme.spacing(1.5),
     marginRight: theme.spacing(1.5),
   },
+  typeList: {
+    [theme.breakpoints.down('xs')]: {
+      display: 'none',
+    },
+  },
 }))
 
 function LandingPage() {
@@ -128,7 +139,12 @@ function LandingPage() {
       <Box className={classes.container}>
         <Box className={classes.contentBox}>
           <Box className={classes.allPostBox}>
-            <Box width="100%" display="flex" justifyContent="center">
+            <Box
+              className={classes.typeList}
+              width="100%"
+              display="flex"
+              justifyContent="center"
+            >
               {['Popular', 'Newest', 'Following'].map((value, idx) => (
                 <Button
                   key={idx}

@@ -15,7 +15,7 @@ import React, { memo, useState } from 'react'
 
 const useStyle = makeStyles((theme) => ({
   cardContainer: {
-    width: '94%',
+    width: '92%',
     borderRadius: 10,
     marginBottom: theme.spacing(1.5),
     padding: theme.spacing(1.5),
