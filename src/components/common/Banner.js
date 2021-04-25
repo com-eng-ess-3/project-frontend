@@ -16,6 +16,9 @@ const useStyle = makeStyles((theme) => ({
     fontWeight: 400,
     fontSize: '1rem',
     wordWrap: 'break-word',
+    [theme.breakpoints.down('sm')]: {
+      display: 'none',
+    },
   },
 }))
 
