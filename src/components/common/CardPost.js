@@ -159,7 +159,7 @@ function CardPost({ user, index }) {
             />
           ))}
         </Box>
-        <Typography className={classes.contentText} overflowWrap="break-word">
+        <Typography className={classes.contentText}>
           {'นี้คือการทดสอบการพิมพ์ภาษาไทยยย'}
         </Typography>
       </Box>

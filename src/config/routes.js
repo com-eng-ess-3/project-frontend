@@ -2,6 +2,7 @@ import { Box, makeStyles } from '@material-ui/core'
 import { LandingPage, LoginPage, NotFound } from 'pages'
 import CreatePost from 'pages/createPost'
 import EditPost from 'pages/editPost'
+import ViewPostPage from 'pages/post'
 import ProfilePage from 'pages/profile'
 import RegisterPage from 'pages/register'
 import SearchResult from 'pages/search'
@@ -22,6 +23,9 @@ function PageRouting() {
     <React.Fragment>
       <Box className={classes.root}>
         <Switch>
+          <Route exact path="/post/:id">
+            <ViewPostPage />
+          </Route>
           <Route exact path="/profile/:id">
             <ProfilePage />
           </Route>

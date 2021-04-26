@@ -15,10 +15,10 @@ function EditPost() {
   }
 
   return (
-    <Box display="flex" justifyContent="center">
+    <Box height="100%" display="flex" justifyContent="center">
       <NavBar user={userState?.user} />
       <Box height="100%" width="100%">
-        <PostModify mode="Edit" />
+        <PostModify mode="Edit" id={id} />
       </Box>
     </Box>
   )
