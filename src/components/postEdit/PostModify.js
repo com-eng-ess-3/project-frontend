@@ -8,8 +8,12 @@ import {
 } from '@material-ui/core'
 import { TextFieldStyled } from 'components'
 import React from 'react'
+import { useHistory } from 'react-router'
 
 const useStyle = makeStyles((theme) => ({
+  rootBox: {
+    backgroundColor: theme.palette.background.default,
+  },
   paperContainer: {
     marginTop: '100px',
     width: '60%',
@@ -32,6 +36,9 @@ const useStyle = makeStyles((theme) => ({
     color: theme.palette.success.main,
     fontWeight: 'bold',
     marginLeft: theme.spacing(1),
+    [theme.breakpoints.down('xs')]: {
+      padding: theme.spacing(0.5),
+    },
   },
   cancelBtn: {
     border: `2px solid ${theme.palette.error.main}`,
@@ -63,8 +70,10 @@ const ContentText = withStyles((theme) => ({
 
 function PostModify({ mode, id }) {
   const classes = useStyle()
+  const history = useHistory()
+
   return (
-    <Box display="flex" justifyContent="center">
+    <Box className={classes.rootBox} display="flex" justifyContent="center">
       <Box className={classes.paperContainer}>
         <Typography color="secondary" variant="h3">
           {mode === 'Edit' ? 'Edit your post' : 'Create new post'}
@@ -103,7 +112,16 @@ function PostModify({ mode, id }) {
         </Box>
         <Divider className={classes.divider} />
         <Box display="flex" justifyContent="flex-end" marginTop>
-          <Button className={classes.cancelBtn}>
+          <Button
+            className={classes.cancelBtn}
+            onClick={() => {
+              if (mode === 'Edit') {
+                history.push(`/post/${id}`)
+              } else if (mode === 'Create') {
+                history.push('/')
+              }
+            }}
+          >
             <Typography className={classes.boldTypo}>{'Cancel'}</Typography>
           </Button>
           <Button className={classes.addBtn}>

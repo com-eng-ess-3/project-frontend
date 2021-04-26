@@ -1,8 +1,8 @@
 import {
   Box,
   Button,
-  Divider,
   Drawer,
+  Hidden,
   InputBase,
   List,
   ListItem,
@@ -107,6 +107,9 @@ const useStyle = makeStyles((theme) => ({
   },
   linkDecorator: {
     textDecoration: 'none',
+    [theme.breakpoints.down('xs')]: {
+      display: 'none',
+    },
   },
   avatarImg: {
     color: theme.palette.common.black,
@@ -137,12 +140,18 @@ const useStyle = makeStyles((theme) => ({
     fontWeight: 'bold',
     textTransform: 'none',
     borderRadius: 0,
+    width: '250px',
     borderBottom: `2px solid ${theme.palette.secondary.main}`,
+    textAlign: 'center',
+  },
+  drawerDisplayName: {
+    backgroundColor: theme.palette.secondary.main,
+    color: theme.palette.common.white,
     textAlign: 'center',
   },
 }))
 
-function NavBar({ user }) {
+function NavBar({ user, isHomePage }) {
   const history = useHistory()
   const classes = useStyle()
   const [searchValue, setSearchValue] = useState('')
@@ -172,20 +181,65 @@ function NavBar({ user }) {
         onBackdropClick={() => handleToggleDrawer('left', false)}
       >
         <List disablePadding={true}>
-          <ListItem className={classes.typoList} component={Button}>
-            <ListItemText primary="Popular"></ListItemText>
+          <ListItem
+            className={classes.typoList}
+            component={Button}
+            onClick={() => history.push(`/`)}
+          >
+            <ListItemText primary="Home"></ListItemText>
           </ListItem>
           <ListItem className={classes.typoList} component={Button}>
-            <ListItemText primary="Newest"></ListItemText>
+            <ListItemText
+              primary="Create Post"
+              onClick={() => history.push(`/create`)}
+            ></ListItemText>
           </ListItem>
-          <ListItem className={classes.typoList} component={Button}>
-            <ListItemText primary="Following"></ListItemText>
-          </ListItem>
-          <ListItem>
-            <Paper className={classes.leftSidePaper}>
-              <Typography>{'Hello World'}</Typography>
-            </Paper>
-          </ListItem>
+        </List>
+      </Drawer>
+      <Drawer
+        anchor="right"
+        PaperProps={{
+          style: {
+            backgroundColor: '#39ACE7',
+          },
+        }}
+        open={isOpenDrawer?.right}
+        onBackdropClick={() => handleToggleDrawer('right', false)}
+      >
+        <List disablePadding={true}>
+          {!!user ? (
+            <>
+              <ListItem className={classes.drawerDisplayName}>
+                <ListItemText
+                  primary={`Welcome : ${user.displayName}`}
+                ></ListItemText>
+              </ListItem>
+
+              <ListItem
+                className={classes.typoList}
+                component={Button}
+                onClick={() => history.push(`/profile/${user.uid}`)}
+              >
+                <ListItemText primary="Profile"></ListItemText>
+              </ListItem>
+              <ListItem
+                className={classes.typoList}
+                component={Button}
+                onClick={() => history.push(`/search?name=${searchValue}`)}
+              >
+                <ListItemText primary="Sign out"></ListItemText>
+              </ListItem>
+            </>
+          ) : (
+            <>
+              <ListItem className={classes.typoList}>
+                <ListItemText primary="Sign in"></ListItemText>
+              </ListItem>
+              <ListItem className={classes.typoList} component={Button}>
+                <ListItemText primary="Register"></ListItemText>
+              </ListItem>
+            </>
+          )}
         </List>
       </Drawer>
       <Box className={classes.navBar}>
@@ -198,7 +252,7 @@ function NavBar({ user }) {
             variant="h6"
             className={classes.clickableNode}
             color="textPrimary"
-            onClick={() => window.location.reload()}
+            onClick={() => history.push('/')}
           >
             {'GoWrite'}
           </Typography>
@@ -224,7 +278,15 @@ function NavBar({ user }) {
             />
           </Paper>
         </Box>
+
         <Box className={classes.userBox}>
+          <Hidden smUp>
+            <AccountCircleIcon
+              className={classes.clickableNode}
+              fontSize="large"
+              onClick={() => handleToggleDrawer('right', true)}
+            />
+          </Hidden>
           {!user ? (
             <React.Fragment>
               <Link to="/login" className={classes.linkDecorator}>
@@ -235,11 +297,8 @@ function NavBar({ user }) {
               </Link>
             </React.Fragment>
           ) : (
-            <React.Fragment>
-              <AccountCircleIcon
-                className={classes.userIcon}
-                fontSize="large"
-              />
+            <Hidden xsDown>
+              <AccountCircleIcon fontSize="large" />
               <Typography
                 aria-controls="simple-menu"
                 aria-haspopup="true"
@@ -272,11 +331,12 @@ function NavBar({ user }) {
                 open={Boolean(anchorEl)}
                 onBackdropClick={handleCloseUser}
               >
-                <MenuItem>Profile</MenuItem>
-                <MenuItem>Help</MenuItem>
+                <MenuItem onClick={() => history.push(`/profile/${user?.uid}`)}>
+                  Profile
+                </MenuItem>
                 <MenuItem onClick={() => auth.signOut()}>Logout</MenuItem>
               </Menu>
-            </React.Fragment>
+            </Hidden>
           )}
         </Box>
       </Box>

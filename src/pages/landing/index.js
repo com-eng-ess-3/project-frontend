@@ -6,6 +6,7 @@ import { AuthContext } from 'context/userContext'
 import React, { useContext, useEffect, useState } from 'react'
 import CreateRoundedIcon from '@material-ui/icons/CreateRounded'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import { useHistory } from 'react-router'
 
 const useStyle = makeStyles((theme) => ({
   container: {
@@ -56,7 +57,7 @@ const useStyle = makeStyles((theme) => ({
     },
     padding: 10,
     borderRadius: 0,
-    width: '35%',
+    width: '100%',
     color: theme.palette.common.white,
     border: 'none',
     backgroundColor: theme.palette.background.light,
@@ -67,7 +68,7 @@ const useStyle = makeStyles((theme) => ({
     },
     padding: 10,
     borderRadius: 0,
-    width: '35%',
+    width: '100%',
     color: theme.palette.common.white,
     border: 'none',
     backgroundColor: theme.palette.background.dark,
@@ -110,14 +111,10 @@ const useStyle = makeStyles((theme) => ({
     marginLeft: theme.spacing(1.5),
     marginRight: theme.spacing(1.5),
   },
-  typeList: {
-    [theme.breakpoints.down('xs')]: {
-      display: 'none',
-    },
-  },
 }))
 
 function LandingPage() {
+  const history = useHistory()
   const classes = useStyle()
   const [selected, setSelected] = useState(0)
   const [arr, setArr] = useState([])
@@ -135,7 +132,7 @@ function LandingPage() {
 
   return (
     <Box>
-      <NavBar user={userState?.user} />
+      <NavBar user={userState?.user} isHomepage />
       <Box className={classes.container}>
         <Box className={classes.contentBox}>
           <Box className={classes.allPostBox}>
@@ -145,20 +142,25 @@ function LandingPage() {
               display="flex"
               justifyContent="center"
             >
-              {['Popular', 'Newest', 'Following'].map((value, idx) => (
-                <Button
-                  key={idx}
-                  className={
-                    selected === idx
-                      ? classes.switchSelectedButton
-                      : classes.switchButton
-                  }
-                  variant="outlined"
-                  onClick={() => setSelected(idx)}
-                >
-                  {value}
-                </Button>
-              ))}
+              {['Popular', 'Newest', 'Following'].map((value, idx) => {
+                if (value === 'Following' && !userState?.user) {
+                  return null
+                }
+                return (
+                  <Button
+                    key={idx}
+                    className={
+                      selected === idx
+                        ? classes.switchSelectedButton
+                        : classes.switchButton
+                    }
+                    variant="outlined"
+                    onClick={() => setSelected(idx)}
+                  >
+                    {value}
+                  </Button>
+                )
+              })}
             </Box>
             <Paper className={classes.newPostContainer}>
               <AccountCircleOutlined fontSize="large" color="primary" />
@@ -169,7 +171,10 @@ function LandingPage() {
               </Paper>
               <Button className={classes.createPostBtn} variant="outlined">
                 <CreateRoundedIcon className={classes.createIcon} />
-                <Typography className={classes.createText}>
+                <Typography
+                  className={classes.createText}
+                  onClick={() => history.push('/create')}
+                >
                   {'Create Post'}
                 </Typography>
               </Button>
