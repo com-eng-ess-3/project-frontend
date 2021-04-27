@@ -232,10 +232,18 @@ function NavBar({ user, isHomePage }) {
             </>
           ) : (
             <>
-              <ListItem className={classes.typoList}>
+              <ListItem
+                className={classes.typoList}
+                component={Button}
+                onClick={() => history.push('/login')}
+              >
                 <ListItemText primary="Sign in"></ListItemText>
               </ListItem>
-              <ListItem className={classes.typoList} component={Button}>
+              <ListItem
+                className={classes.typoList}
+                component={Button}
+                onClick={() => history.push('/register')}
+              >
                 <ListItemText primary="Register"></ListItemText>
               </ListItem>
             </>
@@ -251,7 +259,7 @@ function NavBar({ user, isHomePage }) {
           <Typography
             variant="h6"
             className={classes.clickableNode}
-            color="textPrimary"
+            style={{ color: 'white' }}
             onClick={() => history.push('/')}
           >
             {'GoWrite'}
@@ -278,7 +286,6 @@ function NavBar({ user, isHomePage }) {
             />
           </Paper>
         </Box>
-
         <Box className={classes.userBox}>
           <Hidden smUp>
             <AccountCircleIcon
