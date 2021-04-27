@@ -1,4 +1,4 @@
-import { Box } from '@material-ui/core'
+import { Box, Typography } from '@material-ui/core'
 import React, { createContext, useEffect, useState } from 'react'
 import { auth } from 'utils/firebaseUtil'
 
@@ -23,7 +23,9 @@ export const AuthProvider = (props) => {
         justifyContent="center"
         width="100%"
         height="100%"
-      ></Box>
+      >
+        <Typography variant="h1">Pending</Typography>
+      </Box>
     )
   }
 
