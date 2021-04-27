@@ -13,6 +13,7 @@ const TextFieldStyled = withStyles((theme) => ({
         border: '2px solid #9BD4E4',
       },
       margin: 5,
+      marginLeft: 0,
       fontWeight: 'bold',
       borderRadius: 8,
     },

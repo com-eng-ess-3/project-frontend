@@ -7,12 +7,13 @@ import {
   withStyles,
 } from '@material-ui/core'
 import { TextFieldStyled } from 'components'
-import React from 'react'
+import React, { useState } from 'react'
 import { useHistory } from 'react-router'
 
 const useStyle = makeStyles((theme) => ({
   rootBox: {
     backgroundColor: theme.palette.background.default,
+    paddingBottom: theme.spacing(3),
   },
   paperContainer: {
     marginTop: '100px',
@@ -27,7 +28,6 @@ const useStyle = makeStyles((theme) => ({
   textLabel: {
     color: theme.palette.secondary.main,
     fontWeight: 'bold',
-    marginLeft: theme.spacing(0.75),
   },
   addBtn: {
     border: `2px solid ${theme.palette.success.main}`,
@@ -71,11 +71,12 @@ const ContentText = withStyles((theme) => ({
 function PostModify({ mode, id }) {
   const classes = useStyle()
   const history = useHistory()
+  const [content, setContent] = useState('')
 
   return (
     <Box className={classes.rootBox} display="flex" justifyContent="center">
       <Box className={classes.paperContainer}>
-        <Typography color="secondary" variant="h3">
+        <Typography color="secondary" variant="h4">
           {mode === 'Edit' ? 'Edit your post' : 'Create new post'}
         </Typography>
         <Divider className={classes.divider} />
@@ -104,6 +105,8 @@ function PostModify({ mode, id }) {
             <ContentText
               fullWidth
               variant="outlined"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
               multiline
               rows={10}
               rowsMax={10}
@@ -124,7 +127,10 @@ function PostModify({ mode, id }) {
           >
             <Typography className={classes.boldTypo}>{'Cancel'}</Typography>
           </Button>
-          <Button className={classes.addBtn}>
+          <Button
+            className={classes.addBtn}
+            onClick={() => console.log(content.split('\n'))}
+          >
             <Typography className={classes.boldTypo}>
               {mode === 'Edit' ? 'Edit' : 'Create'}
             </Typography>
