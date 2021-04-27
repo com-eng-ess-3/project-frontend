@@ -42,10 +42,10 @@ function PageRouting() {
             <SearchResult name={query.get('name')} />
           </Route>
           <Route exact path="/register">
-            <RegisterPage />
+            <RegisterPage urlRedirect={query.get('redirect')} />
           </Route>
           <Route exact path="/login">
-            <LoginPage />
+            <LoginPage urlRedirect={query.get('redirect')} />
           </Route>
           <Route exact path="/">
             <LandingPage />
