@@ -2,7 +2,7 @@ import { Box, Button, Divider, makeStyles, Typography } from '@material-ui/core'
 import { Banner, TextFieldStyled } from 'components'
 import { AuthContext } from 'context/userContext'
 import React, { useContext, useEffect, useState } from 'react'
-import { Link, useHistory, useParams } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { auth, firestore } from 'utils/firebaseUtil'
 
 const useStyle = makeStyles((theme) => ({
