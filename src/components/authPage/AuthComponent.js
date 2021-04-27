@@ -1,9 +1,9 @@
 import { Box, Button, Divider, makeStyles, Typography } from '@material-ui/core'
 import { Banner, TextFieldStyled } from 'components'
 import { AuthContext } from 'context/userContext'
-import React, { useContext, useState } from 'react'
-import { Link, Redirect, useHistory } from 'react-router-dom'
-import { auth } from 'utils/firebaseUtil'
+import React, { useContext, useEffect, useState } from 'react'
+import { Link, useHistory, useParams } from 'react-router-dom'
+import { auth, firestore } from 'utils/firebaseUtil'
 
 const useStyle = makeStyles((theme) => ({
   pageContainer: {
@@ -67,7 +67,7 @@ const useStyle = makeStyles((theme) => ({
   },
 }))
 
-function AuthComponent({ isRegister }) {
+function AuthComponent({ isRegister, urlRedirect }) {
   const isRegisterPage = !!isRegister
   const history = useHistory()
   const classes = useStyle()
@@ -98,6 +98,13 @@ function AuthComponent({ isRegister }) {
         )
 
         userAuth.user.updateProfile({ displayName })
+        await firestore.collection('users').doc(userAuth.user.uid).set({
+          follower: [],
+          following: [],
+          interested: '',
+          status: '',
+        })
+        history.push(!!urlRedirect ? `${urlRedirect}` : '/')
       } catch (e) {
         const code = e?.code
         if (code === 'auth/email-already-in-use') {
@@ -114,7 +121,7 @@ function AuthComponent({ isRegister }) {
     } else {
       try {
         await auth.signInWithEmailAndPassword(email, password)
-        history.push('/')
+        history.push(!!urlRedirect ? `${urlRedirect}` : '/')
       } catch (e) {
         const code = e?.code
         if (code === 'auth/invalid-email') {
@@ -128,11 +135,22 @@ function AuthComponent({ isRegister }) {
         return
       }
     }
-  }, [confirmPassword, displayName, email, history, isRegisterPage, password])
+  }, [
+    confirmPassword,
+    displayName,
+    email,
+    history,
+    isRegisterPage,
+    password,
+    urlRedirect,
+  ])
 
-  if (userAuth.user !== null) {
-    return <Redirect to="/" />
-  }
+  useEffect(() => {
+    if (userAuth.user !== null) {
+      history.push(!!urlRedirect ? `${urlRedirect}` : '/')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <Box className={classes.pageContainer}>
