@@ -34,7 +34,7 @@ const useStyle = makeStyles((theme) => ({
       maxWidth: '800px',
       marginLeft: '50px',
       marginBottom: '30px',
-      marginRight: '40%',
+      marginRight: (props) => (props.isLogin ? '40%' : '50px'),
     },
   },
   notificationBox: {
@@ -99,6 +99,9 @@ const useStyle = makeStyles((theme) => ({
     },
   },
   description: {
+    [theme.breakpoints.down('xs')]: {
+      fontSize: '0.75rem',
+    },
     color: theme.palette.secondary.main,
     paddingLeft: theme.spacing(1),
     fontWeight: 'bold',
@@ -115,17 +118,18 @@ const useStyle = makeStyles((theme) => ({
 
 function LandingPage() {
   const history = useHistory()
-  const classes = useStyle()
+
   const [selected, setSelected] = useState(0)
   const [arr, setArr] = useState([])
 
   const userState = useContext(AuthContext)
-  const tmp = []
-  for (let i = 0; i < 10; i++) {
-    tmp.push(i)
-  }
+  const classes = useStyle({ isLogin: !!userState?.user })
 
   useEffect(() => {
+    const tmp = []
+    for (let i = 0; i < 10; i++) {
+      tmp.push(i)
+    }
     setArr(tmp)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -136,12 +140,7 @@ function LandingPage() {
       <Box className={classes.container}>
         <Box className={classes.contentBox}>
           <Box className={classes.allPostBox}>
-            <Box
-              className={classes.typeList}
-              width="100%"
-              display="flex"
-              justifyContent="center"
-            >
+            <Box width="100%" display="flex" justifyContent="center">
               {['Popular', 'Newest', 'Following'].map((value, idx) => {
                 if (value === 'Following' && !userState?.user) {
                   return null
@@ -198,9 +197,11 @@ function LandingPage() {
             </InfiniteScroll>
           </Box>
         </Box>
-        <Box className={classes.notificationBox}>
-          <Typography>This is for notification Box</Typography>
-        </Box>
+        {!!userState?.user ? (
+          <Box className={classes.notificationBox}>
+            <Typography>This is for notification Box</Typography>
+          </Box>
+        ) : null}
       </Box>
     </Box>
   )
