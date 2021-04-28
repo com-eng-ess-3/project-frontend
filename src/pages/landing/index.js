@@ -1,5 +1,4 @@
 import { Box, Button, makeStyles, Paper, Typography } from '@material-ui/core'
-import { grey } from '@material-ui/core/colors'
 import { AccountCircleOutlined } from '@material-ui/icons'
 import { CardPost, NavBar } from 'components'
 import { AuthContext } from 'context/userContext'
@@ -29,27 +28,15 @@ const useStyle = makeStyles((theme) => ({
     padding: '10px',
     marginTop: '30px',
     width: '90%',
-    [theme.breakpoints.up('md')]: {
-      width: '100%',
-      maxWidth: '800px',
-      marginLeft: '50px',
-      marginBottom: '30px',
-      marginRight: (props) => (props.isLogin ? '40%' : '50px'),
-    },
   },
-  notificationBox: {
-    [theme.breakpoints.down('sm')]: {
-      display: 'none',
+  switchContainer: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    maxWidth: '800px',
+    [theme.breakpoints.up('sm')]: {
+      width: '90%',
     },
-    overflow: 'auto',
-    backgroundColor: grey[500],
-    position: 'fixed',
-    right: 0,
-    padding: theme.spacing(1.25),
-    maxHeight: '80%',
-    width: '30%',
-    marginTop: '90px',
-    marginRight: theme.spacing(5),
   },
   switchButton: {
     '&:hover': {
@@ -131,6 +118,7 @@ function LandingPage() {
       tmp.push(i)
     }
     setArr(tmp)
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -140,7 +128,7 @@ function LandingPage() {
       <Box className={classes.container}>
         <Box className={classes.contentBox}>
           <Box className={classes.allPostBox}>
-            <Box width="100%" display="flex" justifyContent="center">
+            <Box className={classes.switchContainer}>
               {['Popular', 'Newest', 'Following'].map((value, idx) => {
                 if (value === 'Following' && !userState?.user) {
                   return null
@@ -180,7 +168,12 @@ function LandingPage() {
             </Paper>
             <InfiniteScroll
               dataLength={arr.length}
-              style={{ width: '100%' }}
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                flexDirection: 'column',
+              }}
               hasMore={true}
               next={() => {
                 console.log(arr.length)
@@ -197,11 +190,6 @@ function LandingPage() {
             </InfiniteScroll>
           </Box>
         </Box>
-        {!!userState?.user ? (
-          <Box className={classes.notificationBox}>
-            <Typography>This is for notification Box</Typography>
-          </Box>
-        ) : null}
       </Box>
     </Box>
   )
