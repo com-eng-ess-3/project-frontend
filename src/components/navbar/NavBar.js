@@ -19,6 +19,7 @@ import { Link, useHistory } from 'react-router-dom'
 import { auth } from 'utils/firebaseUtil'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import MenuIcon from '@material-ui/icons/Menu'
+import NotificationBox from './Notification'
 
 const useStyle = makeStyles((theme) => ({
   root: {
@@ -225,7 +226,7 @@ function NavBar({ user, isHomePage }) {
               <ListItem
                 className={classes.typoList}
                 component={Button}
-                onClick={() => history.push(`/search?name=${searchValue}`)}
+                onClick={() => auth.signOut()}
               >
                 <ListItemText primary="Sign out"></ListItemText>
               </ListItem>
@@ -256,14 +257,16 @@ function NavBar({ user, isHomePage }) {
             className={`${classes.menuIcon} ${classes.clickableNode}`}
             onClick={() => handleToggleDrawer('left', true)}
           />
-          <Typography
-            variant="h6"
-            className={classes.clickableNode}
-            style={{ color: 'white' }}
-            onClick={() => history.push('/')}
-          >
-            {'GoWrite'}
-          </Typography>
+          <Hidden xsDown>
+            <Typography
+              variant="h6"
+              className={classes.clickableNode}
+              style={{ color: 'white' }}
+              onClick={() => history.push('/')}
+            >
+              {'GoWrite'}
+            </Typography>
+          </Hidden>
         </Box>
         <Box className={classes.searchRoot}>
           <Paper
@@ -287,6 +290,7 @@ function NavBar({ user, isHomePage }) {
           </Paper>
         </Box>
         <Box className={classes.userBox}>
+          {!!user ? <NotificationBox user={user} /> : null}
           <Hidden smUp>
             <AccountCircleIcon
               className={classes.clickableNode}
@@ -305,16 +309,22 @@ function NavBar({ user, isHomePage }) {
             </React.Fragment>
           ) : (
             <Hidden xsDown>
-              <AccountCircleIcon fontSize="large" />
-              <Typography
-                aria-controls="simple-menu"
-                aria-haspopup="true"
-                variant="h6"
-                className={`${classes.displayText} ${classes.clickableNode}`}
+              <Box
+                display="flex"
+                alignItems="center"
+                className={classes.clickableNode}
                 onClick={(e) => setAnchorEl(e.currentTarget)}
               >
-                {user.displayName}
-              </Typography>
+                <AccountCircleIcon fontSize="large" />
+                <Typography
+                  aria-controls="simple-menu"
+                  aria-haspopup="true"
+                  variant="h6"
+                  className={`${classes.displayText} ${classes.clickableNode}`}
+                >
+                  {user.displayName}
+                </Typography>
+              </Box>
               <Menu
                 anchorEl={anchorEl}
                 id="simple-menu"
@@ -334,9 +344,19 @@ function NavBar({ user, isHomePage }) {
                     marginTop: '60px',
                   },
                 }}
+                style={{ marginTop: 10 }}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'center',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'center',
+                }}
                 disableScrollLock={true}
                 open={Boolean(anchorEl)}
                 onBackdropClick={handleCloseUser}
+                onKeyUp={handleCloseUser}
               >
                 <MenuItem onClick={() => history.push(`/profile/${user?.uid}`)}>
                   Profile

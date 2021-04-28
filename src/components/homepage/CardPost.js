@@ -11,7 +11,9 @@ import { blue, green, purple, red, yellow } from '@material-ui/core/colors'
 import { ThumbUpAlt, ThumbUpAltOutlined } from '@material-ui/icons'
 import CommentIcon from '@material-ui/icons/Comment'
 import { ChipTag } from 'components'
+import FollowBtn from 'components/common/FollowBtn'
 import React, { memo, useState } from 'react'
+import { useHistory } from 'react-router'
 
 const useStyle = makeStyles((theme) => ({
   cardContainer: {
@@ -30,27 +32,7 @@ const useStyle = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
   },
-  followBtn: {
-    '&:hover': {
-      backgroundColor: (props) =>
-        !props.isFollowed
-          ? theme.palette.background.dark
-          : theme.palette.common.white,
-    },
-    border: `2px solid ${theme.palette.background.dark}`,
-    display: 'flex',
-    color: (props) =>
-      props.isFollowed
-        ? theme.palette.text.secondary
-        : theme.palette.common.white,
-    backgroundColor: (props) =>
-      !props.isFollowed
-        ? theme.palette.background.dark
-        : theme.palette.common.white,
 
-    borderRadius: 10,
-    right: 0,
-  },
   dividerLine: {
     marginTop: theme.spacing(1.5),
     marginBottom: theme.spacing(1),
@@ -86,6 +68,7 @@ const useStyle = makeStyles((theme) => ({
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
     color: '#0784B5',
+    cursor: 'pointer',
     fontWeight: 'bold',
   },
   contentText: {
@@ -96,12 +79,11 @@ const useStyle = makeStyles((theme) => ({
 }))
 
 function CardPost({ user, index }) {
-  const isLogin = false
-  const isFollowed = false
-  const classes = useStyle({ isLogin, isFollowed })
+  const history = useHistory()
   const [isLiked, setLiked] = useState(false)
+  const [isFollowed, setFollowed] = useState(false)
 
-  console.log('render ' + index)
+  const classes = useStyle()
 
   const tag = [
     {
@@ -134,20 +116,22 @@ function CardPost({ user, index }) {
           <Typography className={classes.textLabel} variant="h6">
             {'Username'}
           </Typography>
-          <Typography className={classes.textLabel} variant="subtitle1">
-            {'Time'}
+          <Typography className={classes.textLabel} variant="subtitle2">
+            {'23/02/2563 16:23'}
           </Typography>
         </Box>
         {user ? (
-          <Button className={classes.followBtn}>
-            {isFollowed ? 'followed' : '+ follow'}
-          </Button>
+          <FollowBtn isFollowed={isFollowed} setFollowed={setFollowed} />
         ) : null}
       </Box>
       <Divider className={classes.dividerLine} />
       <Box>
         <Box display="flex" alignItems="center" flexWrap="wrap">
-          <Typography variant="h4" className={classes.topicText}>
+          <Typography
+            variant="h4"
+            className={`${classes.topicText}`}
+            onClick={() => history.push(`/post/${index}`)}
+          >
             {'How to write JS in VS Code'}
           </Typography>
           {tag.map((value, idx) => (
