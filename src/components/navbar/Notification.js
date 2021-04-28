@@ -4,6 +4,7 @@ import {
   Backdrop,
   Badge,
   Box,
+  Divider,
   makeStyles,
   Popover,
   Typography,
@@ -23,7 +24,6 @@ const useStyle = makeStyles((theme) => ({
   notificationPaper: {
     top: 0,
     position: 'fixed',
-
     marginTop: theme.spacing(7.5),
   },
 }))
@@ -31,14 +31,22 @@ const useStyle = makeStyles((theme) => ({
 function NotificationBox({ isNavBar, user }) {
   const classes = useStyle()
   const [anchorEl, setAnchorEl] = useState(null)
+  const [isNewPost, setNewPost] = useState(false)
 
   return (
     <React.Fragment>
-      <Badge color="error" variant="dot" invisible={true}>
+      <Badge
+        className={classes.notificationIcon}
+        color="error"
+        variant="dot"
+        invisible={!isNewPost}
+      >
         <NotificationsIcon
-          className={classes.notificationIcon}
           fontSize="large"
-          onClick={(e) => setAnchorEl(e.currentTarget)}
+          onClick={(e) => {
+            setAnchorEl(e.currentTarget)
+            setNewPost(false)
+          }}
         />
 
         <Backdrop className={classes.backdrop} open={Boolean(anchorEl)}>
@@ -58,9 +66,7 @@ function NotificationBox({ isNavBar, user }) {
             }}
             style={{ marginTop: 10, marginRight: 10 }}
           >
-            <Box padding={2}>
-              <Typography>Hello Worlddddddddddddddd</Typography>
-            </Box>
+            <AllNotificationCard />
           </Popover>
         </Backdrop>
       </Badge>
@@ -68,4 +74,29 @@ function NotificationBox({ isNavBar, user }) {
   )
 }
 
-export default NotificationBox
+function AllNotificationCard({ isSideBar }) {
+  return (
+    <Box
+      padding={isSideBar ? 1 : 2}
+      height={isSideBar ? '78vh' : '80vh'}
+      overflow="auto"
+      width={isSideBar ? '200px' : '250px'}
+      style={{ backgroundColor: '#FFF' }}
+    >
+      <Typography
+        color="secondary"
+        style={{
+          fontWeight: 'bold',
+          textAlign: 'center',
+          marginBottom: 10,
+        }}
+        variant="h5"
+      >
+        Notification
+      </Typography>
+      <Divider />
+    </Box>
+  )
+}
+
+export { NotificationBox, AllNotificationCard }
