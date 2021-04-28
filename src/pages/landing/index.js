@@ -1,7 +1,7 @@
 import { Box, Button, makeStyles, Paper, Typography } from '@material-ui/core'
 import { AccountCircleOutlined } from '@material-ui/icons'
 import { CardPost, NavBar } from 'components'
-import { AuthContext } from 'context/userContext'
+import { UserContext } from 'context/userContext'
 import React, { useContext, useEffect, useState } from 'react'
 import CreateRoundedIcon from '@material-ui/icons/CreateRounded'
 import InfiniteScroll from 'react-infinite-scroll-component'
@@ -109,7 +109,7 @@ function LandingPage() {
   const [selected, setSelected] = useState(0)
   const [arr, setArr] = useState([])
 
-  const userState = useContext(AuthContext)
+  const userState = useContext(UserContext)
   const classes = useStyle({ isLogin: !!userState?.user })
 
   useEffect(() => {

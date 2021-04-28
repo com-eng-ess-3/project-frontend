@@ -1,11 +1,11 @@
 import { Box, Typography } from '@material-ui/core'
 import { NavBar } from 'components'
-import { AuthContext } from 'context/userContext'
+import { UserContext } from 'context/userContext'
 import React, { useContext } from 'react'
 import { useHistory } from 'react-router'
 
 function SearchResult({ name }) {
-  const userState = useContext(AuthContext)
+  const userState = useContext(UserContext)
   const history = useHistory()
 
   if (name === '') {
