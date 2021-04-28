@@ -18,6 +18,7 @@ const useStyle = makeStyles((theme) => ({
     marginTop: '80px',
     [theme.breakpoints.down('xs')]: {
       marginRight: theme.spacing(3),
+      marginTop: '60px',
     },
   },
   commentBox: {

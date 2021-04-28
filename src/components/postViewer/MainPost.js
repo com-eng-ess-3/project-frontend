@@ -12,6 +12,7 @@ import { ThumbUpAlt, ThumbUpAltOutlined } from '@material-ui/icons'
 import { ChipTag } from 'components'
 import React, { useState } from 'react'
 import CommentIcon from '@material-ui/icons/Comment'
+import FollowBtn from 'components/common/FollowBtn'
 
 const useStyle = makeStyles((theme) => ({
   mainPost: {
@@ -84,9 +85,10 @@ const useStyle = makeStyles((theme) => ({
   },
 }))
 
-function MainPost({ data }) {
+function MainPost({ data, isLogin }) {
   const classes = useStyle()
   const [isLiked, setLiked] = useState(false)
+  const [isFollowed, setFollowed] = useState(false)
 
   return (
     <Paper className={classes.mainPost}>
@@ -96,13 +98,15 @@ function MainPost({ data }) {
         variant="h4"
       >
         {data.topic}
-        <Typography
-          className={classes.titleTime}
-          display="inline"
-          variant="subtitle1"
-        >
-          {'time'}
-        </Typography>
+        <Hidden mdUp>
+          <Typography
+            className={classes.titleTime}
+            display="inline"
+            variant="subtitle1"
+          >
+            {'23/02/2563 16:23'}
+          </Typography>
+        </Hidden>
       </Typography>
       {data.tag.map((value, idx) => (
         <ChipTag
@@ -174,7 +178,9 @@ function MainPost({ data }) {
                 {'Username'}
               </Typography>
               <Hidden smDown>
-                <Typography variant="subtitle2">{'Time'}</Typography>
+                <Typography variant="subtitle2">
+                  {'23/02/2563 16:23'}
+                </Typography>
               </Hidden>
             </Box>
           </Hidden>
@@ -188,9 +194,7 @@ function MainPost({ data }) {
               </Typography>
             </Box>
           </Hidden>
-          <Button className={classes.followBtn}>
-            <Typography variant="subtitle2">{'+ Follow'}</Typography>
-          </Button>
+          <FollowBtn isFollowed={isFollowed} setFollowed={setFollowed} />
         </Box>
       </Box>
     </Paper>
