@@ -8,6 +8,7 @@ import RegisterPage from 'pages/register'
 import SearchResult from 'pages/search'
 import React from 'react'
 import { Route, Switch, useLocation, Redirect } from 'react-router-dom'
+import ScrollToTop from './ScrollToTop'
 
 const useStyle = makeStyles((theme) => ({
   root: {
@@ -22,6 +23,7 @@ function PageRouting() {
   return (
     <React.Fragment>
       <Box className={classes.root}>
+        <ScrollToTop />
         <Switch>
           <Route exact path="/post/:id">
             <ViewPostPage />
