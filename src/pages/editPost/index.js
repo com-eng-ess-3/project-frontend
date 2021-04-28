@@ -1,13 +1,13 @@
 import { Box } from '@material-ui/core'
 import { NavBar, PostModify } from 'components'
-import { AuthContext } from 'context/userContext'
+import { UserContext } from 'context/userContext'
 import React, { useContext } from 'react'
 import { useHistory, useParams } from 'react-router'
 
 function EditPost() {
   const id = useParams().id
   const history = useHistory()
-  const userState = useContext(AuthContext)
+  const userState = useContext(UserContext)
 
   if (!id) {
     history.push('/')

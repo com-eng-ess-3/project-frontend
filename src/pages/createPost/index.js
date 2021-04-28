@@ -1,10 +1,10 @@
 import { Box } from '@material-ui/core'
 import { NavBar, PostModify } from 'components'
-import { AuthContext } from 'context/userContext'
+import { UserContext } from 'context/userContext'
 import React, { useContext } from 'react'
 
 function CreatePost() {
-  const userState = useContext(AuthContext)
+  const userState = useContext(UserContext)
 
   return (
     <Box display="flex" justifyContent="center">

@@ -1,6 +1,6 @@
 import { Box, Button, Divider, makeStyles, Typography } from '@material-ui/core'
 import { Banner, TextFieldStyled } from 'components'
-import { AuthContext } from 'context/userContext'
+import { UserContext } from 'context/userContext'
 import React, { useContext, useEffect, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import { auth, firestore } from 'utils/firebaseUtil'
@@ -79,7 +79,7 @@ function AuthComponent({ isRegister, urlRedirect }) {
 
   const [errorMsg, setErrorMsg] = useState('')
 
-  const userAuth = useContext(AuthContext)
+  const userAuth = useContext(UserContext)
 
   const handleAuthAction = React.useCallback(async () => {
     if (isRegisterPage) {

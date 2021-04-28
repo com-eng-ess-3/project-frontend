@@ -1,16 +1,19 @@
 import { Box, Typography } from '@material-ui/core'
 import React, { createContext, useEffect, useState } from 'react'
-import { auth } from 'utils/firebaseUtil'
+import { auth, firestore } from 'utils/firebaseUtil'
 
-export const AuthContext = createContext(null)
+export const UserContext = createContext(null)
 
-export const AuthProvider = (props) => {
+export const UserProvider = (props) => {
   const [user, setUser] = useState(null)
   const [authPending, setAuthPending] = useState(true)
+  const [notificationList, setNotificationList] = useState([])
 
   useEffect(() => {
     return auth.onAuthStateChanged((userAuth) => {
       setUser(userAuth)
+      if (!!userAuth) {
+      }
       setAuthPending(false)
     })
   }, [authPending])
@@ -30,13 +33,13 @@ export const AuthProvider = (props) => {
   }
 
   return (
-    <AuthContext.Provider
+    <UserContext.Provider
       value={{
         user,
-        authPending,
+        notificationList,
       }}
     >
       {props.children}
-    </AuthContext.Provider>
+    </UserContext.Provider>
   )
 }
