@@ -19,7 +19,7 @@ import { Link, useHistory } from 'react-router-dom'
 import { auth } from 'utils/firebaseUtil'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import MenuIcon from '@material-ui/icons/Menu'
-import NotificationBox from './Notification'
+import { AllNotificationCard, NotificationBox } from './Notification'
 
 const useStyle = makeStyles((theme) => ({
   root: {
@@ -152,7 +152,7 @@ const useStyle = makeStyles((theme) => ({
   },
 }))
 
-function NavBar({ user, isHomePage }) {
+function NavBar({ user }) {
   const history = useHistory()
   const classes = useStyle()
   const [searchValue, setSearchValue] = useState('')
@@ -183,18 +183,30 @@ function NavBar({ user, isHomePage }) {
       >
         <List disablePadding={true}>
           <ListItem
+            className={`${classes.typoList} ${classes.drawerDisplayName}`}
+          >
+            <ListItemText primary="GoWrite" />
+          </ListItem>
+          <ListItem
             className={classes.typoList}
             component={Button}
             onClick={() => history.push(`/`)}
           >
             <ListItemText primary="Home"></ListItemText>
           </ListItem>
-          <ListItem className={classes.typoList} component={Button}>
-            <ListItemText
-              primary="Create Post"
-              onClick={() => history.push(`/create`)}
-            ></ListItemText>
-          </ListItem>
+          {!!user ? (
+            <React.Fragment>
+              <ListItem className={classes.typoList} component={Button}>
+                <ListItemText
+                  primary="Create Post"
+                  onClick={() => history.push(`/create`)}
+                ></ListItemText>
+              </ListItem>
+              <ListItem>
+                <AllNotificationCard isSideBar />
+              </ListItem>
+            </React.Fragment>
+          ) : null}
         </List>
       </Drawer>
       <Drawer
@@ -290,7 +302,9 @@ function NavBar({ user, isHomePage }) {
           </Paper>
         </Box>
         <Box className={classes.userBox}>
-          {!!user ? <NotificationBox user={user} /> : null}
+          <Hidden xsDown>
+            {!!user ? <NotificationBox user={user} /> : null}
+          </Hidden>
           <Hidden smUp>
             <AccountCircleIcon
               className={classes.clickableNode}

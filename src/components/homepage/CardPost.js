@@ -1,7 +1,6 @@
 import {
   Avatar,
   Box,
-  Button,
   Card,
   Divider,
   makeStyles,
@@ -18,6 +17,7 @@ import { useHistory } from 'react-router'
 const useStyle = makeStyles((theme) => ({
   cardContainer: {
     width: '92%',
+    maxWidth: '800px',
     borderRadius: 10,
     marginBottom: theme.spacing(1.5),
     padding: theme.spacing(1.5),
@@ -72,9 +72,16 @@ const useStyle = makeStyles((theme) => ({
     fontWeight: 'bold',
   },
   contentText: {
+    wordBreak: 'break-word',
     marginLeft: theme.spacing(1),
     color: theme.palette.text.secondary,
     marginTop: theme.spacing(1.5),
+  },
+  readMoreText: {
+    marginLeft: theme.spacing(1),
+    color: theme.palette.text.secondary,
+    fontWeight: 'bold',
+    textDecoration: 'underline',
   },
 }))
 
@@ -144,7 +151,13 @@ function CardPost({ user, index }) {
           ))}
         </Box>
         <Typography className={classes.contentText}>
-          {'นี้คือการทดสอบการพิมพ์ภาษาไทยยย'}
+          {'นี้คือการทดสอบการพิมพ์ภาษาไทยยยยยยยย'}
+        </Typography>
+        <Typography
+          className={`${classes.readMoreText} ${classes.pointerCursor}`}
+          onClick={() => history.push(`/post/${index}`)}
+        >
+          {'Read More'}
         </Typography>
       </Box>
       <Divider className={classes.dividerLine} />
