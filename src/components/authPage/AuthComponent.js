@@ -97,7 +97,7 @@ function AuthComponent({ isRegister, urlRedirect }) {
           password
         )
 
-        userAuth.user.updateProfile({ displayName })
+        await userAuth.user.updateProfile({ displayName })
         await firestore.collection('users').doc(userAuth.user.uid).set({
           follower: [],
           following: [],
@@ -163,7 +163,7 @@ function AuthComponent({ isRegister, urlRedirect }) {
           {isRegisterPage ? (
             <TextFieldStyled
               variant="outlined"
-              placeholder="Handle Name"
+              placeholder="Display Name"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
             />
