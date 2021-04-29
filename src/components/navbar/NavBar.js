@@ -190,7 +190,10 @@ function NavBar({ user }) {
           <ListItem
             className={classes.typoList}
             component={Button}
-            onClick={() => history.push(`/`)}
+            onClick={() => {
+              history.push(`/`)
+              handleToggleDrawer('left', false)
+            }}
           >
             <ListItemText primary="Home"></ListItemText>
           </ListItem>
@@ -199,7 +202,10 @@ function NavBar({ user }) {
               <ListItem className={classes.typoList} component={Button}>
                 <ListItemText
                   primary="Create Post"
-                  onClick={() => history.push(`/create`)}
+                  onClick={() => {
+                    history.push(`/create`)
+                    handleToggleDrawer('left', false)
+                  }}
                 ></ListItemText>
               </ListItem>
               <ListItem>
@@ -231,14 +237,20 @@ function NavBar({ user }) {
               <ListItem
                 className={classes.typoList}
                 component={Button}
-                onClick={() => history.push(`/profile/${user.uid}`)}
+                onClick={() => {
+                  history.push(`/profile/${user.uid}`)
+                  handleToggleDrawer('right', false)
+                }}
               >
                 <ListItemText primary="Profile"></ListItemText>
               </ListItem>
               <ListItem
                 className={classes.typoList}
                 component={Button}
-                onClick={() => auth.signOut()}
+                onClick={() => {
+                  auth.signOut()
+                  handleToggleDrawer('right', false)
+                }}
               >
                 <ListItemText primary="Sign out"></ListItemText>
               </ListItem>
