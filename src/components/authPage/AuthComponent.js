@@ -98,10 +98,6 @@ function AuthComponent({ isRegister, urlRedirect }) {
         )
 
         await userAuth.user.updateProfile({ displayName })
-
-        await auth.signOut()
-        await auth.signInWithEmailAndPassword(email, password)
-
         await firestore.collection('users').doc(userAuth.user.uid).set({
           follower: [],
           following: [],
@@ -109,6 +105,10 @@ function AuthComponent({ isRegister, urlRedirect }) {
           status: '',
           displayName,
         })
+
+        await auth.signOut()
+        await auth.signInWithEmailAndPassword(email, password)
+
         history.push(!!urlRedirect ? `${urlRedirect}` : '/')
       } catch (e) {
         const code = e?.code
