@@ -109,6 +109,7 @@ function MainPost({ data, isLogin }) {
       </Typography>
       {data.tag.map((value, idx) => (
         <ChipTag
+          color="primary"
           label={value.text}
           key={idx}
           style={{ backgroundColor: value.color }}

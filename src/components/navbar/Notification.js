@@ -78,7 +78,7 @@ function AllNotificationCard({ isSideBar }) {
   return (
     <Box
       padding={isSideBar ? 1 : 2}
-      height={isSideBar ? '78vh' : '80vh'}
+      height={isSideBar ? '77vh' : '80vh'}
       overflow="auto"
       width={isSideBar ? '200px' : '250px'}
       style={{ backgroundColor: '#FFF' }}
