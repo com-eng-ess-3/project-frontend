@@ -1,4 +1,3 @@
-import './App.css'
 import { ThemeProvider } from '@material-ui/core'
 import theme from 'config/theme'
 import { BrowserRouter as Router } from 'react-router-dom'
