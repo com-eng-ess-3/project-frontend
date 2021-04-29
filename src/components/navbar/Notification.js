@@ -9,6 +9,7 @@ import {
   Popover,
   Typography,
 } from '@material-ui/core'
+import NotificationCard from './NotificationCard'
 
 const useStyle = makeStyles((theme) => ({
   notificationIcon: {
@@ -95,6 +96,16 @@ function AllNotificationCard({ isSideBar }) {
         Notification
       </Typography>
       <Divider />
+      <NotificationCard />
+      <NotificationCard />
+      <NotificationCard />
+      <NotificationCard />
+      <NotificationCard />
+      <NotificationCard />
+      <NotificationCard />
+      <NotificationCard />
+      <NotificationCard />
+      <NotificationCard />
     </Box>
   )
 }
