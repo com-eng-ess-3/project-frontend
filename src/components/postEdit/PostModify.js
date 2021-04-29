@@ -6,9 +6,18 @@ import {
   Typography,
   withStyles,
 } from '@material-ui/core'
-import { TextFieldStyled } from 'components'
-import React, { useState } from 'react'
+import {
+  blue,
+  green,
+  grey,
+  purple,
+  red,
+  yellow,
+} from '@material-ui/core/colors'
+import { ChipTag, TextFieldStyled } from 'components'
+import React, { useRef, useState } from 'react'
 import { useHistory } from 'react-router'
+import { getColor } from 'utils/chipColorUtil'
 
 const useStyle = makeStyles((theme) => ({
   rootBox: {
@@ -71,7 +80,57 @@ const ContentText = withStyles((theme) => ({
 function PostModify({ mode, id }) {
   const classes = useStyle()
   const history = useHistory()
-  const [content, setContent] = useState('')
+  const topicRef = useRef(null)
+  const contentRef = useRef(null)
+  const [tagLabel, setTagLabel] = useState('')
+
+  const [chipData, setChipData] = useState([
+    {
+      key: 0,
+      color: green[500],
+      text: 'Hello',
+    },
+    {
+      key: 1,
+      color: yellow[900],
+      text: 'Dev',
+    },
+    {
+      key: 2,
+      color: red[500],
+      text: 'React',
+    },
+    {
+      key: 3,
+      color: grey[500],
+      text: 'สวัสดีครับ',
+    },
+    {
+      key: 4,
+      color: blue[500],
+      text: 'Hello',
+    },
+  ])
+
+  const handleAddChip = (text) => {
+    console.log(text)
+    const newKey =
+      chipData.length !== 0 ? chipData[chipData.length - 1].key + 1 : 0
+    setChipData([
+      ...chipData,
+      {
+        key: newKey,
+        color: getColor(),
+        text,
+      },
+    ])
+  }
+
+  const handleDeleteChip = (chipToDelete) => {
+    setChipData((chip) => chip.filter((chip) => chip.key !== chipToDelete.key))
+  }
+
+  console.log(chipData)
 
   return (
     <Box className={classes.rootBox} display="flex" justifyContent="center">
@@ -81,32 +140,58 @@ function PostModify({ mode, id }) {
         </Typography>
         <Divider className={classes.divider} />
         <Box>
-          <Box marginTop>
+          <Box>
             <Typography className={classes.textLabel} variant="subtitle1">
               {'Topic Name:'}
             </Typography>
-            <TextFieldStyled fullWidth variant="outlined" />
+            <TextFieldStyled inputRef={topicRef} fullWidth variant="outlined" />
           </Box>
-          <Box marginTop marginBottom>
-            <Box>
+          <Box>
+            <Box display="flex" alignItems="center" flexWrap="wrap">
               <Typography className={classes.textLabel} variant="subtitle1">
                 {'Tag:'}
               </Typography>
+              {chipData.map((value) => (
+                <ChipTag
+                  label={value.text}
+                  key={value.key}
+                  color="primary"
+                  style={{ backgroundColor: value.color }}
+                  onDelete={() => handleDeleteChip(value)}
+                />
+              ))}
             </Box>
             <Box display="flex" alignItems="center">
-              <TextFieldStyled variant="outlined" />
-              <Button className={classes.addBtn} variant="outlined">
+              <TextFieldStyled
+                value={tagLabel}
+                onChange={(e) => {
+                  if (e.target.value.length <= 20) {
+                    setTagLabel(e.target.value)
+                  }
+                }}
+                variant="outlined"
+              />
+              <Button
+                className={classes.addBtn}
+                variant="outlined"
+                onClick={() => {
+                  if (tagLabel === '') {
+                    return
+                  }
+                  handleAddChip(tagLabel)
+                  setTagLabel('')
+                }}
+              >
                 {'+ Add'}
               </Button>
             </Box>
           </Box>
-          <Box width="100%" marginBottom>
+          <Box width="100%">
             <Typography className={classes.textLabel}>{'Content:'}</Typography>
             <ContentText
               fullWidth
               variant="outlined"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
+              inputRef={contentRef}
               multiline
               rows={10}
               rowsMax={10}
@@ -114,7 +199,7 @@ function PostModify({ mode, id }) {
           </Box>
         </Box>
         <Divider className={classes.divider} />
-        <Box display="flex" justifyContent="flex-end" marginTop>
+        <Box display="flex" justifyContent="flex-end">
           <Button
             className={classes.cancelBtn}
             onClick={() => {
@@ -129,7 +214,7 @@ function PostModify({ mode, id }) {
           </Button>
           <Button
             className={classes.addBtn}
-            onClick={() => console.log(content.split('\n'))}
+            onClick={() => console.log(contentRef.current.value.split('\n'))}
           >
             <Typography className={classes.boldTypo}>
               {mode === 'Edit' ? 'Edit' : 'Create'}
