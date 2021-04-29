@@ -1,14 +1,14 @@
 import { Box } from '@material-ui/core'
 import Loading from 'components/common/Loading'
 import React, { createContext, useEffect, useState } from 'react'
-import { auth, firestore } from 'utils/firebaseUtil'
+import { auth } from 'utils/firebaseUtil'
 
 export const UserContext = createContext(null)
 
 export const UserProvider = (props) => {
   const [user, setUser] = useState(null)
   const [authPending, setAuthPending] = useState(true)
-  const [notificationList, setNotificationList] = useState([])
+  const [notificationList] = useState([])
 
   useEffect(() => {
     return auth.onAuthStateChanged(async (userAuth) => {

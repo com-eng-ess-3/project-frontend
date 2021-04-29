@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import CreateIcon from '@material-ui/icons/Create'
 import PersonAddIcon from '@material-ui/icons/PersonAdd'
 import { Box, makeStyles, Typography } from '@material-ui/core'

@@ -6,14 +6,7 @@ import {
   Typography,
   withStyles,
 } from '@material-ui/core'
-import {
-  blue,
-  green,
-  grey,
-  purple,
-  red,
-  yellow,
-} from '@material-ui/core/colors'
+import { blue, green, grey, red, yellow } from '@material-ui/core/colors'
 import { ChipTag, TextFieldStyled } from 'components'
 import React, { useRef, useState } from 'react'
 import { useHistory } from 'react-router'
