@@ -1,4 +1,5 @@
-import { Box, Typography } from '@material-ui/core'
+import { Box } from '@material-ui/core'
+import Loading from 'components/common/Loading'
 import React, { createContext, useEffect, useState } from 'react'
 import { auth, firestore } from 'utils/firebaseUtil'
 
@@ -10,13 +11,24 @@ export const UserProvider = (props) => {
   const [notificationList, setNotificationList] = useState([])
 
   useEffect(() => {
-    return auth.onAuthStateChanged((userAuth) => {
-      setUser(userAuth)
-      if (!!userAuth) {
+    return auth.onAuthStateChanged(async (userAuth) => {
+      if (userAuth !== null) {
+        setUser({
+          uid: userAuth.uid,
+          displayName: userAuth.displayName,
+        })
+      } else {
+        setUser(null)
       }
       setAuthPending(false)
     })
   }, [authPending])
+
+  // Listen to new post
+  useEffect(() => null, [user])
+
+  // Listen to new follower
+  useEffect(() => null, [user])
 
   if (authPending) {
     return (
@@ -25,9 +37,9 @@ export const UserProvider = (props) => {
         alignItems="center"
         justifyContent="center"
         width="100%"
-        height="100%"
+        height="100vh"
       >
-        <Typography variant="h1">Pending</Typography>
+        <Loading />
       </Box>
     )
   }
