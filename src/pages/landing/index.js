@@ -124,7 +124,7 @@ function LandingPage() {
 
   return (
     <Box>
-      <NavBar user={userState?.user} isHomepage />
+      <NavBar isHomepage />
       <Box className={classes.container}>
         <Box className={classes.contentBox}>
           <Box className={classes.allPostBox}>
