@@ -45,6 +45,9 @@ async function deletePost(id) {
 
 async function getPostById(id) {
   const postData = (await firestore.collection('posts').doc(id).get()).data()
+  if (!postData) {
+    return null
+  }
   const urlImage = await getImageUrl(postData.authorid)
   const postStat = await getPostStat(id)
   return {
