@@ -14,7 +14,6 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useHistory } from 'react-router'
 import { createCommentInPost, getCommentInPost } from 'utils/commentUtil'
-import { getImageUrl } from 'utils/firebaseUtil'
 import { getPostById } from 'utils/postUtil'
 import CommentBox from './CommentBox'
 import MainPost from './MainPost'
@@ -94,7 +93,6 @@ function PostViewer({ id }) {
   const user = useContext(UserContext)?.user
   const commentField = useRef(null)
 
-  const [arr, setArr] = useState([])
   const [mainPost, setMainPost] = useState(null)
   const [moreComment, setMoreComment] = useState(true)
   const [comment, setComment] = useState([])
@@ -132,12 +130,6 @@ function PostViewer({ id }) {
 
     getPost()
     getComment()
-
-    const tmp = []
-    for (let i = 0; i < 10; i++) {
-      tmp.push(i)
-    }
-    setArr(tmp)
   }, [history, id])
 
   const handleAddComment = async () => {
