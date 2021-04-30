@@ -1,8 +1,5 @@
-import { firestore, getImageUrl } from './firebaseUtil'
+import { firestore, getImageUrl, increment } from './firebaseUtil'
 import { getCurrentTime } from 'utils/getTime'
-import firebase from 'firebase'
-
-const increment = firebase.firestore.FieldValue.increment(1)
 
 async function createPost(topic, content, tag, authorid, displayname) {
   const timeStamp = getCurrentTime()
