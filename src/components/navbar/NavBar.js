@@ -13,13 +13,14 @@ import {
   Paper,
   Typography,
 } from '@material-ui/core'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import SearchIcon from '@material-ui/icons/Search'
 import { Link, useHistory } from 'react-router-dom'
 import { auth } from 'utils/firebaseUtil'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import MenuIcon from '@material-ui/icons/Menu'
 import { AllNotificationCard, NotificationBox } from './Notification'
+import { UserContext } from 'context/userContext'
 
 const useStyle = makeStyles((theme) => ({
   root: {
@@ -152,11 +153,14 @@ const useStyle = makeStyles((theme) => ({
   },
 }))
 
-function NavBar({ user }) {
+function NavBar() {
   const history = useHistory()
   const classes = useStyle()
   const [searchValue, setSearchValue] = useState('')
   const [anchorEl, setAnchorEl] = useState(null)
+
+  const user = useContext(UserContext)?.user
+
   const [isOpenDrawer, setOpenDrawer] = useState({
     left: false,
     right: false,
@@ -168,6 +172,7 @@ function NavBar({ user }) {
     },
     [isOpenDrawer]
   )
+
   const handleCloseUser = useCallback(() => setAnchorEl(null), [])
 
   return (
