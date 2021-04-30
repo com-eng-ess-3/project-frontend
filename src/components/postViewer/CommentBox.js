@@ -8,6 +8,7 @@ import {
 } from '@material-ui/core'
 import { ThumbUpAlt, ThumbUpAltOutlined } from '@material-ui/icons'
 import React, { useState } from 'react'
+import { epochToDate } from 'utils/getTime'
 
 const useStyle = makeStyles((theme) => ({
   rootPaper: {
@@ -35,9 +36,10 @@ const useStyle = makeStyles((theme) => ({
   },
 }))
 
-function CommentBox({ index }) {
+function CommentBox({ comment, index }) {
   const classes = useStyle()
   const [isLiked, setLiked] = useState(false)
+
   return (
     <Paper className={classes.rootPaper}>
       <Typography
@@ -45,19 +47,19 @@ function CommentBox({ index }) {
         variant="subtitle2"
       >{`Comment #${index + 1}`}</Typography>
       <Typography variant="body2" className={classes.commentContent}>
-        {`โฟนรวมมิตรหลวงตา เซลส์แมนไทม์ฟิวเจอร์ ปิกอัพนอมินีการันตีเยอร์บีร่าพรีเซ็นเตอร์ โมหจริตโกะผลักดันคอนแทค ปาสเตอร์รีเสิร์ชล้มเหลวนาฏยศาลา กษัตริยาธิราช อึ้มเอ๋อ คาเฟ่ ภารตะคอมเมนท์โปรเจ็คไฮเอนด์ พาเหรดเป่ายิ้งฉุบไฮไลท์อยุติธรรม มะกันป๊อป เซ็กซ์ แชมเปี้ยนตุ๊กตุ๊กเวิลด์ แบตสมาพันธ์ วีซ่าวิลล์ โทรโข่งบอกซ์ซูมจิ๊กโซลาร์`}
+        {comment.content}
       </Typography>
       <Divider className={classes.hrDivider} />
       <Box display="flex" alignItems="center" justifyContent="space-between">
         <Box display="flex" alignItems="center">
-          <Avatar src="https://youimg1.tripcdn.com/target/100i1f000001gp3y38C7A_C_750_500.jpg?proc=source%2Ftrip">
-            A
+          <Avatar src={comment.urlProfile}>
+            {comment.displayname[0].toUpperCase()}
           </Avatar>
           <Typography className={classes.textLabel} variant="subtitle1">
-            {'Username'}
+            {comment.displayname}
           </Typography>
           <Typography className={classes.textLabel} variant="subtitle2">
-            {'Time'}
+            {epochToDate(comment.timeStamp.seconds)}
           </Typography>
         </Box>
         <Box display="flex">
@@ -72,7 +74,7 @@ function CommentBox({ index }) {
               onClick={() => setLiked(false)}
             />
           )}
-          <Typography className={classes.textLabel}>{999}</Typography>
+          <Typography className={classes.textLabel}>{comment.like}</Typography>
         </Box>
       </Box>
     </Paper>

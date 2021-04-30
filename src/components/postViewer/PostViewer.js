@@ -1,9 +1,21 @@
-import { Box, Button, Divider, makeStyles, Paper } from '@material-ui/core'
-import { blue, green, purple, red, yellow } from '@material-ui/core/colors'
+import {
+  Box,
+  Button,
+  Divider,
+  makeStyles,
+  Paper,
+  Typography,
+} from '@material-ui/core'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import { TextFieldStyled } from 'components'
-import React, { useEffect, useState } from 'react'
+import Loading from 'components/common/Loading'
+import { UserContext } from 'context/userContext'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import { useHistory } from 'react-router'
+import { createCommentInPost, getCommentInPost } from 'utils/commentUtil'
+import { getImageUrl } from 'utils/firebaseUtil'
+import { getPostById, getPostStat } from 'utils/postUtil'
 import CommentBox from './CommentBox'
 import MainPost from './MainPost'
 
@@ -76,95 +88,112 @@ const useStyle = makeStyles((theme) => ({
   },
 }))
 
-function PostViewer({ user, id }) {
+function PostViewer({ id }) {
   const classes = useStyle()
+  const history = useHistory()
+  const user = useContext(UserContext)?.user
+  const commentField = useRef(null)
+
   const [arr, setArr] = useState([])
+  const [mainPost, setMainPost] = useState(null)
+  const [moreComment, setMoreComment] = useState(true)
+  const [comment, setComment] = useState([])
 
-  const topic = 'เนื้อเพลง โอมจงเงย - STAMP feat.Joey Boy , ตู่ ภพธร'
-  const testStr = `โฟนรวมมิตรหลวงตา เซลส์แมนไทม์ฟิวเจอร์ ปิกอัพนอมินีการันตีเยอร์บีร่าพรีเซ็นเตอร์ โมหจริตโกะผลักดันคอนแทค ปาสเตอร์รีเสิร์ชล้มเหลวนาฏยศาลา กษัตริยาธิราช อึ้มเอ๋อ คาเฟ่ ภารตะคอมเมนท์โปรเจ็คไฮเอนด์ พาเหรดเป่ายิ้งฉุบไฮไลท์อยุติธรรม มะกันป๊อป เซ็กซ์ แชมเปี้ยนตุ๊กตุ๊กเวิลด์ แบตสมาพันธ์ วีซ่าวิลล์ โทรโข่งบอกซ์ซูมจิ๊กโซลาร์
-
-  ซ้อรามเทพทับซ้อนสังโฆคีตราชัน หงวนโฮมมั้ยซาตานชินบัญชร เหมยฮาลาลวอล์ก โอเพ่น กัมมันตะดีลเลอร์อิเหนามาเฟียอึ๋ม ปิกอัพไลฟ์ตื้บ วาซาบิกุนซือเซ็กซ์จ๊อกกี้ ซีนสเตริโอ ตัวตน โอ้ยคาเฟ่วิดีโอฟลุตกรอบรูป ฟีดช็อปเปอร์เรซิน เจ๊าะแจ๊ะแคชเชียร์เท็กซ์ช็อต แคร์น็อกซากุระซัพพลายเออร์ โซนี่รีโมทวิดีโอ มั้ยเกสต์เฮาส์ กัมมันตะแจ๊กเก็ต
-  
-  พาร์หล่อฮังก้วยจีดีพียูโรเอ๋อ วาทกรรมแคร์ช็อต ศึกษาศาสตร์ซะเวณิกา แดนเซอร์ซัมเมอร์โลโก้ทัวริสต์น็อค ไรเฟิลฮิปโปโรแมนติก ไวอะกร้าเมจิค เกรย์แช่แข็งสเตชั่น โกะ เต๊ะแพทยสภาเอสเปรสโซพรีเซ็นเตอร์แคนู ติ๋มไตรมาส จิ๊กตุ๋ย แฟลชมอยส์เจอไรเซอร์อีสเตอร์มอคคา แทงโก้ไชน่าถ่ายทำแอนด์ โดนัทพาสตาผลักดันลาตินคาวบอย เทเลกราฟแดนเซอร์พอเพียงแคทวอล์ค โปรจตุคาม
-  
-  มยุราภิรมย์ โฟมคาปูชิโนการันตีคาราโอเกะ ม้าหินอ่อนเซี้ยว อุตสาหการห่วยซัพพลายเออร์ฮวงจุ้ย โรลออนแพลน โพสต์มินท์สเตชั่นมุมมอง แล็บ ทรู แกงค์โบ้ย แฟกซ์ดีลเลอร์มยุราภิรมย์ อันตรกิริยาตาปรือเคลื่อนย้ายคอนแทค เวอร์ รวมมิตรเอ็กซ์โปถ่ายทำโก๊ะโฟม พาสปอร์ตโบ้ยวืดคอรัปชัน เอ็นทรานซ์กาญจน์ออยล์สตริงจอหงวน ยนตรกรรมฮิปฮอปเซอร์
-  
-  อีสเตอร์ มอลล์แตงโมเฟอร์นิเจอร์ เมจิกอิสรชนหลวงพี่ อัลตรา สมาพันธ์คูลเลอร์ โปรเจกเตอร์อพาร์ตเมนต์บ็อกซ์ ฟาสต์ฟู้ดคอลเล็กชั่นฟาสต์ฟู้ดเมจิกเปปเปอร์มินต์ เจได เซอร์วิสออโต้เย้ว แคนยอนเที่ยงวันอพาร์ตเมนท์ ทัวร์ถ่ายทำ ไวกิ้ง สามช่าสถาปัตย์ เซฟตี้วิลเลจเนิร์สเซอรีสคริปต์ซิลเวอร์ ไฮไลท์กษัตริยาธิราช เบลอต่อยอดสไลด์ไมเกรน`
-  const tag = [
-    {
-      color: green[500],
-      text: 'Hello',
-    },
-    {
-      color: yellow[900],
-      text: 'Dev',
-    },
-    {
-      color: red[500],
-      text: 'React',
-    },
-    {
-      color: purple[500],
-      text: 'Frontend',
-    },
-    {
-      color: blue[500],
-      text: 'Hello',
-    },
-    {
-      color: blue[500],
-      text: 'Hello',
-    },
-    {
-      color: blue[500],
-      text: 'Hello',
-    },
-    {
-      color: blue[500],
-      text: 'Hello',
-    },
-    {
-      color: blue[500],
-      text: 'Hello',
-    },
-  ]
   useEffect(() => {
+    const getPost = async () => {
+      try {
+        const postData = await getPostById(id)
+        console.log(postData)
+        if (!postData) {
+          return
+        } else {
+          setMainPost(postData)
+        }
+      } catch (e) {
+        return
+      }
+    }
+
+    const getComment = async () => {
+      try {
+        const data = (await getCommentInPost(id)).docs
+
+        const commentData = await Promise.all(
+          data.map(async (doc) => {
+            const authorUid = doc.data().uid
+            const url = await getImageUrl(authorUid)
+            return {
+              ...doc.data(),
+              commentId: doc.id,
+              urlProfile: url,
+            }
+          })
+        )
+
+        if (commentData.length !== 0) {
+          setComment(commentData)
+          setMoreComment(true)
+        } else {
+          setMoreComment(false)
+        }
+      } catch (e) {
+        console.log(e.message)
+      }
+    }
+
+    getPost()
+    getComment()
+
     const tmp = []
     for (let i = 0; i < 10; i++) {
       tmp.push(i)
     }
     setArr(tmp)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [history, id])
+
+  const handleAddComment = async () => {
+    try {
+      const comment = commentField.current.value
+      if (comment.length === 0) {
+        return
+      }
+      await createCommentInPost(id, comment, user.uid, user.displayName)
+    } catch (e) {
+      console.log(e.message)
+    }
+  }
+
+  if (!mainPost) {
+    return <Loading />
+  }
 
   return (
     <Box className={classes.rootBox}>
-      <MainPost
-        data={{
-          topic: topic,
-          content: testStr,
-          tag,
-          likeCount: 999,
-          commentCount: 999,
-          authorId: 'aaaa',
-        }}
-      />
+      <MainPost data={mainPost} />
       <Divider />
       <Paper className={classes.makeCommentPaper}>
         <AccountCircleIcon className={classes.avatarIcon} color="action" />
         <TextFieldStyled
           className={classes.commentField}
+          inputRef={commentField}
           placeholder="Add some comment ?"
           variant="outlined"
         />
-        <Button className={classes.sendBtn}>{'Send'}</Button>
+        <Button className={classes.sendBtn} onClick={handleAddComment}>
+          {'Send'}
+        </Button>
       </Paper>
       <Divider />
       <Box width="100%">
         <InfiniteScroll
+          endMessage={
+            <Typography style={{ marginTop: '10px' }}>
+              {'No more comment'}
+            </Typography>
+          }
           dataLength={arr.length}
           className={`${classes.rootBox} ${classes.commentBox}`}
-          hasMore={true}
+          hasMore={false}
           next={() => {
             console.log(arr.length)
             const tmp2 = []
@@ -174,8 +203,8 @@ function PostViewer({ user, id }) {
             setArr([...arr, ...tmp2])
           }}
         >
-          {arr.map((_value, idx) => {
-            return <CommentBox index={idx} key={idx} />
+          {comment.map((value, idx) => {
+            return <CommentBox comment={value} index={idx} key={idx} />
           })}
         </InfiniteScroll>
       </Box>
