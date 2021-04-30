@@ -6,11 +6,12 @@ import {
   Typography,
   withStyles,
 } from '@material-ui/core'
-import { blue, green, grey, red, yellow } from '@material-ui/core/colors'
 import { ChipTag, TextFieldStyled } from 'components'
-import React, { useRef, useState } from 'react'
+import { UserContext } from 'context/userContext'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useHistory } from 'react-router'
 import { getColor } from 'utils/chipColorUtil'
+import { createPost, editPostById, getPostById } from 'utils/postUtil'
 
 const useStyle = makeStyles((theme) => ({
   rootBox: {
@@ -77,33 +78,9 @@ function PostModify({ mode, id }) {
   const contentRef = useRef(null)
   const [tagLabel, setTagLabel] = useState('')
 
-  const [chipData, setChipData] = useState([
-    {
-      key: 0,
-      color: green[500],
-      text: 'Hello',
-    },
-    {
-      key: 1,
-      color: yellow[900],
-      text: 'Dev',
-    },
-    {
-      key: 2,
-      color: red[500],
-      text: 'React',
-    },
-    {
-      key: 3,
-      color: grey[500],
-      text: 'สวัสดีครับ',
-    },
-    {
-      key: 4,
-      color: blue[500],
-      text: 'Hello',
-    },
-  ])
+  const user = useContext(UserContext)?.user
+
+  const [chipData, setChipData] = useState([])
 
   const handleAddChip = (text) => {
     console.log(text)
@@ -123,7 +100,59 @@ function PostModify({ mode, id }) {
     setChipData((chip) => chip.filter((chip) => chip.key !== chipToDelete.key))
   }
 
-  console.log(chipData)
+  const handleEditPost = async () => {
+    const topic = topicRef.current.value
+    const content = contentRef.current.value
+    const tag = chipData.map((value) => ({
+      color: value.color,
+      label: value.label,
+    }))
+    try {
+      await editPostById(topic, content, tag, id)
+      history.push(`/post/${id}`)
+    } catch (e) {
+      console.log(e.message)
+    }
+  }
+
+  const handleAddPost = async () => {
+    const topic = topicRef.current.value
+    const content = contentRef.current.value
+    const tag = chipData.map((value) => ({
+      color: value.color,
+      label: value.text,
+    }))
+
+    try {
+      const id = await createPost(
+        topic,
+        content,
+        tag,
+        user.uid,
+        user.displayName
+      )
+
+      history.push(`/post/${id}`)
+    } catch (e) {
+      console.log(e.message)
+    }
+  }
+
+  useEffect(() => {
+    const getData = async () => {
+      const postData = await getPostById(id)
+      if (!postData) {
+        history.push('/')
+        return
+      }
+      topicRef.current.value = postData.topic
+      contentRef.current.value = postData.content
+      setChipData(postData.tag.map((value, idx) => ({ ...value, key: idx })))
+    }
+    if (mode === 'Edit') {
+      getData()
+    }
+  }, [history, id, mode])
 
   return (
     <Box className={classes.rootBox} display="flex" justifyContent="center">
@@ -146,7 +175,7 @@ function PostModify({ mode, id }) {
               </Typography>
               {chipData.map((value) => (
                 <ChipTag
-                  label={value.text}
+                  label={value.label}
                   key={value.key}
                   color="primary"
                   style={{ backgroundColor: value.color }}
@@ -209,7 +238,16 @@ function PostModify({ mode, id }) {
             className={classes.addBtn}
             onClick={() => console.log(contentRef.current.value.split('\n'))}
           >
-            <Typography className={classes.boldTypo}>
+            <Typography
+              className={classes.boldTypo}
+              onClick={() => {
+                if (mode === 'Edit') {
+                  handleEditPost()
+                } else {
+                  handleAddPost()
+                }
+              }}
+            >
               {mode === 'Edit' ? 'Edit' : 'Create'}
             </Typography>
           </Button>
