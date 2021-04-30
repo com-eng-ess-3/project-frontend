@@ -82,8 +82,7 @@ function PostModify({ mode, id }) {
 
   const [chipData, setChipData] = useState([])
 
-  const handleAddChip = (text) => {
-    console.log(text)
+  const handleAddChip = (label) => {
     const newKey =
       chipData.length !== 0 ? chipData[chipData.length - 1].key + 1 : 0
     setChipData([
@@ -91,7 +90,7 @@ function PostModify({ mode, id }) {
       {
         key: newKey,
         color: getColor(),
-        text,
+        label,
       },
     ])
   }
@@ -120,7 +119,7 @@ function PostModify({ mode, id }) {
     const content = contentRef.current.value
     const tag = chipData.map((value) => ({
       color: value.color,
-      label: value.text,
+      label: value.label,
     }))
 
     try {
