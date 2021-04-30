@@ -15,7 +15,7 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import { useHistory } from 'react-router'
 import { createCommentInPost, getCommentInPost } from 'utils/commentUtil'
 import { getImageUrl } from 'utils/firebaseUtil'
-import { getPostById, getPostStat } from 'utils/postUtil'
+import { getPostById } from 'utils/postUtil'
 import CommentBox from './CommentBox'
 import MainPost from './MainPost'
 
@@ -116,24 +116,13 @@ function PostViewer({ id }) {
 
     const getComment = async () => {
       try {
-        const data = (await getCommentInPost(id)).docs
-
-        const commentData = await Promise.all(
-          data.map(async (doc) => {
-            const authorUid = doc.data().uid
-            const url = await getImageUrl(authorUid)
-            return {
-              ...doc.data(),
-              commentId: doc.id,
-              urlProfile: url,
-            }
-          })
-        )
+        const commentData = await getCommentInPost(id)
 
         if (commentData.length !== 0) {
           setComment(commentData)
-          setMoreComment(true)
-        } else {
+        }
+
+        if (commentData.length < 10) {
           setMoreComment(false)
         }
       } catch (e) {
@@ -191,16 +180,18 @@ function PostViewer({ id }) {
               {'No more comment'}
             </Typography>
           }
-          dataLength={arr.length}
+          dataLength={comment.length}
           className={`${classes.rootBox} ${classes.commentBox}`}
-          hasMore={false}
-          next={() => {
-            console.log(arr.length)
-            const tmp2 = []
-            for (let i = 0; i < 10; i++) {
-              tmp2.push(i)
+          hasMore={moreComment}
+          next={async () => {
+            const nextComment = await getCommentInPost(
+              id,
+              comment[comment.length - 1].index
+            )
+            if (nextComment.length < 10) {
+              setMoreComment(false)
             }
-            setArr([...arr, ...tmp2])
+            setComment([...comment, ...nextComment])
           }}
         >
           {comment.map((value, idx) => {
