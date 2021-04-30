@@ -14,3 +14,7 @@ const firestore = app.firestore()
 const storage = app.storage()
 
 export { auth, storage, firestore }
+
+export function getImageUrl(uid) {
+  return storage.ref(`users/${uid}/profileImage.png`).getDownloadURL()
+}
