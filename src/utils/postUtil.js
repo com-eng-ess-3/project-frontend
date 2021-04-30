@@ -9,16 +9,13 @@ async function createPost(topic, content, tag, authorid, displayname) {
     topic,
     content,
     tag,
-    timeStamp,
-    authorid,
-    displayname,
     index,
-  })
-
-  await firestore.collection(`posts/${result.id}/stat`).doc('counting').set({
     like: 0,
     indexComment: 0,
     currentComment: 0,
+    timeStamp,
+    authorid,
+    displayname,
   })
 
   await firestore.collection('config').doc('id').update({
@@ -46,19 +43,88 @@ async function getPostById(id) {
     return null
   }
   const urlImage = await getImageUrl(postData.authorid)
-  const postStat = await getPostStat(id)
   return {
     ...postData,
     urlProfile: urlImage,
-    commentCount: postStat.data().currentComment,
-    likeCount: postStat.data().like,
   }
 }
 
-function getPostInRange(lastIndex) {}
+async function getNewestPost(lastIndex) {
+  let docRef
+  if (typeof lastIndex !== 'number') {
+    docRef = firestore
+      .collection('posts')
+      .orderBy('timeStamp', 'desc')
+      .limit(10)
+  } else {
+    const cursor = (
+      await firestore.collection('posts').where('index', '==', lastIndex).get()
+    ).docs[0]
+    docRef = firestore
+      .collection('posts')
+      .orderBy('timeStamp', 'desc')
+      .startAfter(cursor)
+      .limit(10)
+  }
 
-function getPostStat(id) {
-  return firestore.collection(`posts/${id}/stat`).doc('counting').get()
+  const collectionQuery = (await docRef.get()).docs
+
+  if (collectionQuery.length === 0) {
+    return []
+  }
+  const postData = await Promise.all(
+    collectionQuery.map(async (doc) => {
+      const authorUid = doc.data().uid
+      const url = await getImageUrl(authorUid)
+      return {
+        ...doc.data(),
+        postId: doc.id,
+        urlProfile: url,
+      }
+    })
+  )
+
+  return postData
+}
+
+async function getPopularPost(lastIndex) {
+  let docRef
+  if (typeof lastIndex !== 'number') {
+    docRef = firestore.collection('posts').orderBy('like', 'desc').limit(10)
+  } else {
+    const cursor = (
+      await firestore.collection('posts').where('index', '==', lastIndex).get()
+    ).docs[0]
+    docRef = firestore
+      .collection('posts')
+      .orderBy('like', 'desc')
+      .startAfter(cursor)
+      .limit(10)
+  }
+
+  const collectionQuery = (await docRef.get()).docs
+
+  if (collectionQuery.length === 0) {
+    return []
+  }
+  const postData = await Promise.all(
+    collectionQuery.map(async (doc) => {
+      const authorUid = doc.data().uid
+      const url = await getImageUrl(authorUid)
+      return {
+        ...doc.data(),
+        postId: doc.id,
+        urlProfile: url,
+      }
+    })
+  )
+
+  return postData
+}
+
+function getFollowerPost(lastIndex) {
+  if (typeof lastIndex !== 'number') {
+  }
 }
 
 export {
@@ -66,6 +132,7 @@ export {
   createPost,
   deletePost,
   getPostById,
-  getPostInRange,
-  getPostStat,
+  getNewestPost,
+  getPopularPost,
+  getFollowerPost,
 }
