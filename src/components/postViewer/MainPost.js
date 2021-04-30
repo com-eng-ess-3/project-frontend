@@ -12,6 +12,7 @@ import { ChipTag } from 'components'
 import React, { useState } from 'react'
 import CommentIcon from '@material-ui/icons/Comment'
 import FollowBtn from 'components/common/FollowBtn'
+import { epochToDate } from 'utils/getTime'
 
 const useStyle = makeStyles((theme) => ({
   mainPost: {
@@ -103,14 +104,14 @@ function MainPost({ data, isLogin }) {
             display="inline"
             variant="subtitle1"
           >
-            {'23/02/2563 16:23'}
+            {epochToDate(data.timeStamp.seconds)}
           </Typography>
         </Hidden>
       </Typography>
       {data.tag.map((value, idx) => (
         <ChipTag
           color="primary"
-          label={value.text}
+          label={value.label}
           key={idx}
           style={{ backgroundColor: value.color }}
           onClick={() => null}
@@ -173,13 +174,15 @@ function MainPost({ data, isLogin }) {
           />
           <Hidden xsDown>
             <Box className={classes.authorBox}>
-              <Avatar className={classes.avatarImg}>A</Avatar>
+              <Avatar className={classes.avatarImg} src={data.urlProfile}>
+                {data.displayname[0].toUpperCase()}
+              </Avatar>
               <Typography className={classes.textLabel} variant="subtitle1">
-                {'Username'}
+                {data.displayname}
               </Typography>
               <Hidden smDown>
                 <Typography variant="subtitle2">
-                  {'23/02/2563 16:23'}
+                  {epochToDate(data.timeStamp.seconds)}
                 </Typography>
               </Hidden>
             </Box>
@@ -188,9 +191,11 @@ function MainPost({ data, isLogin }) {
         <Box display="flex" flexDirection="column" alignItems="center">
           <Hidden smUp>
             <Box className={classes.authorBox}>
-              <Avatar className={classes.avatarImg}>A</Avatar>
+              <Avatar className={classes.avatarImg}>
+                {data.displayname[0].toUpperCase()}
+              </Avatar>
               <Typography className={classes.textLabel} variant="subtitle1">
-                {'Username'}
+                {data.displayname}
               </Typography>
             </Box>
           </Hidden>
