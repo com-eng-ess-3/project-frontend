@@ -1,16 +1,14 @@
 import { Box } from '@material-ui/core'
 import { NavBar, PostViewer } from 'components'
-import { UserContext } from 'context/userContext'
-import React, { useContext } from 'react'
+import React from 'react'
 import { useParams } from 'react-router'
 
 function ViewPostPage() {
   const id = useParams().id
-  const userState = useContext(UserContext)
 
   return (
     <Box display="flex" justifyContent="center">
-      <NavBar user={userState?.user} />
+      <NavBar />
       <Box height="100%" width="100%">
         <PostViewer mode="Edit" id={id} />
       </Box>
