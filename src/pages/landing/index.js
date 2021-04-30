@@ -6,6 +6,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import CreateRoundedIcon from '@material-ui/icons/CreateRounded'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useHistory } from 'react-router'
+import { getNewestPost, getPopularPost } from 'utils/postUtil'
 
 const useStyle = makeStyles((theme) => ({
   container: {
@@ -108,11 +109,37 @@ function LandingPage() {
 
   const [selected, setSelected] = useState(0)
   const [arr, setArr] = useState([])
+  const [isMorePost, setMorePost] = useState({
+    Popular: true,
+    Newest: true,
+    Following: true,
+  })
+  const [postNow, setPostNow] = useState([])
 
   const userState = useContext(UserContext)
   const classes = useStyle({ isLogin: !!userState?.user })
 
   useEffect(() => {
+    const getInitialNewest = async () => {
+      const postData = await getNewestPost()
+      setPostNow(postData)
+      if (postData.length < 10) {
+        setMorePost({ ...isMorePost, Newest: false })
+      }
+    }
+
+    const getInitialPopular = async () => {
+      const postData = await getPopularPost()
+      setPostNow(postData)
+      if (postData.length < 10) {
+        setMorePost({ ...isMorePost, Popular: false })
+      }
+    }
+
+    const getInitialFollowing = async () => {}
+
+    // getInitialPopular()
+
     const tmp = []
     for (let i = 0; i < 10; i++) {
       tmp.push(i)

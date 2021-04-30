@@ -3,7 +3,7 @@ import { getCurrentTime } from './getTime'
 
 async function createCommentInPost(postId, content, uid, displayname) {
   const timeStamp = getCurrentTime()
-  const docRef = firestore.collection(`posts/${postId}/stat`).doc('counting')
+  const docRef = firestore.collection(`posts`).doc(postId)
 
   const indexComment = (await docRef.get()).data().indexComment
 
@@ -13,6 +13,7 @@ async function createCommentInPost(postId, content, uid, displayname) {
     uid,
     index: indexComment,
     displayname,
+    like: 0,
   })
 
   await docRef.update({
