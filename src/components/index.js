@@ -6,6 +6,7 @@ import ChipTag from './common/ChipTag'
 import PostModify from './postEdit/PostModify'
 import AuthComponent from './authPage/AuthComponent'
 import PostViewer from './postViewer/PostViewer'
+import CardPostSearchResult from './common/CardPostSearchResult'
 
 export {
   NavBar,
@@ -16,4 +17,5 @@ export {
   PostModify,
   AuthComponent,
   PostViewer,
+  CardPostSearchResult,
 }
