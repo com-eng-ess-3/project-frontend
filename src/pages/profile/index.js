@@ -1,6 +1,6 @@
 import { Box, Typography, makeStyles, Button, Paper, Divider } from '@material-ui/core'
 import React, { useState, useContext,  } from 'react'
-import { useParams } from 'react-router'
+//import { useParams } from 'react-router'
 import { UserContext } from 'context/userContext'
 import { CardPost, NavBar } from 'components'
 import CreateRoundedIcon from '@material-ui/icons/CreateRounded'
@@ -198,12 +198,12 @@ const useStyle = makeStyles((theme) => ({
 /////////////////////https://material-ui.com/components/lists//////////////////////
 function ProfilePage() {
   const history = useHistory()
-  const id = useParams().id
+  //const id = useParams().id
   const userState = useContext(UserContext)
   const classes = useStyle({ isLogin: !!userState?.user })
-  const [isMyProfile, setMyProfile] = useState(true)
+  const [isMyProfile] = useState(true)
   const [selected, setSelected] = useState('Recent Post')
-  const [arr, setArr] = useState([])
+
   return (
     // <React.Fragment>
     //   <Box>
@@ -285,7 +285,7 @@ function ProfilePage() {
             {(selected === 'Following') ?
               <List dense className={classes.followingBox}>
               {[0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9].map((value) => {
-                const labelId = `checkbox-list-secondary-label-${value}`;
+                //const labelId = `checkbox-list-secondary-label-${value}`;
                 return (
                   <ListItem key={value} button>
                     <ListItemAvatar>
@@ -313,7 +313,7 @@ function ProfilePage() {
             {(selected === 'Followers') ? 
               <List dense className={classes.followerBox}>
               {[0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9].map((value) => {
-                const labelId = `checkbox-list-secondary-label-${value}`;
+                //const labelId = `checkbox-list-secondary-label-${value}`;
                 return (
                   <ListItem key={value} button>
                     <ListItemAvatar>

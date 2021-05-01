@@ -1,7 +1,5 @@
 import {
-    Avatar,
     Box,
-    Button,
     Paper,
     Card,
     Divider,
@@ -132,11 +130,11 @@ import SaveIcon from '@material-ui/icons/Save'
     const isLogin = false
     const isFollowed = false
     const classes = useStyle({ isLogin, isFollowed })
-    const [isMyProfile, setIsMyProfile] = useState(true)
+    const [isMyProfile] = useState(true)
     const [inNameEditState, setNameEditState] = useState(false)
     const [inStatusEditState, setStatusEditState] = useState(false)
     const [inInterestEditState, setInterestEditState] = useState(false)
-    const [wasFollow, setWasFollow] = useState(true)
+    //const [wasFollow, setWasFollow] = useState(true)
   
     
     console.log('render ' + index)
@@ -150,7 +148,7 @@ import SaveIcon from '@material-ui/icons/Save'
         <Divider className={classes.dividerLine} />
         <Box display='flex' className={classes.picNameStaSide} marginBottom='15px'>
         <Box width='40%' className={classes.picBox}>
-              <img className={classes.profilePic} src="https://picsum.photos/200" alt="display image"/>
+              <img className={classes.profilePic} src="https://picsum.photos/200" alt="display"/>
               {isMyProfile ? <BuildIcon className={classes.saveEditButtonPic} ></BuildIcon> : null}
             </Box>
             <Box  width='60%' marginLeft='15px'>
@@ -208,7 +206,7 @@ import SaveIcon from '@material-ui/icons/Save'
         </Box>
         <Box display='flex' className={classes.picNameStaSideLessThanSm} marginBottom='15px'>
         <Box width='40%' className={classes.picBox}>
-              <img className={classes.profilePic} src="https://picsum.photos/200" alt="display image"/>
+              <img className={classes.profilePic} src="https://picsum.photos/200" alt="display"/>
               {isMyProfile ? <BuildIcon className={classes.saveEditButtonPic} ></BuildIcon> : null}
             </Box>
             <Box  width='60%' marginLeft='15px'>
@@ -275,7 +273,7 @@ import SaveIcon from '@material-ui/icons/Save'
         <Box className={classes.picNameStaCenter} display={{ xs: 'none', md: 'block', lg: 'none' }}>
             <Box justifyContent='center' display='flex'>
             <Box width='200px' className={classes.picBox}>
-                <img className={classes.profilePic} src="https://picsum.photos/200" alt="display image"/>
+                <img className={classes.profilePic} src="https://picsum.photos/200" alt="display"/>
                 {isMyProfile ? <BuildIcon className={classes.saveEditButtonPic} ></BuildIcon> : null}
               </Box>
             </Box>
