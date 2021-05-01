@@ -6,13 +6,14 @@ import {
   makeStyles,
   Typography,
 } from '@material-ui/core'
-import { blue, green, purple, red, yellow } from '@material-ui/core/colors'
 import { ThumbUpAlt, ThumbUpAltOutlined } from '@material-ui/icons'
 import CommentIcon from '@material-ui/icons/Comment'
 import { ChipTag } from 'components'
 import FollowBtn from 'components/common/FollowBtn'
-import React, { memo, useState } from 'react'
+import { UserContext } from 'context/userContext'
+import React, { memo, useContext, useState } from 'react'
 import { useHistory } from 'react-router'
+import { handleWhenDislike, handleWhenLike } from 'utils/actionUtil'
 import { epochToDate } from 'utils/getTime'
 
 const useStyle = makeStyles((theme) => ({
@@ -86,35 +87,13 @@ const useStyle = makeStyles((theme) => ({
   },
 }))
 
-function CardPost({ user, index, post, editMode }) {
+function CardPost({ user, id, post, editMode, isLike }) {
   const history = useHistory()
-  const [isLiked, setLiked] = useState(false)
+  const { setLikePostId, likePostId } = useContext(UserContext)
+  const [isLiked, setLiked] = useState(isLike)
   const [isFollowed, setFollowed] = useState(false)
 
   const classes = useStyle()
-
-  const tag = [
-    {
-      color: green[500],
-      text: 'Hello',
-    },
-    {
-      color: yellow[900],
-      text: 'Dev',
-    },
-    {
-      color: red[500],
-      text: 'React',
-    },
-    {
-      color: purple[500],
-      text: 'Frontend',
-    },
-    {
-      color: blue[500],
-      text: 'Hello',
-    },
-  ]
 
   return (
     <Card className={classes.cardContainer}>
@@ -144,10 +123,10 @@ function CardPost({ user, index, post, editMode }) {
           >
             {post.topic}
           </Typography>
-          {tag.map((value, idx) => (
+          {post.tag.map((value, idx) => (
             <ChipTag
               color="primary"
-              label={value.text}
+              label={value.label}
               key={idx}
               style={{ backgroundColor: value.color }}
               onClick={() => null}
@@ -168,12 +147,33 @@ function CardPost({ user, index, post, editMode }) {
           {!isLiked ? (
             <ThumbUpAltOutlined
               className={classes.pointerCursor}
-              onClick={() => setLiked(true)}
+              onClick={async () => {
+                try {
+                  post.like += 1
+                  setLiked(true)
+                  await handleWhenLike(id)
+                  setLikePostId([...likePostId, id])
+                } catch (e) {
+                  post.like -= 1
+                  setLiked(false)
+                }
+              }}
             />
           ) : (
             <ThumbUpAlt
               className={classes.pointerCursor}
-              onClick={() => setLiked(false)}
+              onClick={async () => {
+                try {
+                  post.like -= 1
+                  setLiked(false)
+                  await handleWhenDislike(id)
+                  setLikePostId(likePostId.filter((item) => item !== id))
+                } catch (e) {
+                  post.like += 1
+                  setLiked(true)
+                  console.log(e.message)
+                }
+              }}
             />
           )}
           <Typography className={classes.textLabel}>{post.like}</Typography>

@@ -7,7 +7,9 @@ import {
   Typography,
 } from '@material-ui/core'
 import { ThumbUpAlt, ThumbUpAltOutlined } from '@material-ui/icons'
-import React, { useState } from 'react'
+import { UserContext } from 'context/userContext'
+import React, { useContext, useState } from 'react'
+import { handleWhenDislike, handleWhenLike } from 'utils/actionUtil'
 import { epochToDate } from 'utils/getTime'
 
 const useStyle = makeStyles((theme) => ({
@@ -36,9 +38,10 @@ const useStyle = makeStyles((theme) => ({
   },
 }))
 
-function CommentBox({ comment, index }) {
+function CommentBox({ comment, index, commentId, postId, isLike }) {
   const classes = useStyle()
-  const [isLiked, setLiked] = useState(false)
+  const { likeCommentId, setLikeCommentId } = useContext(UserContext)
+  const [isLiked, setLiked] = useState(isLike)
 
   return (
     <Paper className={classes.rootPaper}>
@@ -66,12 +69,34 @@ function CommentBox({ comment, index }) {
           {!isLiked ? (
             <ThumbUpAltOutlined
               className={classes.clickableNode}
-              onClick={() => setLiked(true)}
+              onClick={async () => {
+                try {
+                  setLiked(true)
+                  comment.like += 1
+                  await handleWhenLike(postId, commentId)
+                  setLikeCommentId([...likeCommentId, commentId])
+                } catch {
+                  setLiked(false)
+                  comment.like -= 1
+                }
+              }}
             />
           ) : (
             <ThumbUpAlt
               className={classes.clickableNode}
-              onClick={() => setLiked(false)}
+              onClick={async () => {
+                try {
+                  setLiked(false)
+                  comment.like -= 1
+                  await handleWhenDislike(postId, commentId)
+                  setLikeCommentId(
+                    likeCommentId.filter((item) => item !== commentId)
+                  )
+                } catch {
+                  setLiked(true)
+                  comment.like += 1
+                }
+              }}
             />
           )}
           <Typography className={classes.textLabel}>{comment.like}</Typography>

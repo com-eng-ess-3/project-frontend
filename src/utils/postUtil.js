@@ -125,6 +125,15 @@ function getFollowerPost(lastIndex) {
   }
 }
 
+function getSearchResult(query, tag) {}
+
+function checkElementInsideArray(arr, query) {
+  if (!arr) {
+    return false
+  }
+  return arr.indexOf(query) !== -1
+}
+
 export {
   editPostById,
   createPost,
@@ -133,4 +142,6 @@ export {
   getNewestPost,
   getPopularPost,
   getFollowerPost,
+  getSearchResult,
+  checkElementInsideArray,
 }

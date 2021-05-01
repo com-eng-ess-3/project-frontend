@@ -9,10 +9,12 @@ import {
 } from '@material-ui/core'
 import { ThumbUpAlt, ThumbUpAltOutlined } from '@material-ui/icons'
 import { ChipTag } from 'components'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import CommentIcon from '@material-ui/icons/Comment'
 import FollowBtn from 'components/common/FollowBtn'
 import { epochToDate } from 'utils/getTime'
+import { handleWhenDislike, handleWhenLike } from 'utils/actionUtil'
+import { UserContext } from 'context/userContext'
 
 const useStyle = makeStyles((theme) => ({
   mainPost: {
@@ -85,9 +87,10 @@ const useStyle = makeStyles((theme) => ({
   },
 }))
 
-function MainPost({ data, isLogin }) {
+function MainPost({ data, isLike, postId }) {
   const classes = useStyle()
-  const [isLiked, setLiked] = useState(false)
+  const { likePostId, setLikePostId } = useContext(UserContext)
+  const [isLiked, setLiked] = useState(isLike)
   const [isFollowed, setFollowed] = useState(false)
 
   return (
@@ -148,12 +151,34 @@ function MainPost({ data, isLogin }) {
               {!isLiked ? (
                 <ThumbUpAltOutlined
                   className={classes.clickableNode}
-                  onClick={() => setLiked(true)}
+                  onClick={async () => {
+                    try {
+                      setLiked(true)
+                      data.like += 1
+                      await handleWhenLike(postId)
+                      setLikePostId([...likePostId, postId])
+                    } catch {
+                      setLiked(false)
+                      data.like -= 1
+                    }
+                  }}
                 />
               ) : (
                 <ThumbUpAlt
                   className={classes.clickableNode}
-                  onClick={() => setLiked(false)}
+                  onClick={async () => {
+                    try {
+                      setLiked(false)
+                      data.like -= 1
+                      await handleWhenDislike(postId)
+                      setLikePostId(
+                        likePostId.filter((item) => item !== postId)
+                      )
+                    } catch {
+                      setLiked(true)
+                      data.like += 1
+                    }
+                  }}
                 />
               )}
               <Typography className={classes.textLabel}>{data.like}</Typography>
