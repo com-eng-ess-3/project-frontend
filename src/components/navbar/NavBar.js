@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Button,
   Drawer,
@@ -17,7 +18,6 @@ import React, { useCallback, useContext, useState } from 'react'
 import SearchIcon from '@material-ui/icons/Search'
 import { Link, useHistory } from 'react-router-dom'
 import { auth } from 'utils/firebaseUtil'
-import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import MenuIcon from '@material-ui/icons/Menu'
 import { AllNotificationCard, NotificationBox } from './Notification'
 import { UserContext } from 'context/userContext'
@@ -159,7 +159,7 @@ function NavBar() {
   const [searchValue, setSearchValue] = useState('')
   const [anchorEl, setAnchorEl] = useState(null)
 
-  const user = useContext(UserContext)?.user
+  const { user } = useContext(UserContext)
 
   const [isOpenDrawer, setOpenDrawer] = useState({
     left: false,
@@ -314,7 +314,11 @@ function NavBar() {
             ></InputBase>
             <SearchIcon
               className={`${classes.searchIcon} ${classes.clickableNode}`}
-              onClick={() => history.push(`/search?name=${searchValue}`)}
+              onClick={() => {
+                if (searchValue !== '') {
+                  history.push(`/search?name=${searchValue}`)
+                }
+              }}
             />
           </Paper>
         </Box>
@@ -323,7 +327,8 @@ function NavBar() {
             {!!user ? <NotificationBox user={user} /> : null}
           </Hidden>
           <Hidden smUp>
-            <AccountCircleIcon
+            <Avatar
+              src={user?.profileUrl}
               className={classes.clickableNode}
               fontSize="large"
               onClick={() => handleToggleDrawer('right', true)}
@@ -346,7 +351,7 @@ function NavBar() {
                 className={classes.clickableNode}
                 onClick={(e) => setAnchorEl(e.currentTarget)}
               >
-                <AccountCircleIcon fontSize="large" />
+                <Avatar fontSize="large" src={user?.profileUrl} />
                 <Typography
                   aria-controls="simple-menu"
                   aria-haspopup="true"
