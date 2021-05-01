@@ -156,14 +156,12 @@ function MainPost({ data, isLogin }) {
                   onClick={() => setLiked(false)}
                 />
               )}
-              <Typography className={classes.textLabel}>
-                {data.likeCount}
-              </Typography>
+              <Typography className={classes.textLabel}>{data.like}</Typography>
             </Box>
             <Box className={classes.actionBox}>
               <CommentIcon className={classes.clickableNode} />
               <Typography className={classes.textLabel}>
-                {data.commentCount}
+                {data.currentComment}
               </Typography>
             </Box>
           </Box>
@@ -191,7 +189,7 @@ function MainPost({ data, isLogin }) {
         <Box display="flex" flexDirection="column" alignItems="center">
           <Hidden smUp>
             <Box className={classes.authorBox}>
-              <Avatar className={classes.avatarImg}>
+              <Avatar className={classes.avatarImg} src={data.urlProfile}>
                 {data.displayname[0].toUpperCase()}
               </Avatar>
               <Typography className={classes.textLabel} variant="subtitle1">

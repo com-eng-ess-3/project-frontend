@@ -157,7 +157,7 @@ function PostViewer({ id }) {
         <TextFieldStyled
           className={classes.commentField}
           inputRef={commentField}
-          placeholder="Add some comment ?"
+          placeholder="Add some comment?"
           variant="outlined"
         />
         <Button className={classes.sendBtn} onClick={handleAddComment}>
@@ -169,7 +169,7 @@ function PostViewer({ id }) {
         <InfiniteScroll
           endMessage={
             <Typography style={{ marginTop: '10px' }}>
-              {'No more comment'}
+              {'You have seen them all!'}
             </Typography>
           }
           dataLength={comment.length}

@@ -107,45 +107,47 @@ const useStyle = makeStyles((theme) => ({
 function LandingPage() {
   const history = useHistory()
 
-  const [selected, setSelected] = useState(0)
+  const [selected, setSelected] = useState('Popular')
   const [arr, setArr] = useState([])
   const [isMorePost, setMorePost] = useState({
     Popular: true,
     Newest: true,
     Following: true,
   })
-  const [postNow, setPostNow] = useState([])
+
+  const [allPost, setAllPost] = useState({
+    Popular: [],
+    Newest: [],
+    Following: [],
+  })
+  console.log(allPost)
+  // const [popularPost, setPopularPost] = useState([])
+  // const [newestPost, setNewestPost] = useState([])
+  // const [followingPost, setFollowingPost] = useState([])
 
   const userState = useContext(UserContext)
   const classes = useStyle({ isLogin: !!userState?.user })
 
   useEffect(() => {
-    const getInitialNewest = async () => {
-      const postData = await getNewestPost()
-      setPostNow(postData)
-      if (postData.length < 10) {
-        setMorePost({ ...isMorePost, Newest: false })
-      }
+    const getData = async () => {
+      const popularData = await getPopularPost()
+      const newestData = await getNewestPost()
+
+      setAllPost({ ...allPost, Popular: popularData, Newest: newestData })
+      setMorePost({
+        ...isMorePost,
+        Popular: popularData.length === 10,
+        Newest: newestData.length === 10,
+      })
     }
 
-    const getInitialPopular = async () => {
-      const postData = await getPopularPost()
-      setPostNow(postData)
-      if (postData.length < 10) {
-        setMorePost({ ...isMorePost, Popular: false })
-      }
-    }
-
-    const getInitialFollowing = async () => {}
-
-    // getInitialPopular()
+    getData()
 
     const tmp = []
     for (let i = 0; i < 10; i++) {
       tmp.push(i)
     }
     setArr(tmp)
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -164,12 +166,12 @@ function LandingPage() {
                   <Button
                     key={idx}
                     className={
-                      selected === idx
+                      selected === value
                         ? classes.switchSelectedButton
                         : classes.switchButton
                     }
                     variant="outlined"
-                    onClick={() => setSelected(idx)}
+                    onClick={() => setSelected(value)}
                   >
                     {value}
                   </Button>
@@ -194,14 +196,19 @@ function LandingPage() {
               </Button>
             </Paper>
             <InfiniteScroll
-              dataLength={arr.length}
+              dataLength={allPost[selected].length}
               style={{
-                width: '100%',
+                width: '100vw',
                 display: 'flex',
                 alignItems: 'center',
                 flexDirection: 'column',
               }}
-              hasMore={true}
+              endMessage={
+                <Typography variant="h6">
+                  {'You have seen posts all!'}
+                </Typography>
+              }
+              hasMore={isMorePost[selected]}
               next={() => {
                 console.log(arr.length)
                 const tmp2 = []
@@ -211,8 +218,15 @@ function LandingPage() {
                 setArr([...arr, ...tmp2])
               }}
             >
-              {arr.map((_value, idx) => {
-                return <CardPost user={userState?.user} index={idx} key={idx} />
+              {allPost[selected].map((value, idx) => {
+                return (
+                  <CardPost
+                    user={userState?.user}
+                    post={value}
+                    index={idx}
+                    key={idx}
+                  />
+                )
               })}
             </InfiniteScroll>
           </Box>

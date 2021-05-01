@@ -13,10 +13,11 @@ import { ChipTag } from 'components'
 import FollowBtn from 'components/common/FollowBtn'
 import React, { memo, useState } from 'react'
 import { useHistory } from 'react-router'
+import { epochToDate } from 'utils/getTime'
 
 const useStyle = makeStyles((theme) => ({
   cardContainer: {
-    width: '92%',
+    width: '80%',
     maxWidth: '800px',
     borderRadius: 10,
     marginBottom: theme.spacing(1.5),
@@ -85,7 +86,7 @@ const useStyle = makeStyles((theme) => ({
   },
 }))
 
-function CardPost({ user, index }) {
+function CardPost({ user, index, post, editMode }) {
   const history = useHistory()
   const [isLiked, setLiked] = useState(false)
   const [isFollowed, setFollowed] = useState(false)
@@ -119,12 +120,14 @@ function CardPost({ user, index }) {
     <Card className={classes.cardContainer}>
       <Box className={classes.headerContainer}>
         <Box className={classes.authorBox}>
-          <Avatar className={classes.avatarImg}>A</Avatar>
+          <Avatar className={classes.avatarImg} src={post.urlProfile}>
+            {post.displayname[0].toUpperCase()}
+          </Avatar>
           <Typography className={classes.textLabel} variant="h6">
-            {'Username'}
+            {post.displayname}
           </Typography>
           <Typography className={classes.textLabel} variant="subtitle2">
-            {'23/02/2563 16:23'}
+            {epochToDate(post.timeStamp.seconds)}
           </Typography>
         </Box>
         {user ? (
@@ -137,9 +140,9 @@ function CardPost({ user, index }) {
           <Typography
             variant="h4"
             className={`${classes.topicText}`}
-            onClick={() => history.push(`/post/${index}`)}
+            onClick={() => history.push(`/post/${post.postId}`)}
           >
-            {'How to write JS in VS Code'}
+            {post.topic}
           </Typography>
           {tag.map((value, idx) => (
             <ChipTag
@@ -151,12 +154,10 @@ function CardPost({ user, index }) {
             />
           ))}
         </Box>
-        <Typography className={classes.contentText}>
-          {'นี้คือการทดสอบการพิมพ์ภาษาไทยยยยยยยย'}
-        </Typography>
+        <Typography className={classes.contentText}>{post.content}</Typography>
         <Typography
           className={`${classes.readMoreText} ${classes.pointerCursor}`}
-          onClick={() => history.push(`/post/${index}`)}
+          onClick={() => history.push(`/post/${post.postId}`)}
         >
           {'Read More'}
         </Typography>
@@ -175,11 +176,13 @@ function CardPost({ user, index }) {
               onClick={() => setLiked(false)}
             />
           )}
-          <Typography className={classes.textLabel}>999</Typography>
+          <Typography className={classes.textLabel}>{post.like}</Typography>
         </Box>
         <Box className={classes.commentCountBox}>
           <CommentIcon className={classes.pointerCursor} />
-          <Typography className={classes.textLabel}>999</Typography>
+          <Typography className={classes.textLabel}>
+            {post.currentComment}
+          </Typography>
         </Box>
       </Box>
     </Card>
