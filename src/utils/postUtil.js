@@ -68,13 +68,12 @@ async function getNewestPost(lastIndex) {
   }
 
   const collectionQuery = (await docRef.get()).docs
-
   if (collectionQuery.length === 0) {
     return []
   }
   const postData = await Promise.all(
     collectionQuery.map(async (doc) => {
-      const authorUid = doc.data().uid
+      const authorUid = doc.data().authorid
       const url = await getImageUrl(authorUid)
       return {
         ...doc.data(),
@@ -83,7 +82,6 @@ async function getNewestPost(lastIndex) {
       }
     })
   )
-
   return postData
 }
 
@@ -109,7 +107,7 @@ async function getPopularPost(lastIndex) {
   }
   const postData = await Promise.all(
     collectionQuery.map(async (doc) => {
-      const authorUid = doc.data().uid
+      const authorUid = doc.data().authorid
       const url = await getImageUrl(authorUid)
       return {
         ...doc.data(),
