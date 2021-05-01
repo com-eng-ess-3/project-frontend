@@ -1,5 +1,5 @@
 import { Box, Typography, makeStyles, Card, Paper, InputBase, Button, Divider } from '@material-ui/core'
-import { NavBar,CardPost,CardPostSearchResult } from 'components'
+import { NavBar,CardPostSearchResult } from 'components'
 import SearchIcon from '@material-ui/icons/Search'
 import { UserContext } from 'context/userContext'
 import React, { useContext, useEffect, useState } from 'react'

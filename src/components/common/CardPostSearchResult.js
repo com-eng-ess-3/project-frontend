@@ -8,7 +8,7 @@ import {
     Typography,
   } from '@material-ui/core'
 import { blue, green, purple, red, yellow } from '@material-ui/core/colors'
-import { MaximizeSharp, ThumbUpAlt, ThumbUpAltOutlined } from '@material-ui/icons'
+import { ThumbUpAlt, ThumbUpAltOutlined } from '@material-ui/icons'
 import CommentIcon from '@material-ui/icons/Comment'
 import { ChipTag } from 'components'
 import React, { memo, useState } from 'react'
