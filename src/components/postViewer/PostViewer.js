@@ -14,7 +14,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useHistory } from 'react-router'
 import { createCommentInPost, getCommentInPost } from 'utils/commentUtil'
-import { getPostById } from 'utils/postUtil'
+import { checkElementInsideArray, getPostById } from 'utils/postUtil'
 import CommentBox from './CommentBox'
 import MainPost from './MainPost'
 
@@ -90,7 +90,7 @@ const useStyle = makeStyles((theme) => ({
 function PostViewer({ id }) {
   const classes = useStyle()
   const history = useHistory()
-  const user = useContext(UserContext)?.user
+  const { user, likePostId, likeCommentId } = useContext(UserContext)
   const commentField = useRef(null)
 
   const [mainPost, setMainPost] = useState(null)
@@ -150,7 +150,11 @@ function PostViewer({ id }) {
 
   return (
     <Box className={classes.rootBox}>
-      <MainPost data={mainPost} />
+      <MainPost
+        isLike={checkElementInsideArray(likePostId, id)}
+        postId={id}
+        data={mainPost}
+      />
       <Divider />
       <Paper className={classes.makeCommentPaper}>
         <AccountCircleIcon className={classes.avatarIcon} color="action" />
@@ -187,7 +191,16 @@ function PostViewer({ id }) {
           }}
         >
           {comment.map((value, idx) => {
-            return <CommentBox comment={value} index={idx} key={idx} />
+            return (
+              <CommentBox
+                comment={value}
+                index={idx}
+                postId={id}
+                isLike={checkElementInsideArray(likeCommentId, value.commentId)}
+                commentId={value.commentId}
+                key={value.commentId}
+              />
+            )
           })}
         </InfiniteScroll>
       </Box>

@@ -143,6 +143,9 @@ function PostModify({ mode, id }) {
       if (!postData) {
         history.push('/')
         return
+      } else if (postData.authorid !== user.uid) {
+        history.push('/')
+        return
       }
       topicRef.current.value = postData.topic
       contentRef.current.value = postData.content
@@ -151,7 +154,7 @@ function PostModify({ mode, id }) {
     if (mode === 'Edit') {
       getData()
     }
-  }, [history, id, mode])
+  }, [history, id, mode, user.uid])
 
   return (
     <Box className={classes.rootBox} display="flex" justifyContent="center">

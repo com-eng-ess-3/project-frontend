@@ -6,7 +6,11 @@ import React, { useContext, useEffect, useState } from 'react'
 import CreateRoundedIcon from '@material-ui/icons/CreateRounded'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useHistory } from 'react-router'
-import { getNewestPost, getPopularPost } from 'utils/postUtil'
+import {
+  checkElementInsideArray,
+  getNewestPost,
+  getPopularPost,
+} from 'utils/postUtil'
 
 const useStyle = makeStyles((theme) => ({
   container: {
@@ -120,13 +124,12 @@ function LandingPage() {
     Newest: [],
     Following: [],
   })
-  console.log(allPost)
   // const [popularPost, setPopularPost] = useState([])
   // const [newestPost, setNewestPost] = useState([])
   // const [followingPost, setFollowingPost] = useState([])
 
-  const userState = useContext(UserContext)
-  const classes = useStyle({ isLogin: !!userState?.user })
+  const { user, likePostId } = useContext(UserContext)
+  const classes = useStyle({ isLogin: !!user })
 
   useEffect(() => {
     const getData = async () => {
@@ -159,7 +162,7 @@ function LandingPage() {
           <Box className={classes.allPostBox}>
             <Box className={classes.switchContainer}>
               {['Popular', 'Newest', 'Following'].map((value, idx) => {
-                if (value === 'Following' && !userState?.user) {
+                if (value === 'Following' && !user) {
                   return null
                 }
                 return (
@@ -218,13 +221,14 @@ function LandingPage() {
                 setArr([...arr, ...tmp2])
               }}
             >
-              {allPost[selected].map((value, idx) => {
+              {allPost[selected].map((value) => {
                 return (
                   <CardPost
-                    user={userState?.user}
+                    user={!!user}
+                    isLike={checkElementInsideArray(likePostId, value.postId)}
                     post={value}
-                    index={idx}
-                    key={idx}
+                    id={value.postId}
+                    key={value.postId}
                   />
                 )
               })}
