@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  CircularProgress,
   Divider,
   makeStyles,
   Paper,
@@ -181,6 +182,7 @@ function PostViewer({ id }) {
               {'You have seen all comments!'}
             </Typography>
           }
+          loader={<CircularProgress color="default" disableShrink />}
           dataLength={comment.length}
           className={`${classes.rootBox} ${classes.commentBox}`}
           hasMore={moreComment}

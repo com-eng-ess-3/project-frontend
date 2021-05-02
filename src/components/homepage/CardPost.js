@@ -166,7 +166,9 @@ function CardPost({ user, id, post, isLike, following }) {
             />
           ))}
         </Box>
-        <Typography className={classes.contentText}>{post?.content}</Typography>
+        <Typography noWrap className={classes.contentText}>
+          {post?.content}
+        </Typography>
         <Typography
           className={`${classes.readMoreText} ${classes.pointerCursor}`}
           onClick={() => history.push(`/post/${post?.postId}`)}
