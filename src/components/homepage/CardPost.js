@@ -10,6 +10,7 @@ import { ThumbUpAlt, ThumbUpAltOutlined } from '@material-ui/icons'
 import CommentIcon from '@material-ui/icons/Comment'
 import { ChipTag } from 'components'
 import FollowBtn from 'components/common/FollowBtn'
+import ModifyButtonSet from 'components/common/ModifyButtonSet'
 import { UserContext } from 'context/userContext'
 import React, { memo, useContext, useEffect, useState } from 'react'
 import { useHistory } from 'react-router'
@@ -39,14 +40,12 @@ const useStyle = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
   },
-
   dividerLine: {
     marginTop: theme.spacing(1.5),
     marginBottom: theme.spacing(1),
   },
   actionBox: {
     display: 'flex',
-    marginTop: theme.spacing(1),
     marginLeft: theme.spacing(1),
     width: '100%',
   },
@@ -92,7 +91,7 @@ const useStyle = makeStyles((theme) => ({
   },
 }))
 
-function CardPost({ user, id, post, editMode, isLike, following }) {
+function CardPost({ user, id, post, isLike, following }) {
   const history = useHistory()
   const {
     setLikePostId,
@@ -176,48 +175,52 @@ function CardPost({ user, id, post, editMode, isLike, following }) {
         </Typography>
       </Box>
       <Divider className={classes.dividerLine} />
-      <Box className={classes.actionBox}>
-        <Box className={classes.likeCountBox}>
-          {!isLiked ? (
-            <ThumbUpAltOutlined
-              className={classes.pointerCursor}
-              onClick={async () => {
-                try {
-                  post.like += 1
-                  setLiked(true)
-                  await handleWhenLike(id)
-                  setLikePostId([...likePostId, id])
-                } catch (e) {
-                  post.like -= 1
-                  setLiked(false)
-                }
-              }}
-            />
-          ) : (
-            <ThumbUpAlt
-              className={classes.pointerCursor}
-              onClick={async () => {
-                try {
-                  post.like -= 1
-                  setLiked(false)
-                  await handleWhenDislike(id)
-                  setLikePostId(likePostId.filter((item) => item !== id))
-                } catch (e) {
-                  console.log(e.message)
-                  post.like += 1
-                  setLiked(true)
-                }
-              }}
-            />
-          )}
-          <Typography className={classes.textLabel}>{post?.like}</Typography>
+      <Box display="flex" justifyContent="space-between" alignItems="center">
+        <Box className={classes.actionBox}>
+          <Box className={classes.likeCountBox}>
+            {!isLiked ? (
+              <ThumbUpAltOutlined
+                className={classes.pointerCursor}
+                onClick={async () => {
+                  try {
+                    post.like += 1
+                    setLiked(true)
+                    await handleWhenLike(id)
+                    setLikePostId([...likePostId, id])
+                  } catch (e) {
+                    post.like = Math.max(post.like - 1, 0)
+                    setLiked(false)
+                  }
+                }}
+              />
+            ) : (
+              <ThumbUpAlt
+                className={classes.pointerCursor}
+                onClick={async () => {
+                  try {
+                    post.like = Math.max(post.like - 1, 0)
+                    setLiked(false)
+                    await handleWhenDislike(id)
+                    setLikePostId(likePostId.filter((item) => item !== id))
+                  } catch (e) {
+                    post.like += 1
+                    setLiked(true)
+                  }
+                }}
+              />
+            )}
+            <Typography className={classes.textLabel}>{post?.like}</Typography>
+          </Box>
+          <Box className={classes.commentCountBox}>
+            <CommentIcon className={classes.pointerCursor} />
+            <Typography className={classes.textLabel}>
+              {post?.currentComment}
+            </Typography>
+          </Box>
         </Box>
-        <Box className={classes.commentCountBox}>
-          <CommentIcon className={classes.pointerCursor} />
-          <Typography className={classes.textLabel}>
-            {post?.currentComment}
-          </Typography>
-        </Box>
+        {user?.uid === post?.authorid ? (
+          <ModifyButtonSet postid={post.postId} />
+        ) : null}
       </Box>
     </Card>
   )

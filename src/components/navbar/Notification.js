@@ -30,10 +30,11 @@ const useStyle = makeStyles((theme) => ({
   },
 }))
 
-const NotificationBox = React.memo(({ isNavBar, user }) => {
+const NotificationBox = React.memo(() => {
   const classes = useStyle()
+  const { isNewPost, setNewPost } = useContext(UserContext)
+
   const [anchorEl, setAnchorEl] = useState(null)
-  const [isNewPost, setNewPost] = useState(false)
 
   return (
     <React.Fragment>
