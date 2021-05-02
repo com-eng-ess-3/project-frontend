@@ -1,57 +1,79 @@
-import { Box, Typography, makeStyles, Card, Paper, InputBase, Button, Divider } from '@material-ui/core'
-import { NavBar,CardPostSearchResult } from 'components'
-import SearchIcon from '@material-ui/icons/Search'
+import { Box, Typography, makeStyles, Button, Divider } from '@material-ui/core'
+import { NavBar,CardPost } from 'components'
+
 import { UserContext } from 'context/userContext'
 import React, { useContext, useEffect, useState } from 'react'
 import { useHistory } from 'react-router'
 import InfiniteScroll from 'react-infinite-scroll-component'
-import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked'
-import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked'
+
 
 
 const useStyle = makeStyles((theme) =>({
-  searchBoxContainer: {
-  },
-  // postResultContainer: {
 
-  // },
-
-  container: {// [theme.breakpoints.up('md')]: {
-    //   marginmarginLeft: '15%',
-    //   marginRight: '15%',
-    // },
-    height: "100%" ,
-    width: "100%" ,
-    marginTop: '70px' ,
-    //backgroundColor: theme.palette.common.black,
-    marginLeft: '17%',
-    marginRight: '17%',
+  container: {
+    display: 'flex',
+    height: '100%',
+    flexFlow: 'column',
+    width: '100%',
   },
-  searchCard: {
+  contentBox: {
+    backgroundColor: theme.palette.background.default,
+    flex: 1,
+    display: 'flex',
+    flexGrow: 'row',
+    marginTop: '50px',
+    justifyContent: 'center',
+  },
+  allPostBox: {
+    display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center',
-    borderRadius: 5,
-    padding: theme.spacing(0.5),
-    marginBottom: theme.spacing(4),
-    [theme.breakpoints.up('md')]: {
-      width: '100%',
-      maxWidth: '1000px',
+    padding: '10px',
+    marginTop: '30px',
+    width: '90%',
+  },
+  switchContainer: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    maxWidth: '800px',
+    [theme.breakpoints.up('sm')]: {
+      width: '90%',
     },
   },
-  saerchBarAndButtonContainer: {
-    justifyContent: 'space-between',
-    display: 'flex',
-  },selecSearchTypeContainer: {
-    display: 'flex',
-    marginTop: theme.spacing(1),
-    marginLeft: theme.spacing(3),
-  },
-  postResultContainer: {
-    //backgroundColor: theme.palette.common.white,
-    marginTop: theme.spacing(4),
-    [theme.breakpoints.up('md')]: {
-      width: '100%',
-      maxWidth: '1000px',
+  switchButton: {
+    '&:hover': {
+      backgroundColor: theme.palette.background.light,
     },
+    padding: 10,
+    borderRadius: 0,
+    width: '100%',
+    color: theme.palette.common.white,
+    border: 'none',
+    backgroundColor: theme.palette.background.light,
+  },
+  switchSelectedButton: {
+    '&:hover': {
+      backgroundColor: theme.palette.background.dark,
+    },
+    padding: 10,
+    borderRadius: 0,
+    width: '100%',
+    color: theme.palette.common.white,
+    border: 'none',
+    backgroundColor: theme.palette.background.dark,
+  },
+  searchResultPostBox: {
+    maxWidth: "830px",
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    width: "100%",
+  },
+  amountPostResult: {
+    marginTop: theme.spacing(2),
+    color: theme.palette.background.dark,
+    fontWeight: 'bold',
   },
   dividerLine: {
     marginTop: theme.spacing(1),
@@ -66,7 +88,7 @@ function SearchResult({ name }) {
   const classes = useStyle()
   const [arr, setArr] = useState([])
 
-  const [selected, setSelected] = useState('byDate')
+  const [selected, setSelected] = useState('Sort by Date')
 
   const tmp = []
   for (let i = 0; i < 10; i++) {
@@ -85,91 +107,105 @@ function SearchResult({ name }) {
     <Box  justifyContent="center" display='flex'>
       <NavBar user={userState?.user} />
       <Box className={classes.container} >
-        <Card className={classes.searchCard}> 
-          <Box className={classes.saerchBarAndButtonContainer} display='flex' justifyContent="center">
-            <Box display='flex'>
-              <SearchIcon style={{ fontSize: 30 }}/>
-              <Paper
-                className={classes.searchPaper}
-                component="form"
-              >
-                <InputBase
-                  className={classes.searchInput}
-                  //onChange={(e) => setSearchValue(e.target.value)}
-                  placeholder="  Search"
-                ></InputBase>
-              </Paper>
+        <Box className={classes.contentBox}>
+          <Box className={classes.allPostBox}>
+            { /////////////////////////////////////////////switch เลือกระหว่าง Sort by Date ฿ Sort by Like}/////////////////////////////////
+            }
+            <Box className={classes.switchContainer}>
+                {['Sort by Date', 'Sort by Like'].map((value) => {
+                  return (
+                    <Button
+                      className={
+                        selected === value
+                          ? classes.switchSelectedButton
+                          : classes.switchButton
+                      }
+                      variant="outlined"
+                      onClick={() => setSelected(value)}
+                    >
+                      {value}
+                    </Button>
+                  )
+                })}
             </Box>
-            <Button className={classes.createPostBtn} variant="outlined" marginRight='20px'>
-              <Typography
-                className={classes.createText}
-                //onClick={() => history.push('/create')}
-              >
-                {'Create Post'}
-              </Typography>
-            </Button>
-          </Box>
-          <Box className={classes.selecSearchTypeContainer}> 
-            <Box display='flex' spacing='5px'>
-              {(selected === 'byDate') ? 
-                <RadioButtonCheckedIcon/> :
-                <RadioButtonUncheckedIcon 
-                  onClick={() => setSelected('byDate')}
-                />
+            {/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            }
+
+
+            <Divider className={classes.dividerLine} />
+            <Box className={classes.searchResultPostBox}> 
+
+              <Typography  className={classes.amountPostResult}>230 Posts Result</Typography> 
+
+
+              {////////////////////////////////////////////////////////ที่ใส่ post result ถ้า useState == Sort by Date/////////////////////////
+               }
+               { (selected === 'Sort by Date') ?
+                <InfiniteScroll
+                  dataLength={arr.length}
+                  style={{
+                    width: '90vw',
+                    display: 'flex',
+                    alignItems: 'center',
+                    flexDirection: 'column',
+                  }}
+                  hasMore={true}
+                  next={() => {
+                    console.log(arr.length)
+                    const tmp2 = []
+                    for (let i = 0; i < 10; i++) {
+                      tmp2.push(i)
+                    }
+                    setArr([...arr, ...tmp2])
+                  }}
+                >
+                  {arr.map((_value, idx) => {
+                    return <CardPost user={userState?.user}/>
+                  })}
+                </InfiniteScroll>
+                :null}
+              {/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
               }
-              <Typography>sort by date</Typography>
-            </Box>
-            <Box display='flex' marginLeft='15px' spacing='5px'>
-              {(selected === 'byMostView') ? 
-                  <RadioButtonCheckedIcon/> :
-                  <RadioButtonUncheckedIcon 
-                    onClick={() => setSelected('byMostView')}
-                  />
-                }
-              <Typography>sort by most view</Typography>
-            </Box>
-            <Box display='flex' marginLeft='15px' spacing='5px'>
-              {(selected === 'byHotest') ? 
-                  <RadioButtonCheckedIcon/> :
-                  <RadioButtonUncheckedIcon 
-                    onClick={() => setSelected('byHotest')}
-                  />
-                }
-              <Typography>Hotest</Typography>
+
+
+
+              {////////////////////////////////////////////////////////ที่ใส่ post result ถ้า useState == Sort by Date/////////////////////////
+              }
+              { (selected === 'Sort by Like') ?
+                <InfiniteScroll
+                  dataLength={arr.length}
+                  style={{
+                    width: '90vw',
+                    display: 'flex',
+                    alignItems: 'center',
+                    flexDirection: 'column',
+                  }}
+                  hasMore={true}
+                  next={() => {
+                    console.log(arr.length)
+                    const tmp2 = []
+                    for (let i = 0; i < 10; i++) {
+                      tmp2.push(i)
+                    }
+                    setArr([...arr, ...tmp2])
+                  }}
+                >
+                  {arr.map((_value, idx) => {
+                    return <CardPost user={userState?.user}/>
+                  })}
+                </InfiniteScroll>
+              :null}
+              {/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+              }
+
+
+
+
             </Box>
           </Box>
-        </Card>
-      <Box>
-      <Divider className={classes.dividerLine} />
-      {/* <Typography></Typography>
-      <Box><Divider className={classes.dividerLine} /></Box> */}
+        </Box>        
+      </Box>
     </Box>
-
-
-<Box className={classes.postResultContainer}>
-  <InfiniteScroll
-    dataLength={arr.length}
-    style={{ width: '100%' }}
-    hasMore={true}
-    next={() => {
-      console.log(arr.length)
-      const tmp2 = []
-      for (let i = 0; i < 10; i++) {
-        tmp2.push(i)
-      }
-      setArr([...arr, ...tmp2])
-    }}
-  >
-    {arr.map((_value, idx) => {
-      // return <CardPost user={userState?.user} index={idx} key={idx} />
-      return <CardPostSearchResult user={userState?.user} index={idx} key={idx} />
-    })}
-  </InfiniteScroll>
-</Box>
-
-
-</Box>
-</Box>
   )
 }
 
