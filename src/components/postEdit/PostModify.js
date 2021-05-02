@@ -129,6 +129,15 @@ function PostModify({ mode, id }) {
   const handleAddPost = async () => {
     const topic = topicRef.current.value
     const content = contentRef.current.value
+
+    if (topic === '') {
+      return
+    }
+
+    if (content === '') {
+      return
+    }
+
     const tag = chipData.map((value) => ({
       color: value.color,
       label: value.label,
