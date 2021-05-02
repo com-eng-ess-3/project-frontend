@@ -225,21 +225,27 @@ function LandingPage() {
                 const len = allPost[selected].length
 
                 if (selected === 'Popular') {
-                  newData = await getPopularPost(
-                    allPost[selected][len - 1].index
-                  )
+                  if (len > 0) {
+                    newData = await getPopularPost(
+                      allPost[selected][len - 1].index
+                    )
+                  }
                 } else if (selected === 'Newest') {
-                  newData = await getNewestPost(
-                    allPost[selected][len - 1].index
-                  )
+                  if (len > 0) {
+                    newData = await getNewestPost(
+                      allPost[selected][len - 1].index
+                    )
+                  }
                 } else if (selected === 'Following') {
-                  newData = await getFollowerPost(
-                    followingList,
-                    allPost[selected][len - 1].index
-                  )
-                  newData = newData.filter((value) =>
-                    checkElementInsideArray(followingList, value.authorid)
-                  )
+                  if (len > 0) {
+                    newData = await getFollowerPost(
+                      followingList,
+                      allPost[selected][len - 1].index
+                    )
+                    newData = newData.filter((value) =>
+                      checkElementInsideArray(followingList, value.authorid)
+                    )
+                  }
                 }
 
                 if (!newData || newData.length < 10) {
