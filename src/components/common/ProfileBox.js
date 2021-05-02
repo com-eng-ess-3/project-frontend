@@ -136,7 +136,6 @@ function ProfileBox({ user, index }) {
   const [inNameEditState, setNameEditState] = useState(false)
   const [inStatusEditState, setStatusEditState] = useState(false)
   const [inInterestEditState, setInterestEditState] = useState(false)
-  //const [wasFollow, setWasFollow] = useState(true)
 
   console.log('render ' + index)
 
@@ -148,58 +147,47 @@ function ProfileBox({ user, index }) {
         </Typography>
       </Box>
       <Divider className={classes.dividerLine} />
+
+
+
+
+
+
+
+      {
+      /////////////////////////////////////////////case แรก size จอ > lg /////////////////////////////////////////////////////////////
+      }
       <Box
         display="flex"
         className={classes.picNameStaSide}
         marginBottom="15px"
       >
-        <Box width="40%" className={classes.picBox}>
+        <Box width="40%" className={classes.picBox}  /////// Box เก็บรูป/////////////////////////////////////
+        >
           <img
             className={classes.profilePic}
             src="https://picsum.photos/200"
             alt="display"
           />
-          {isMyProfile ? (
+          {isMyProfile ? ( ///////////////////////////// ปุ่มแก้ รูป profile ///////////////////////////////////
             <BuildIcon className={classes.saveEditButtonPic}></BuildIcon>
           ) : null}
         </Box>
+
         <Box width="60%" marginLeft="15px">
           <Typography variant="h6" className={classes.topicText}>
             Name :
           </Typography>
           <Paper width="100%" className={classes.paper}>
-            {inNameEditState ? (
-              <InputBase
-                className={classes.allInput}
-                placeholder={user.displayName}
-                //onChange={(e) => setNameEditState(false)}
-              />
-            ) : (
-              <Typography variant="h6" className={classes.content}>
-                {user.displayName}
-              </Typography>
-            )}
-            {isMyProfile ? (
-              <Box>
-                {inNameEditState ? (
-                  <SaveIcon
-                    className={classes.saveEditButton}
-                    onClick={() => setNameEditState(false)}
-                  />
-                ) : (
-                  <BuildIcon
-                    className={classes.saveEditButton}
-                    onClick={() => setNameEditState(true)}
-                  />
-                )}
-              </Box>
-            ) : null}
+            <Typography variant="h6" className={classes.content}>
+              {user.displayName}
+            </Typography>
           </Paper>
           <Typography variant="h6" className={classes.topicText}>
             Status :
           </Typography>
           <Paper width="100%" className={classes.paper}>
-            {inStatusEditState ? (
+            {inStatusEditState ? ( ///////////////////// Input สำหรับใส่ค่า status ใหม่////////////////////////
               <InputBase
                 className={classes.allInput}
                 placeholder="single"
@@ -210,7 +198,7 @@ function ProfileBox({ user, index }) {
                 {user?.status}
               </Typography>
             )}
-            {isMyProfile ? (
+            {isMyProfile ? (  ///////////////////// ปุ่ม สำหรับ edit฿save status ใหม่///////////////////////////
               <Box>
                 {inStatusEditState ? (
                   <SaveIcon
@@ -228,66 +216,54 @@ function ProfileBox({ user, index }) {
           </Paper>
         </Box>
       </Box>
+      {
+      ///////////////////////////////////////////// จบ case แรก size จอ > md /////////////////////////////////////////////////////////////
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+      {
+      /////////////////////////////////////////////case 2  size < sm ////////////////////////////////////////////////////////////////////
+      }
       <Box
         display="flex"
         className={classes.picNameStaSideLessThanSm}
         marginBottom="15px"
       >
-        <Box width="40%" className={classes.picBox}>
+        <Box width="40%" className={classes.picBox}  /////// Box เก็บรูป/////////////////////////////////////
+        >
           <img
             className={classes.profilePic}
             src="https://picsum.photos/200"
             alt="display"
           />
-          {isMyProfile ? (
+          {isMyProfile ? (  ///////////////////////////// ปุ่มแก้ รูป profile ///////////////////////////////////
             <BuildIcon className={classes.saveEditButtonPic}></BuildIcon>
           ) : null}
         </Box>
         <Box width="60%" marginLeft="15px">
-          {/* <Typography variant="h6" className={classes.topicText}>Name :</Typography>
-                <Paper width='100%' className={classes.paper}>
-                    <Typography variant="h6" className={classes.content}>{user.displayName}</Typography>
-                </Paper>
-                <Typography variant="h6" className={classes.topicText}>Status :</Typography>
-                <Paper width='100%' className={classes.paper}>
-                    <Typography variant="h6" className={classes.content}>single</Typography>
-                </Paper> */}
           <Typography variant="h6" className={classes.topicText}>
             Name :
           </Typography>
           <Paper width="100%" className={classes.paper}>
-            {inNameEditState ? (
-              <InputBase
-                className={classes.allInput}
-                placeholder={user.displayName}
-                //onChange={(e) => setNameEditState(false)}
-              />
-            ) : (
-              <Typography variant="h6" className={classes.content}>
-                {user.displayName}
-              </Typography>
-            )}
-            {isMyProfile ? (
-              <Box>
-                {inNameEditState ? (
-                  <SaveIcon
-                    className={classes.saveEditButton}
-                    onClick={() => setNameEditState(false)}
-                  />
-                ) : (
-                  <BuildIcon
-                    className={classes.saveEditButton}
-                    onClick={() => setNameEditState(true)}
-                  />
-                )}
-              </Box>
-            ) : null}
+            <Typography variant="h6" className={classes.content}>
+              {user.displayName}
+            </Typography>
           </Paper>
           <Typography variant="h6" className={classes.topicText}>
             Status :
           </Typography>
           <Paper width="100%" className={classes.paper}>
-            {inStatusEditState ? (
+            {inStatusEditState ? (///////////////////// Input สำหรับใส่ค่า status ใหม่/////////////////////////
               <InputBase
                 className={classes.allInput}
                 placeholder="single"
@@ -300,7 +276,7 @@ function ProfileBox({ user, index }) {
             )}
             {isMyProfile ? (
               <Box>
-                {inStatusEditState ? (
+                {inStatusEditState ? (///////////////////// ปุ่ม สำหรับ edit฿save status ใหม่/////////////////
                   <SaveIcon
                     className={classes.saveEditButton}
                     onClick={() => setStatusEditState(false)}
@@ -316,6 +292,26 @@ function ProfileBox({ user, index }) {
           </Paper>
         </Box>
       </Box>
+      {
+      ///////////////////////////////////////////// จบ case 2  size < sm /////////////////////////////////////////////////////////////
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      {
+      /////////////////////////////////////////////case 3(สุดท้าย) sm < size < md /////////////////////////////////////////////////////////////
+      }
       <Box
         className={classes.picNameStaCenter}
         display={{ xs: 'none', md: 'block', lg: 'none' }}
@@ -362,50 +358,19 @@ function ProfileBox({ user, index }) {
           </Box>
         </Box>
         <Divider className={classes.dividerLine} />
-        {/* <Typography variant="h6" className={classes.topicText}>Name :</Typography>
-            <Paper width='100%' className={classes.paper}>
-                <Typography variant="h6" className={classes.content}>{user.displayName}</Typography>
-            </Paper>
-            <Typography variant="h6" className={classes.topicText}>Status :</Typography>
-            <Paper width='100%' className={classes.paper}>
-                <Typography variant="h6" className={classes.content}>single</Typography>
-            </Paper> */}
         <Typography variant="h6" className={classes.topicText}>
           Name :
         </Typography>
         <Paper width="100%" className={classes.paper}>
-          {inNameEditState ? (
-            <InputBase
-              className={classes.allInput}
-              placeholder={user.displayName}
-              //onChange={(e) => setNameEditState(false)}
-            />
-          ) : (
-            <Typography variant="h6" className={classes.content}>
-              {user.displayName}
-            </Typography>
-          )}
-          {isMyProfile ? (
-            <Box>
-              {inNameEditState ? (
-                <SaveIcon
-                  className={classes.saveEditButton}
-                  onClick={() => setNameEditState(false)}
-                />
-              ) : (
-                <BuildIcon
-                  className={classes.saveEditButton}
-                  onClick={() => setNameEditState(true)}
-                />
-              )}
-            </Box>
-          ) : null}
+          <Typography variant="h6" className={classes.content}>
+            {user.displayName}
+          </Typography>
         </Paper>
         <Typography variant="h6" className={classes.topicText}>
           Status :
         </Typography>
         <Paper width="100%" className={classes.paper}>
-          {inStatusEditState ? (
+          {inStatusEditState ? ( ///////////////////// Input สำหรับใส่ค่า status ใหม่/////////////////////////
             <InputBase
               className={classes.allInput}
               placeholder="single"
@@ -418,7 +383,7 @@ function ProfileBox({ user, index }) {
           )}
           {isMyProfile ? (
             <Box>
-              {inStatusEditState ? (
+              {inStatusEditState ? (///////////////////// ปุ่ม สำหรับ edit฿save status ใหม่/////////////////
                 <SaveIcon
                   className={classes.saveEditButton}
                   onClick={() => setStatusEditState(false)}
@@ -433,6 +398,18 @@ function ProfileBox({ user, index }) {
           ) : null}
         </Paper>
       </Box>
+      {
+      /////////////////////////////////////////////case 3(สุดท้าย) sm < size < md /////////////////////////////////////////////////////////////
+      }
+
+
+
+
+
+
+
+
+
       <Typography variant="h6" className={classes.topicText}>
         Follower : 25,435
       </Typography>
