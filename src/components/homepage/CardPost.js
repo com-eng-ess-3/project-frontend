@@ -11,9 +11,14 @@ import CommentIcon from '@material-ui/icons/Comment'
 import { ChipTag } from 'components'
 import FollowBtn from 'components/common/FollowBtn'
 import { UserContext } from 'context/userContext'
-import React, { memo, useContext, useState } from 'react'
+import React, { memo, useContext, useEffect, useState } from 'react'
 import { useHistory } from 'react-router'
-import { handleWhenDislike, handleWhenLike } from 'utils/actionUtil'
+import {
+  followUser,
+  handleWhenDislike,
+  handleWhenLike,
+  unfollowUser,
+} from 'utils/actionUtil'
 import { epochToDate } from 'utils/getTime'
 
 const useStyle = makeStyles((theme) => ({
@@ -87,30 +92,59 @@ const useStyle = makeStyles((theme) => ({
   },
 }))
 
-function CardPost({ user, id, post, editMode, isLike }) {
+function CardPost({ user, id, post, editMode, isLike, following }) {
   const history = useHistory()
-  const { setLikePostId, likePostId } = useContext(UserContext)
+  const {
+    setLikePostId,
+    likePostId,
+    setFollowingList,
+    followingList,
+  } = useContext(UserContext)
   const [isLiked, setLiked] = useState(isLike)
-  const [isFollowed, setFollowed] = useState(false)
+  const [isFollowing, setFollowing] = useState(following)
 
   const classes = useStyle()
+
+  useEffect(() => {
+    setFollowing(following)
+  }, [following])
 
   return (
     <Card className={classes.cardContainer}>
       <Box className={classes.headerContainer}>
         <Box className={classes.authorBox}>
-          <Avatar className={classes.avatarImg} src={post.urlProfile}>
-            {post.displayname[0].toUpperCase()}
+          <Avatar className={classes.avatarImg} src={post?.urlProfile}>
+            {post?.displayname[0].toUpperCase()}
           </Avatar>
           <Typography className={classes.textLabel} variant="h6">
-            {post.displayname}
+            {post?.displayname}
           </Typography>
           <Typography className={classes.textLabel} variant="subtitle2">
-            {epochToDate(post.timeStamp.seconds)}
+            {epochToDate(post?.timeStamp.seconds)}
           </Typography>
         </Box>
-        {user ? (
-          <FollowBtn isFollowed={isFollowed} setFollowed={setFollowed} />
+        {user && user.uid !== post?.authorid ? (
+          <FollowBtn
+            isFollowed={isFollowing}
+            setFollowed={async () => {
+              let prevState = isFollowing
+              try {
+                if (!isFollowing) {
+                  setFollowing(true)
+                  await followUser(post?.authorid)
+                  setFollowingList([...followingList, post?.authorid])
+                } else {
+                  setFollowing(false)
+                  await unfollowUser(post?.authorid)
+                  setFollowingList(
+                    followingList.filter((item) => item !== post?.authorid)
+                  )
+                }
+              } catch (e) {
+                setFollowing(prevState)
+              }
+            }}
+          />
         ) : null}
       </Box>
       <Divider className={classes.dividerLine} />
@@ -121,9 +155,9 @@ function CardPost({ user, id, post, editMode, isLike }) {
             className={`${classes.topicText}`}
             onClick={() => history.push(`/post/${post.postId}`)}
           >
-            {post.topic}
+            {post?.topic}
           </Typography>
-          {post.tag.map((value, idx) => (
+          {post?.tag.map((value, idx) => (
             <ChipTag
               color="primary"
               label={value.label}
@@ -133,10 +167,10 @@ function CardPost({ user, id, post, editMode, isLike }) {
             />
           ))}
         </Box>
-        <Typography className={classes.contentText}>{post.content}</Typography>
+        <Typography className={classes.contentText}>{post?.content}</Typography>
         <Typography
           className={`${classes.readMoreText} ${classes.pointerCursor}`}
-          onClick={() => history.push(`/post/${post.postId}`)}
+          onClick={() => history.push(`/post/${post?.postId}`)}
         >
           {'Read More'}
         </Typography>
@@ -169,19 +203,19 @@ function CardPost({ user, id, post, editMode, isLike }) {
                   await handleWhenDislike(id)
                   setLikePostId(likePostId.filter((item) => item !== id))
                 } catch (e) {
+                  console.log(e.message)
                   post.like += 1
                   setLiked(true)
-                  console.log(e.message)
                 }
               }}
             />
           )}
-          <Typography className={classes.textLabel}>{post.like}</Typography>
+          <Typography className={classes.textLabel}>{post?.like}</Typography>
         </Box>
         <Box className={classes.commentCountBox}>
           <CommentIcon className={classes.pointerCursor} />
           <Typography className={classes.textLabel}>
-            {post.currentComment}
+            {post?.currentComment}
           </Typography>
         </Box>
       </Box>

@@ -1,28 +1,33 @@
 import { Box } from '@material-ui/core'
 import Loading from 'components/common/Loading'
-import React, { createContext, useEffect, useState } from 'react'
-import { auth, getImageUrl } from 'utils/firebaseUtil'
+import React, { createContext, useCallback, useEffect, useState } from 'react'
+import { auth, firestore, getImageUrl } from 'utils/firebaseUtil'
 import { getLikePostAndCommentList } from 'utils/actionUtil'
+import { isInNotification } from 'utils/getTime'
 
 export const UserContext = createContext(null)
 
 export const UserProvider = (props) => {
   const [user, setUser] = useState(null)
   const [authPending, setAuthPending] = useState(true)
-  const [notificationList] = useState([])
   const [likeCommentId, setLikeCommentId] = useState([])
   const [likePostId, setLikePostId] = useState([])
   const [followingList, setFollowingList] = useState([])
+  const [notificationList, setNotificationList] = useState([])
 
   useEffect(() => {
     return auth.onAuthStateChanged(async (userAuth) => {
       if (userAuth !== null) {
         let url = '',
           likePostId = [],
-          likeCommentId = []
+          likeCommentId = [],
+          followingData = []
         try {
-          url = await getImageUrl(userAuth.uid)
           const data = (await getLikePostAndCommentList(userAuth.uid)).data()
+          followingData = (
+            await firestore.collection('users').doc(userAuth.uid).get()
+          ).data().following
+          url = await getImageUrl(userAuth.uid)
           likePostId = data.post
           likeCommentId = data.comment
         } catch {}
@@ -33,18 +38,68 @@ export const UserProvider = (props) => {
         })
         setLikePostId(likePostId)
         setLikeCommentId(likeCommentId)
+        setFollowingList(followingData)
       } else {
         setUser(null)
+        setLikePostId([])
+        setLikeCommentId([])
+        setFollowingList([])
       }
       setAuthPending(false)
     })
   }, [authPending])
 
   // Listen to new post
-  useEffect(() => null, [user])
+  useEffect(() => {
+    if (user === null) {
+      return
+    }
+
+    const unsubscribe = firestore
+      .collection('posts')
+      .where(
+        'authorid',
+        'in',
+        followingList.length !== 0 ? followingList : ['a']
+      )
+      .orderBy('timeStamp', 'desc')
+      .onSnapshot((docs) => {
+        const filterDocs = docs.docs.filter((value) =>
+          isInNotification(value.data().timeStamp)
+        )
+        setNotificationList(
+          filterDocs.map((value) => {
+            const data = value.data()
+            const postid = value.id
+
+            const addNoti = {
+              type: 'Create',
+              topic: data.topic,
+              displayname: data.displayname,
+              postid,
+              timeStamp: data.timeStamp,
+            }
+
+            return addNoti
+          })
+        )
+      })
+    return () => unsubscribe()
+  }, [followingList, user])
 
   // Listen to new follower
-  useEffect(() => null, [user])
+  // useEffect(() => {
+  //   if (user === null) {
+  //     return
+  //   }
+  //   const unsubscribe = firestore
+  //     .collection('follower')
+  //     .doc(user.uid)
+  //     .onSnapshot((doc) => {
+  //       doc.data()
+  //     })
+  //   return () => unsubscribe()
+  // }, [user])
 
   if (authPending) {
     return (
@@ -64,11 +119,13 @@ export const UserProvider = (props) => {
     <UserContext.Provider
       value={{
         user,
-        notificationList,
         likePostId,
         likeCommentId,
+        notificationList,
         setLikePostId,
         setLikeCommentId,
+        followingList,
+        setFollowingList,
       }}
     >
       {props.children}

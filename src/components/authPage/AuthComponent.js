@@ -106,6 +106,14 @@ function AuthComponent({ isRegister, urlRedirect }) {
           displayName,
         })
 
+        await firestore
+          .collection(`users/${userAuth.user.uid}/private`)
+          .doc('like')
+          .set({
+            comment: [],
+            post: [],
+          })
+
         await auth.signOut()
         await auth.signInWithEmailAndPassword(email, password)
 

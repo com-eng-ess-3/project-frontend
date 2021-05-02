@@ -90,7 +90,9 @@ const useStyle = makeStyles((theme) => ({
 function PostViewer({ id }) {
   const classes = useStyle()
   const history = useHistory()
-  const { user, likePostId, likeCommentId } = useContext(UserContext)
+  const { user, likePostId, likeCommentId, followingList } = useContext(
+    UserContext
+  )
   const commentField = useRef(null)
 
   const [mainPost, setMainPost] = useState(null)
@@ -108,6 +110,7 @@ function PostViewer({ id }) {
           setMainPost(postData)
         }
       } catch (e) {
+        console.log(e.message)
         return
       }
     }
@@ -139,6 +142,7 @@ function PostViewer({ id }) {
         return
       }
       await createCommentInPost(id, comment, user.uid, user.displayName)
+      window.location.reload()
     } catch (e) {
       console.log(e.message)
     }
@@ -152,6 +156,7 @@ function PostViewer({ id }) {
     <Box className={classes.rootBox}>
       <MainPost
         isLike={checkElementInsideArray(likePostId, id)}
+        isFollow={checkElementInsideArray(followingList, mainPost.authorid)}
         postId={id}
         data={mainPost}
       />
@@ -173,7 +178,7 @@ function PostViewer({ id }) {
         <InfiniteScroll
           endMessage={
             <Typography style={{ marginTop: '10px' }}>
-              {'You have seen them all!'}
+              {'You have seen all comments!'}
             </Typography>
           }
           dataLength={comment.length}
