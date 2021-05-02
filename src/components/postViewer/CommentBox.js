@@ -36,6 +36,9 @@ const useStyle = makeStyles((theme) => ({
     lineHeight: '25px',
     textWeight: 'bold',
   },
+  clickableNode: {
+    cursor: 'pointer',
+  },
 }))
 
 function CommentBox({ comment, index, commentId, postId, isLike }) {
