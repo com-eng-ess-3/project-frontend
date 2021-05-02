@@ -8,7 +8,6 @@ import {
   Paper,
   Typography,
 } from '@material-ui/core'
-import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import { TextFieldStyled } from 'components'
 import Loading from 'components/common/Loading'
 import { UserContext } from 'context/userContext'
