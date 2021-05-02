@@ -11,7 +11,12 @@ import { UserContext } from 'context/userContext'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useHistory } from 'react-router'
 import { getColor } from 'utils/chipColorUtil'
-import { createPost, editPostById, getPostById } from 'utils/postUtil'
+import {
+  createPost,
+  deletePost,
+  editPostById,
+  getPostById,
+} from 'utils/postUtil'
 
 const useStyle = makeStyles((theme) => ({
   rootBox: {
@@ -44,6 +49,13 @@ const useStyle = makeStyles((theme) => ({
     },
   },
   cancelBtn: {
+    border: `2px solid ${theme.palette.primary.main}`,
+    borderRadius: 8,
+    boxSizing: 'border-box',
+    color: theme.palette.primary.main,
+    marginLeft: theme.spacing(1),
+  },
+  deleteBtn: {
     border: `2px solid ${theme.palette.error.main}`,
     borderRadius: 8,
     boxSizing: 'border-box',
@@ -228,7 +240,7 @@ function PostModify({ mode, id }) {
             className={classes.cancelBtn}
             onClick={() => {
               if (mode === 'Edit') {
-                history.push(`/post/${id}`)
+                history.goBack()
               } else if (mode === 'Create') {
                 history.push('/')
               }
@@ -236,6 +248,19 @@ function PostModify({ mode, id }) {
           >
             <Typography className={classes.boldTypo}>{'Cancel'}</Typography>
           </Button>
+          {mode === 'Edit' ? (
+            <Button
+              className={`${classes.deleteBtn}`}
+              onClick={async () => {
+                try {
+                  await deletePost(id)
+                  history.push('/')
+                } catch (e) {}
+              }}
+            >
+              <Typography className={classes.boldTypo}>{'Delete'}</Typography>
+            </Button>
+          ) : null}
           <Button
             className={classes.addBtn}
             onClick={() => console.log(contentRef.current.value.split('\n'))}

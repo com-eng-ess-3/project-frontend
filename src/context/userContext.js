@@ -1,6 +1,6 @@
 import { Box } from '@material-ui/core'
 import Loading from 'components/common/Loading'
-import React, { createContext, useCallback, useEffect, useState } from 'react'
+import React, { createContext, useEffect, useState } from 'react'
 import { auth, firestore, getImageUrl } from 'utils/firebaseUtil'
 import { getLikePostAndCommentList } from 'utils/actionUtil'
 import { isInNotification } from 'utils/getTime'
@@ -14,6 +14,7 @@ export const UserProvider = (props) => {
   const [likePostId, setLikePostId] = useState([])
   const [followingList, setFollowingList] = useState([])
   const [notificationList, setNotificationList] = useState([])
+  const [isNewPost, setNewPost] = useState(false)
 
   useEffect(() => {
     return auth.onAuthStateChanged(async (userAuth) => {
@@ -67,6 +68,7 @@ export const UserProvider = (props) => {
         const filterDocs = docs.docs.filter((value) =>
           isInNotification(value.data().timeStamp)
         )
+        setNewPost(true)
         setNotificationList(
           filterDocs.map((value) => {
             const data = value.data()
@@ -121,6 +123,8 @@ export const UserProvider = (props) => {
         user,
         likePostId,
         likeCommentId,
+        isNewPost,
+        setNewPost,
         notificationList,
         setLikePostId,
         setLikeCommentId,

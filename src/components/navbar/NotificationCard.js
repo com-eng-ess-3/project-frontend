@@ -3,6 +3,7 @@ import CreateIcon from '@material-ui/icons/Create'
 import PersonAddIcon from '@material-ui/icons/PersonAdd'
 import { Box, makeStyles, Typography } from '@material-ui/core'
 import { isNewNotification } from 'utils/getTime'
+import { useHistory } from 'react-router'
 
 const useStyle = makeStyles((theme) => ({
   cardRoot: {
@@ -28,13 +29,21 @@ const useStyle = makeStyles((theme) => ({
     paddingLeft: theme.spacing(0.75),
     paddingRight: theme.spacing(0.75),
   },
+  clickableNode: {
+    cursor: 'pointer',
+    fontWeight: 'bold',
+    textDecoration: 'underline',
+  },
 }))
 
 function NotificationCard({ type, data }) {
   const classes = useStyle()
+  const history = useHistory()
+
   if (!data) {
     data = {}
   }
+
   return (
     <Box className={classes.cardRoot}>
       {type === 'Follow' ? (
@@ -48,7 +57,11 @@ function NotificationCard({ type, data }) {
             <Typography noWrap className={classes.content}>
               {`${data.displayname} has a new post`}
             </Typography>
-            <Typography noWrap className={classes.content}>
+            <Typography
+              noWrap
+              className={`${classes.content} ${classes.clickableNode}`}
+              onClick={() => history.push(`/post/${data.postid}`)}
+            >
               {data.topic}
             </Typography>
           </React.Fragment>
