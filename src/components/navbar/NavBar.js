@@ -332,7 +332,9 @@ function NavBar() {
               className={classes.clickableNode}
               fontSize="large"
               onClick={() => handleToggleDrawer('right', true)}
-            />
+            >
+              {user.displayName[0].toUpperCase()}
+            </Avatar>
           </Hidden>
           {!user ? (
             <React.Fragment>
@@ -351,7 +353,9 @@ function NavBar() {
                 className={classes.clickableNode}
                 onClick={(e) => setAnchorEl(e.currentTarget)}
               >
-                <Avatar fontSize="large" src={user?.profileUrl} />
+                <Avatar fontSize="large" src={user?.profileUrl}>
+                  {user.displayName[0].toUpperCase()}
+                </Avatar>
                 <Typography
                   aria-controls="simple-menu"
                   aria-haspopup="true"
