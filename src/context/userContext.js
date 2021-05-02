@@ -63,7 +63,9 @@ export const UserProvider = (props) => {
         const filterDocs = docs.docs.filter((value) =>
           isInNotification(value.data().timeStamp)
         )
-        setNewPost(true)
+        if (!filterDocs.length) {
+          setNewPost(true)
+        }
         setNotificationList(
           filterDocs.map((value) => {
             const data = value.data()
