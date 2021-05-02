@@ -18,6 +18,10 @@ const storage = app.storage()
 
 export { auth, storage, firestore, increment, decrement }
 
-export function getImageUrl(uid) {
-  return storage.ref(`users/${uid}/profileImage.png`).getDownloadURL()
+export async function getImageUrl(uid) {
+  let url = ''
+  try {
+    url = await storage.ref(`users/${uid}/profileImage.png`).getDownloadURL()
+  } catch {}
+  return url
 }

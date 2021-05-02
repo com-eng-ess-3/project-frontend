@@ -42,12 +42,7 @@ async function getPostById(id) {
   if (!postData) {
     return null
   }
-  let urlImage
-  try {
-    urlImage = await getImageUrl(postData.authorid)
-  } catch {
-    urlImage = ''
-  }
+  const urlImage = await getImageUrl(postData.authorid)
   return {
     ...postData,
     urlProfile: urlImage,
@@ -79,10 +74,8 @@ async function getNewestPost(lastIndex) {
   const postData = await Promise.all(
     collectionQuery.map(async (doc) => {
       const authorUid = doc.data().authorid
-      let url = ''
-      try {
-        url = await getImageUrl(authorUid)
-      } catch {}
+      const url = await getImageUrl(authorUid)
+
       return {
         ...doc.data(),
         postId: doc.id,
@@ -115,11 +108,8 @@ async function getPopularPost(lastIndex) {
   }
   const postData = await Promise.all(
     collectionQuery.map(async (doc) => {
-      let url = ''
       const authorUid = doc.data().authorid
-      try {
-        url = await getImageUrl(authorUid)
-      } catch {}
+      const url = await getImageUrl(authorUid)
       return {
         ...doc.data(),
         postId: doc.id,
@@ -166,10 +156,7 @@ async function getFollowerPost(followingList, lastIndex) {
   const postData = await Promise.all(
     collectionQuery.map(async (doc) => {
       const authorUid = doc.data().authorid
-      let url = ''
-      try {
-        url = await getImageUrl(authorUid)
-      } catch {}
+      const url = await getImageUrl(authorUid)
       return {
         ...doc.data(),
         postId: doc.id,
@@ -217,11 +204,9 @@ async function getSearchResult(query, lastIndex) {
   }
   const postData = await Promise.all(
     collectionQuery.map(async (doc) => {
-      let url = ''
       const authorUid = doc.data().authorid
-      try {
-        url = await getImageUrl(authorUid)
-      } catch {}
+      const url = await getImageUrl(authorUid)
+
       return {
         ...doc.data(),
         postId: doc.id,

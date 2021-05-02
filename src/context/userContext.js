@@ -19,19 +19,14 @@ export const UserProvider = (props) => {
   useEffect(() => {
     return auth.onAuthStateChanged(async (userAuth) => {
       if (userAuth !== null) {
-        let url = '',
-          likePostId = [],
-          likeCommentId = [],
-          followingData = []
-        try {
-          const data = (await getLikePostAndCommentList(userAuth.uid)).data()
-          followingData = (
-            await firestore.collection('users').doc(userAuth.uid).get()
-          ).data().following
-          url = await getImageUrl(userAuth.uid)
-          likePostId = data.post
-          likeCommentId = data.comment
-        } catch {}
+        const data = (await getLikePostAndCommentList(userAuth.uid)).data()
+        const followingData = (
+          await firestore.collection('users').doc(userAuth.uid).get()
+        ).data().following
+        const url = await getImageUrl(userAuth.uid)
+        const likePostId = data.post
+        const likeCommentId = data.comment
+
         setUser({
           uid: userAuth.uid,
           displayName: userAuth.displayName,
