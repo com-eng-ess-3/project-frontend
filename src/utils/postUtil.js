@@ -42,7 +42,12 @@ async function getPostById(id) {
   if (!postData) {
     return null
   }
-  const urlImage = await getImageUrl(postData.authorid)
+  let urlImage
+  try {
+    urlImage = await getImageUrl(postData.authorid)
+  } catch {
+    urlImage = ''
+  }
   return {
     ...postData,
     urlProfile: urlImage,
@@ -74,7 +79,10 @@ async function getNewestPost(lastIndex) {
   const postData = await Promise.all(
     collectionQuery.map(async (doc) => {
       const authorUid = doc.data().authorid
-      const url = await getImageUrl(authorUid)
+      let url = ''
+      try {
+        url = await getImageUrl(authorUid)
+      } catch {}
       return {
         ...doc.data(),
         postId: doc.id,
@@ -107,8 +115,11 @@ async function getPopularPost(lastIndex) {
   }
   const postData = await Promise.all(
     collectionQuery.map(async (doc) => {
+      let url = ''
       const authorUid = doc.data().authorid
-      const url = await getImageUrl(authorUid)
+      try {
+        url = await getImageUrl(authorUid)
+      } catch {}
       return {
         ...doc.data(),
         postId: doc.id,
@@ -120,9 +131,53 @@ async function getPopularPost(lastIndex) {
   return postData
 }
 
-function getFollowerPost(lastIndex) {
+async function getFollowerPost(followingList, lastIndex) {
+  let docRef
   if (typeof lastIndex !== 'number') {
+    docRef = firestore
+      .collection('posts')
+      .where(
+        'authorid',
+        'in',
+        followingList.length !== 0 ? followingList : ['a']
+      )
+      .orderBy('timeStamp', 'desc')
+      .limit(10)
+  } else {
+    const cursor = (
+      await firestore.collection('posts').where('index', '==', lastIndex).get()
+    ).docs[0]
+    docRef = firestore
+      .collection('posts')
+      .where(
+        'authorid',
+        'in',
+        followingList.length !== 0 ? followingList : ['a']
+      )
+      .orderBy('timeStamp', 'desc')
+      .startAfter(cursor)
+      .limit(10)
   }
+
+  const collectionQuery = (await docRef.get()).docs
+  if (collectionQuery.length === 0) {
+    return []
+  }
+  const postData = await Promise.all(
+    collectionQuery.map(async (doc) => {
+      const authorUid = doc.data().authorid
+      let url = ''
+      try {
+        url = await getImageUrl(authorUid)
+      } catch {}
+      return {
+        ...doc.data(),
+        postId: doc.id,
+        urlProfile: url,
+      }
+    })
+  )
+  return postData
 }
 
 function getSearchResult(query, tag) {}

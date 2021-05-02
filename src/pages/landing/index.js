@@ -8,6 +8,7 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import { useHistory } from 'react-router'
 import {
   checkElementInsideArray,
+  getFollowerPost,
   getNewestPost,
   getPopularPost,
 } from 'utils/postUtil'
@@ -112,7 +113,6 @@ function LandingPage() {
   const history = useHistory()
 
   const [selected, setSelected] = useState('Popular')
-  const [arr, setArr] = useState([])
   const [isMorePost, setMorePost] = useState({
     Popular: true,
     Newest: true,
@@ -128,29 +128,28 @@ function LandingPage() {
   // const [newestPost, setNewestPost] = useState([])
   // const [followingPost, setFollowingPost] = useState([])
 
-  const { user, likePostId } = useContext(UserContext)
+  const { user, likePostId, followingList } = useContext(UserContext)
   const classes = useStyle({ isLogin: !!user })
 
   useEffect(() => {
     const getData = async () => {
       const popularData = await getPopularPost()
       const newestData = await getNewestPost()
+      const followingData = await getFollowerPost(followingList)
 
-      setAllPost({ ...allPost, Popular: popularData, Newest: newestData })
+      setAllPost({
+        Following: followingData,
+        Popular: popularData,
+        Newest: newestData,
+      })
       setMorePost({
-        ...isMorePost,
+        Following: followingData.length === 10,
         Popular: popularData.length === 10,
         Newest: newestData.length === 10,
       })
     }
 
     getData()
-
-    const tmp = []
-    for (let i = 0; i < 10; i++) {
-      tmp.push(i)
-    }
-    setArr(tmp)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -201,31 +200,63 @@ function LandingPage() {
             <InfiniteScroll
               dataLength={allPost[selected].length}
               style={{
-                width: '100vw',
+                width: '90vw',
                 display: 'flex',
                 alignItems: 'center',
                 flexDirection: 'column',
               }}
               endMessage={
                 <Typography variant="h6">
-                  {'You have seen posts all!'}
+                  {'You have seen all posts!'}
                 </Typography>
               }
               hasMore={isMorePost[selected]}
-              next={() => {
-                console.log(arr.length)
-                const tmp2 = []
-                for (let i = 0; i < 10; i++) {
-                  tmp2.push(i)
+              next={async () => {
+                let newData
+                const len = allPost[selected].length
+
+                if (selected === 'Popular') {
+                  newData = await getPopularPost(
+                    allPost[selected][len - 1].index
+                  )
+                } else if (selected === 'Newest') {
+                  newData = await getNewestPost(
+                    allPost[selected][len - 1].index
+                  )
+                } else if (selected === 'Following') {
+                  newData = await getFollowerPost(
+                    followingList,
+                    allPost[selected][len - 1].index
+                  )
+                  newData = newData.filter((value) =>
+                    checkElementInsideArray(followingList, value.authorid)
+                  )
                 }
-                setArr([...arr, ...tmp2])
+
+                if (!newData || newData.length < 10) {
+                  setMorePost({ ...isMorePost, [selected]: false })
+                }
+
+                if (!!newData) {
+                  setAllPost({
+                    ...allPost,
+                    [selected]: [...allPost[selected], ...newData],
+                  })
+                }
               }}
             >
               {allPost[selected].map((value) => {
+                const isFollowing = checkElementInsideArray(
+                  followingList,
+                  value.authorid
+                )
+
+                const isLike = checkElementInsideArray(likePostId, value.postId)
                 return (
                   <CardPost
-                    user={!!user}
-                    isLike={checkElementInsideArray(likePostId, value.postId)}
+                    user={user}
+                    following={isFollowing}
+                    isLike={isLike}
                     post={value}
                     id={value.postId}
                     key={value.postId}
@@ -240,4 +271,4 @@ function LandingPage() {
   )
 }
 
-export default React.memo(LandingPage)
+export default LandingPage

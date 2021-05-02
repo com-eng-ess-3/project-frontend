@@ -2,6 +2,7 @@ import React from 'react'
 import CreateIcon from '@material-ui/icons/Create'
 import PersonAddIcon from '@material-ui/icons/PersonAdd'
 import { Box, makeStyles, Typography } from '@material-ui/core'
+import { isNewNotification } from 'utils/getTime'
 
 const useStyle = makeStyles((theme) => ({
   cardRoot: {
@@ -16,6 +17,7 @@ const useStyle = makeStyles((theme) => ({
   content: {
     wordBreak: 'break-word',
     color: theme.palette.secondary.main,
+    width: '170px',
   },
   newAdd: {
     border: `2px solid ${theme.palette.error.main}`,
@@ -28,8 +30,11 @@ const useStyle = makeStyles((theme) => ({
   },
 }))
 
-function NotificationCard({ type = 'Follow', author, postName }) {
+function NotificationCard({ type, data }) {
   const classes = useStyle()
+  if (!data) {
+    data = {}
+  }
   return (
     <Box className={classes.cardRoot}>
       {type === 'Follow' ? (
@@ -38,13 +43,26 @@ function NotificationCard({ type = 'Follow', author, postName }) {
         <CreateIcon className={classes.icon} />
       ) : null}
       <Box>
-        <Typography className={classes.content}>
-          HelloWorld
-          fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
-        </Typography>
-        <Box display="flex">
-          <Typography className={classes.newAdd}>New</Typography>
-        </Box>
+        {type === 'Create' ? (
+          <React.Fragment>
+            <Typography noWrap className={classes.content}>
+              {`${data.displayname} has a new post`}
+            </Typography>
+            <Typography noWrap className={classes.content}>
+              {data.topic}
+            </Typography>
+          </React.Fragment>
+        ) : type === 'Follow' ? (
+          <Typography noWrap={true}>
+            HelloWorld
+            fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+          </Typography>
+        ) : null}
+        {isNewNotification(data.timeStamp) ? (
+          <Box display="flex">
+            <Typography className={classes.newAdd}>New</Typography>
+          </Box>
+        ) : null}
       </Box>
     </Box>
   )

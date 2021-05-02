@@ -61,9 +61,31 @@ async function handleWhenDislike(postId, commentId) {
   }
 }
 
-function followUser() {}
+function followUser(uid) {
+  const currentUid = auth.currentUser.uid
+  if (!currentUid) {
+    return
+  }
+  return firestore
+    .collection('users')
+    .doc(currentUid)
+    .update({
+      following: firebase.firestore.FieldValue.arrayUnion(uid),
+    })
+}
 
-function unfollowUser() {}
+function unfollowUser(uid) {
+  const currentUid = auth.currentUser.uid
+  if (!currentUid) {
+    return
+  }
+  return firestore
+    .collection('users')
+    .doc(currentUid)
+    .update({
+      following: firebase.firestore.FieldValue.arrayRemove(uid),
+    })
+}
 
 function getLikePostAndCommentList(uid) {
   return firestore.collection(`users/${uid}/private`).doc('like').get()

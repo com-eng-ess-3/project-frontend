@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import NotificationsIcon from '@material-ui/icons/Notifications'
 import {
   Backdrop,
@@ -10,6 +10,7 @@ import {
   Typography,
 } from '@material-ui/core'
 import NotificationCard from './NotificationCard'
+import { UserContext } from 'context/userContext'
 
 const useStyle = makeStyles((theme) => ({
   notificationIcon: {
@@ -29,7 +30,7 @@ const useStyle = makeStyles((theme) => ({
   },
 }))
 
-function NotificationBox({ isNavBar, user }) {
+const NotificationBox = React.memo(({ isNavBar, user }) => {
   const classes = useStyle()
   const [anchorEl, setAnchorEl] = useState(null)
   const [isNewPost, setNewPost] = useState(false)
@@ -73,15 +74,17 @@ function NotificationBox({ isNavBar, user }) {
       </Badge>
     </React.Fragment>
   )
-}
+})
 
-function AllNotificationCard({ isSideBar }) {
+const AllNotificationCard = React.memo(({ isSideBar }) => {
+  const { notificationList } = useContext(UserContext)
+
   return (
     <Box
       padding={isSideBar ? 1 : 2}
       height={isSideBar ? '77vh' : '80vh'}
       overflow="auto"
-      width={isSideBar ? '200px' : '250px'}
+      width={'200px'}
       style={{ backgroundColor: '#FFF' }}
     >
       <Typography
@@ -96,18 +99,13 @@ function AllNotificationCard({ isSideBar }) {
         Notification
       </Typography>
       <Divider />
-      <NotificationCard />
-      <NotificationCard />
-      <NotificationCard />
-      <NotificationCard />
-      <NotificationCard />
-      <NotificationCard />
-      <NotificationCard />
-      <NotificationCard />
-      <NotificationCard />
-      <NotificationCard />
+      <Box width={'200px'}>
+        {notificationList.map((value, idx) => {
+          return <NotificationCard type={value.type} data={value} key={idx} />
+        })}
+      </Box>
     </Box>
   )
-}
+})
 
 export { NotificationBox, AllNotificationCard }
