@@ -35,6 +35,7 @@ const useStyle = makeStyles((theme) => ({
   },
   commentBox: {
     marginTop: theme.spacing(0),
+    overflowY: 'hidden',
   },
   paperStyle: {
     width: '80%',
@@ -182,7 +183,7 @@ function PostViewer({ id }) {
               {'You have seen all comments!'}
             </Typography>
           }
-          loader={<CircularProgress color="default" disableShrink />}
+          loader={<CircularProgress color="primary" disableShrink />}
           dataLength={comment.length}
           className={`${classes.rootBox} ${classes.commentBox}`}
           hasMore={moreComment}
