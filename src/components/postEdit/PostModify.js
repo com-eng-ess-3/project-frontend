@@ -90,7 +90,7 @@ function PostModify({ mode, id }) {
   const contentRef = useRef(null)
   const [tagLabel, setTagLabel] = useState('')
 
-  const user = useContext(UserContext)?.user
+  const { user } = useContext(UserContext)
 
   const [chipData, setChipData] = useState([])
 
@@ -175,7 +175,7 @@ function PostModify({ mode, id }) {
     if (mode === 'Edit') {
       getData()
     }
-  }, [history, id, mode, user.uid])
+  }, [history, id, mode, user?.uid])
 
   return (
     <Box className={classes.rootBox} display="flex" justifyContent="center">

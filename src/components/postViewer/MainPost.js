@@ -164,13 +164,13 @@ function MainPost({ data, isLike, postId, isFollow }) {
                   className={classes.clickableNode}
                   onClick={async () => {
                     try {
-                      setLiked(true)
                       data.like += 1
+                      setLiked(true)
                       await handleWhenLike(postId)
                       setLikePostId([...likePostId, postId])
                     } catch (e) {
-                      setLiked(false)
                       data.like -= 1
+                      setLiked(false)
                     }
                   }}
                 />

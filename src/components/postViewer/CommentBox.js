@@ -74,13 +74,13 @@ function CommentBox({ comment, index, commentId, postId, isLike }) {
               className={classes.clickableNode}
               onClick={async () => {
                 try {
-                  setLiked(true)
                   comment.like += 1
+                  setLiked(true)
                   await handleWhenLike(postId, commentId)
                   setLikeCommentId([...likeCommentId, commentId])
                 } catch {
-                  setLiked(false)
                   comment.like -= 1
+                  setLiked(false)
                 }
               }}
             />
@@ -89,15 +89,15 @@ function CommentBox({ comment, index, commentId, postId, isLike }) {
               className={classes.clickableNode}
               onClick={async () => {
                 try {
-                  setLiked(false)
                   comment.like -= 1
+                  setLiked(false)
                   await handleWhenDislike(postId, commentId)
                   setLikeCommentId(
                     likeCommentId.filter((item) => item !== commentId)
                   )
                 } catch {
-                  setLiked(true)
                   comment.like += 1
+                  setLiked(true)
                 }
               }}
             />
