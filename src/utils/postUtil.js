@@ -180,7 +180,58 @@ async function getFollowerPost(followingList, lastIndex) {
   return postData
 }
 
-function getSearchResult(query, tag) {}
+async function getSearchResult(query, lastIndex) {
+  let docRef
+  const strlen = query.length
+  const strFrontCode = query.slice(0, strlen - 1)
+  const strEndCode = query.slice(strlen - 1, query.length)
+
+  const startQuery = query
+  const endQuery =
+    strFrontCode + String.fromCharCode(strEndCode.charCodeAt(0) + 1)
+
+  if (typeof lastIndex !== 'number') {
+    docRef = firestore
+      .collection('posts')
+      .where('topic', '>=', startQuery)
+      .where('topic', '<', endQuery)
+      .orderBy('like', 'desc')
+      .limit(10)
+  } else {
+    const cursor = (
+      await firestore.collection('posts').where('index', '==', lastIndex).get()
+    ).docs[0]
+    docRef = firestore
+      .collection('posts')
+      .where('topic', '>=', startQuery)
+      .where('topic', '<', endQuery)
+      .orderBy('like', 'desc')
+      .startAfter(cursor)
+      .limit(10)
+  }
+
+  const collectionQuery = (await docRef.get()).docs
+
+  if (collectionQuery.length === 0) {
+    return []
+  }
+  const postData = await Promise.all(
+    collectionQuery.map(async (doc) => {
+      let url = ''
+      const authorUid = doc.data().authorid
+      try {
+        url = await getImageUrl(authorUid)
+      } catch {}
+      return {
+        ...doc.data(),
+        postId: doc.id,
+        urlProfile: url,
+      }
+    })
+  )
+
+  return postData
+}
 
 function checkElementInsideArray(arr, query) {
   if (!arr) {

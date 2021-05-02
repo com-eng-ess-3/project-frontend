@@ -1,4 +1,11 @@
-import { Box, Button, makeStyles, Paper, Typography } from '@material-ui/core'
+import {
+  Box,
+  Button,
+  CircularProgress,
+  makeStyles,
+  Paper,
+  Typography,
+} from '@material-ui/core'
 import { AccountCircleOutlined } from '@material-ui/icons'
 import { CardPost, NavBar } from 'components'
 import { UserContext } from 'context/userContext'
@@ -205,6 +212,7 @@ function LandingPage() {
                 alignItems: 'center',
                 flexDirection: 'column',
               }}
+              loader={<CircularProgress color="default" disableShrink />}
               endMessage={
                 <Typography variant="h6">
                   {'You have seen all posts!'}
