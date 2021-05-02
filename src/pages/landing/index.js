@@ -211,8 +211,9 @@ function LandingPage() {
                 display: 'flex',
                 alignItems: 'center',
                 flexDirection: 'column',
+                overflowY: 'hidden',
               }}
-              loader={<CircularProgress color="default" disableShrink />}
+              loader={<CircularProgress color="primary" disableShrink />}
               endMessage={
                 <Typography variant="h6">
                   {'You have seen all posts!'}
