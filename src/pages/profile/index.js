@@ -1,6 +1,5 @@
 import { Box, Typography, makeStyles, Button, Paper, Divider } from '@material-ui/core'
 import React, { useState, useContext,  } from 'react'
-//import { useParams } from 'react-router'
 import { UserContext } from 'context/userContext'
 import { CardPost, NavBar } from 'components'
 import CreateRoundedIcon from '@material-ui/icons/CreateRounded'
@@ -20,7 +19,7 @@ const useStyle = makeStyles((theme) => ({
     flexFlow: 'column',
   },
   contentBox: {
-    backgroundColor: theme.palette.background.black,
+    backgroundColor: theme.palette.background.default,
     flex: 1,
     display: 'flex',
     flexGrow: 'row',
@@ -64,7 +63,6 @@ const useStyle = makeStyles((theme) => ({
     border: 'none',
     backgroundColor: theme.palette.background.dark,
   },
-  ////////////
   newPostContainer: {
     display: 'flex',
     justifyContent: 'center',
@@ -110,7 +108,6 @@ const useStyle = makeStyles((theme) => ({
       display: 'none',
     },
     overflow: 'auto',
-    //backgroundColor: grey[500],
     position: 'fixed',
     right: 0,
     padding: theme.spacing(1.25),
@@ -119,10 +116,6 @@ const useStyle = makeStyles((theme) => ({
     marginTop: '90px',
     marginRight: theme.spacing(5),
   },
-  // <Typography className={classes.checksize1}>(lg,xl]</Typography>
-  //   <Typography className={classes.checksize2}>(md,lg]</Typography>
-  //   <Typography className={classes.checksize3}>(sm,md]</Typography>
-  //   <Typography className={classes.checksize4}>(xs,sm]</Typography>
   checksize1: {
     [theme.breakpoints.down('lg')]: {
       display: 'none',
@@ -132,14 +125,8 @@ const useStyle = makeStyles((theme) => ({
     [theme.breakpoints.up('lg')]: {
       display: 'none',
     },
-    // [theme.breakpoints.up('lg')]: {
-    //   display: 'none',
-    // },
   },
   checksize3: {
-    // [theme.breakpoints.down('sm')]: {
-    //   display: 'none',
-    // },
     [theme.breakpoints.up('md')]: {
       display: 'none',
     },
@@ -161,15 +148,12 @@ const useStyle = makeStyles((theme) => ({
     width: '100%',
     backgroundColor: '#ffffff',
   },
-  
   unfollowbtn: {
     borderColor: '#f50057',
   },
   unfollowtext: {
     color: '#f50057',
   },
-
-
   followerBox: {
     marginTop: theme.spacing(1),
     width: '100%',
@@ -188,49 +172,54 @@ const useStyle = makeStyles((theme) => ({
   followText: {
     color: theme.palette.success.main,
   },
-
   amountFollowingWerText: {
     color: theme.palette.background.dark,
     fontWeight: 'bold',
   }
 }))
 
-/////////////////////https://material-ui.com/components/lists//////////////////////
+
 function ProfilePage() {
   const history = useHistory()
-  //const id = useParams().id
   const userState = useContext(UserContext)
   const classes = useStyle({ isLogin: !!userState?.user })
-  const [isMyProfile] = useState(true)
+
+/////////////////////////////////////////////////ตรงนี้ set ไว้เบี้ยงต้นว่าเรากำลังดู profile ตัวเองรึเปล่า/////////////////////////////////////////////
+  const [isMyProfile] = useState(true) 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   const [selected, setSelected] = useState('Recent Post')
 
   return (
-    // <React.Fragment>
-    //   <Box>
-    //     <Typography>{`Your query is ${id ? id : ''}`}</Typography>
-    //   </Box>
-    // </React.Fragment>
     <Box>
       <NavBar user={userState?.user}/>
       <Box className={classes.container}>
-        <Box className={classes.contentBox}>
-          
+        <Box className={classes.contentBox}>     
           <Box className={classes.allPostBox}>
-            {/* <Box>
-              <Typography>This is for notification Box</Typography>
-              <Typography >test</Typography>
-              <Typography className={classes.checksize1}>(lg,xl]</Typography>
-              <Typography className={classes.checksize2}>down lg</Typography>
-              <Typography className={classes.checksize3}>down md</Typography>
-              <Typography className={classes.checksize4}>down sm</Typography>
-              <ProfileBox></ProfileBox>
-            </Box> */}
+
+
+
+
+
+            {////////////////////////////////////// เรียก profile box มาโผล่ตรงกลางเมื่อหน้าจอน้อยกว่าเท่ากับ sm /////////////////////////////////////
+            }
             <Box display={{ sm: 'block', md: 'none'}} className={classes.proFileTop}>
               <Box display='flex' justifyContent="center" width='100%'>
                 <ProfileBox user={userState?.user}/>
               </Box>
               <Divider className={classes.dividerLine} />
             </Box>
+            {///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            }
+
+            
+
+
+
+
+
+            { //////////////////////////switch เลือกระหว่าง (Recent Post) (Following(ถ้าเป็น profile ตัวเอง)) (Followers)///////////////////////
+            }
             <Box width="100%" display="flex" justifyContent="center" marginBottom='20px'>
               {['Recent Post', 'Following', 'Followers'].map((value, idx) => {
                     if (value === 'Following' && !isMyProfile) {
@@ -252,7 +241,19 @@ function ProfilePage() {
                     )
                 })}
             </Box>
-            {(selected === 'Recent Post' && isMyProfile) ?
+            {///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            }
+
+
+
+
+
+
+
+
+            { //////////////////////////////////////////////// (เมื่อเรากดเลือก recent post) ////////////////////////////////////////////////////////////
+            }
+            {(selected === 'Recent Post' && isMyProfile) ? ///////// ตรงนี้ดูว่าเราดู profile ตัวเองรำเปล่า ถ้าใช่ เราสามารถสร้าง post จากตรงนี้ได้/////////
               <Paper className={classes.newPostContainer}>
                 <AccountCircleOutlined fontSize="large" color="primary" />
                 <Paper className={classes.searchPaper} component="form">
@@ -270,22 +271,36 @@ function ProfilePage() {
                   </Typography>
                 </Button>
               </Paper>
-            : null}
-            {[0,1,2,3,4,5,6,7,8,9].map((value,idx) => {
+            : null //////////////////////////////////// จบ create new post paper//////////////////////////////////////////////////////////////
+            } 
+            
+            {[0,1,2,3,4,5,6,7,8,9].map((value,idx) => { ////////////// Show recent post /////////////////////////////////////////////////////// 
                 if (selected === 'Recent Post') {
                   return <CardPost user={userState?.user} />
                 }
                 return null
-              })}
+              })////////////////////////////////////////////////////////จบ Show recent post ///////////////////////////////////////////////////
+              }
+            { //////////////////////////////////////////////// จบ (เมื่อเรากดเลือก recent post) ////////////////////////////////////////////////////////////
+            }
+            
+
+
+
+
+
+
+
+            { //////////////////////////////////////////////// (เมื่อเรากดเลือก Following) ////////////////////////////////////////////////////////////
+            }
             {(selected === 'Following') ? 
               <Box width='100%' display='flex'>
-                <Typography  className={classes.amountFollowingWerText}>230 Following</Typography>
+                <Typography  className={classes.amountFollowingWerText}>230 Following</Typography> 
               </Box>
             :null}
             {(selected === 'Following') ?
               <List dense className={classes.followingBox}>
               {[0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9].map((value) => {
-                //const labelId = `checkbox-list-secondary-label-${value}`;
                 return (
                   <ListItem key={value} button>
                     <ListItemAvatar>
@@ -305,6 +320,18 @@ function ProfilePage() {
               })}
               </List>
             : null}
+            { //////////////////////////////////////////////// จบ (เมื่อเรากดเลือก Following) ////////////////////////////////////////////////////////////
+            }
+
+
+
+
+
+
+
+
+            { //////////////////////////////////////////////// (เมื่อเรากดเลือก Followers) ////////////////////////////////////////////////////////////
+            }
             {(selected === 'Followers') ? 
               <Box width='100%' display='flex'>
                 <Typography  className={classes.amountFollowingWerText}>230 followers</Typography>
@@ -341,11 +368,25 @@ function ProfilePage() {
               })}
               </List>
             : null}
+            { //////////////////////////////////////////////// จบ (เมื่อเรากดเลือก Followers) ////////////////////////////////////////////////////////////
+            }
+
+
+
+
+
           </Box>
         </Box>
+        {////////////////////////////////////// เรียก profile box มาโผล่ทางขวามือ เมือ่ size จอใหญ่กว่า sm ขึ้นไป /////////////////////////////////
+        }
         <Box className={classes.proFileSide}>
           <ProfileBox user={userState?.user} ></ProfileBox>
         </Box>
+        {//////////////////////////////////////ฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝ/////////////////////////////////
+        }
+
+
+
       </Box>
     </Box>
   )
