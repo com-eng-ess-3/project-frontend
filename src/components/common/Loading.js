@@ -4,7 +4,7 @@ import React from 'react'
 function Loading() {
   return (
     <Backdrop open={true}>
-      <CircularProgress color="default" disableShrink />
+      <CircularProgress color="primary" disableShrink />
     </Backdrop>
   )
 }

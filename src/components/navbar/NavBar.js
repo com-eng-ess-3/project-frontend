@@ -333,7 +333,7 @@ function NavBar() {
               fontSize="large"
               onClick={() => handleToggleDrawer('right', true)}
             >
-              {user.displayName[0].toUpperCase()}
+              {user?.displayName[0].toUpperCase()}
             </Avatar>
           </Hidden>
           {!user ? (
