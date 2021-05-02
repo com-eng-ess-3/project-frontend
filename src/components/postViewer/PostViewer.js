@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Button,
   CircularProgress,
@@ -71,6 +72,8 @@ const useStyle = makeStyles((theme) => ({
     },
   },
   avatarIcon: {
+    width: theme.spacing(4),
+    height: theme.spacing(4),
     [theme.breakpoints.down('xs')]: {
       marginRight: theme.spacing(1),
     },
@@ -164,7 +167,9 @@ function PostViewer({ id }) {
       />
       <Divider />
       <Paper className={classes.makeCommentPaper}>
-        <AccountCircleIcon className={classes.avatarIcon} color="action" />
+        <Avatar className={classes.avatarIcon} src={user?.urlProfile}>
+          {user?.displayName[0].toUpperCase()}
+        </Avatar>
         <TextFieldStyled
           className={classes.commentField}
           inputRef={commentField}
