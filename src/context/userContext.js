@@ -3,7 +3,7 @@ import Loading from 'components/common/Loading'
 import React, { createContext, useEffect, useState } from 'react'
 import { auth, firestore, getImageUrl } from 'utils/firebaseUtil'
 import { getLikePostAndCommentList } from 'utils/actionUtil'
-import { isInNotification } from 'utils/getTime'
+import { isInNotification, isNewNotification } from 'utils/getTime'
 
 export const UserContext = createContext(null)
 
@@ -63,7 +63,10 @@ export const UserProvider = (props) => {
         const filterDocs = docs.docs.filter((value) =>
           isInNotification(value.data().timeStamp)
         )
-        if (!filterDocs.length) {
+        const isNew =
+          docs.docs.filter((value) => isNewNotification(value.data().timeStamp))
+            .length > 0
+        if (isNew) {
           setNewPost(true)
         }
         setNotificationList(
