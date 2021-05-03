@@ -166,7 +166,7 @@ function PostViewer({ id }) {
       />
       <Divider />
       <Paper className={classes.makeCommentPaper}>
-        <Avatar className={classes.avatarIcon} src={user?.urlProfile}>
+        <Avatar className={classes.avatarIcon} src={user?.profileUrl}>
           {user?.displayName[0].toUpperCase()}
         </Avatar>
         <TextFieldStyled

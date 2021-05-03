@@ -1,4 +1,3 @@
-import { Box } from '@material-ui/core'
 import Loading from 'components/common/Loading'
 import React, { createContext, useEffect, useState } from 'react'
 import { auth, firestore, getImageUrl } from 'utils/firebaseUtil'
@@ -22,19 +21,19 @@ export const UserProvider = (props) => {
         const data = (await getLikePostAndCommentList(userAuth.uid)).data()
         const followingData = (
           await firestore.collection('users').doc(userAuth.uid).get()
-        ).data().following
+        ).data()?.following
         const url = await getImageUrl(userAuth.uid)
-        const likePostId = data.post
-        const likeCommentId = data.comment
+        const likePostId = data?.post
+        const likeCommentId = data?.comment
 
         setUser({
           uid: userAuth.uid,
           displayName: userAuth.displayName,
           profileUrl: url,
         })
-        setLikePostId(likePostId)
-        setLikeCommentId(likeCommentId)
-        setFollowingList(followingData)
+        setLikePostId(!!likePostId ? likePostId : [])
+        setLikeCommentId(!!likeCommentId ? likeCommentId : [])
+        setFollowingList(!!followingData ? followingData : [])
       } else {
         setUser(null)
         setLikePostId([])
