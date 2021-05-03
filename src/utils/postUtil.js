@@ -167,8 +167,7 @@ async function getFollowerPost(followingList, lastIndex) {
   return postData
 }
 
-async function getSearchResult(query, lastIndex) {
-  let docRef
+async function getSearchResult(query) {
   const strlen = query.length
   const strFrontCode = query.slice(0, strlen - 1)
   const strEndCode = query.slice(strlen - 1, query.length)
@@ -177,25 +176,10 @@ async function getSearchResult(query, lastIndex) {
   const endQuery =
     strFrontCode + String.fromCharCode(strEndCode.charCodeAt(0) + 1)
 
-  if (typeof lastIndex !== 'number') {
-    docRef = firestore
-      .collection('posts')
-      .where('topic', '>=', startQuery)
-      .where('topic', '<', endQuery)
-      .orderBy('like', 'desc')
-      .limit(10)
-  } else {
-    const cursor = (
-      await firestore.collection('posts').where('index', '==', lastIndex).get()
-    ).docs[0]
-    docRef = firestore
-      .collection('posts')
-      .where('topic', '>=', startQuery)
-      .where('topic', '<', endQuery)
-      .orderBy('like', 'desc')
-      .startAfter(cursor)
-      .limit(10)
-  }
+  const docRef = firestore
+    .collection('posts')
+    .where('topic', '>=', startQuery)
+    .where('topic', '<', endQuery)
 
   const collectionQuery = (await docRef.get()).docs
 
