@@ -251,6 +251,7 @@ function MainPost({ data, isLike, postId, isFollow }) {
                     )
                   }
                 } catch (e) {
+                  console.log(e.message)
                   setFollowing(prevState)
                 }
               }}

@@ -104,17 +104,7 @@ export const UserProvider = (props) => {
   // }, [user])
 
   if (authPending) {
-    return (
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        width="100%"
-        height="100vh"
-      >
-        <Loading />
-      </Box>
-    )
+    return <Loading />
   }
 
   return (

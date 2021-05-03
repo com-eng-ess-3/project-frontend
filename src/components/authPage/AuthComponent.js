@@ -123,7 +123,7 @@ function AuthComponent({ isRegister, urlRedirect }) {
         if (code === 'auth/email-already-in-use') {
           setErrorMsg('This email is already register')
         } else if (code === 'auth/invalid-email') {
-          setErrorMsg('The email address is badly formatted.')
+          setErrorMsg('The email address is badly formatted')
         } else if (code === 'auth/weak-password') {
           setErrorMsg('The password must be at least 6 characters')
         } else {
@@ -138,7 +138,7 @@ function AuthComponent({ isRegister, urlRedirect }) {
       } catch (e) {
         const code = e?.code
         if (code === 'auth/invalid-email') {
-          setErrorMsg('Your email is not valid')
+          setErrorMsg('Your email is badly formatted')
         } else if (
           code === 'auth/wrong-password' ||
           code === 'auth/user-not-found'

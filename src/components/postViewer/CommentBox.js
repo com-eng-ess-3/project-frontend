@@ -78,7 +78,8 @@ function CommentBox({ comment, index, commentId, postId, isLike }) {
                   setLiked(true)
                   await handleWhenLike(postId, commentId)
                   setLikeCommentId([...likeCommentId, commentId])
-                } catch {
+                } catch (e) {
+                  console.log(e)
                   comment.like -= 1
                   setLiked(false)
                 }
@@ -95,7 +96,8 @@ function CommentBox({ comment, index, commentId, postId, isLike }) {
                   setLikeCommentId(
                     likeCommentId.filter((item) => item !== commentId)
                   )
-                } catch {
+                } catch (e) {
+                  console.log(e)
                   comment.like += 1
                   setLiked(true)
                 }

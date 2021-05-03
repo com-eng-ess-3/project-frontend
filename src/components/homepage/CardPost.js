@@ -140,6 +140,7 @@ function CardPost({ user, id, post, isLike, following }) {
                   )
                 }
               } catch (e) {
+                console.log(e)
                 setFollowing(prevState)
               }
             }}

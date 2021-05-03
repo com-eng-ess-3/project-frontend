@@ -6,13 +6,16 @@ import {
   makeStyles,
   Typography,
   InputBase,
+  Avatar,
 } from '@material-ui/core'
 
-import React, { memo, useState } from 'react'
+import React, { memo, useCallback, useRef, useState } from 'react'
 import BuildIcon from '@material-ui/icons/Build'
 import SaveIcon from '@material-ui/icons/Save'
-import { storage } from 'utils/firebaseUtil'
-import { Label } from '@material-ui/icons'
+import { auth, storage } from 'utils/firebaseUtil'
+import firebase from 'firebase'
+import { updateProfileDetail } from 'utils/profileUtil'
+
 const useStyle = makeStyles((theme) => ({
   cardContainer: {
     width: '92%',
@@ -63,6 +66,7 @@ const useStyle = makeStyles((theme) => ({
   },
   paper: {
     borderRadius: 5,
+    height: '32px',
     border: `1px solid ${theme.palette.background.dark}`,
     display: 'flex',
     alignItems: 'center',
@@ -75,6 +79,7 @@ const useStyle = makeStyles((theme) => ({
     color: theme.palette.secondary.main,
     paddingLeft: theme.spacing(1),
     paddingRight: theme.spacing(1),
+    whiteSpace: 'pre-line',
   },
   picNameStaSide: {
     [theme.breakpoints.down('md')]: {
@@ -100,6 +105,7 @@ const useStyle = makeStyles((theme) => ({
     fontSize: 'small',
     marginRight: theme.spacing(1),
     color: theme.palette.secondary.main,
+    cursor: 'pointer',
   },
   allInput: {
     width: '100%',
@@ -109,9 +115,11 @@ const useStyle = makeStyles((theme) => ({
   },
   profilePic: {
     width: '100%',
+    height: '100%',
     display: 'block',
+    border: 0,
+    objectFit: 'cover',
   },
-
   saveEditButtonPic: {
     border: `1px solid ${theme.palette.background.dark}`,
     backgroundColor: '#ffffff',
@@ -129,14 +137,43 @@ const useStyle = makeStyles((theme) => ({
 }))
 
 function ProfileBox({ user, index }) {
-  const isLogin = false
-  const isFollowed = false
-  const classes = useStyle({ isLogin, isFollowed })
-  const [isMyProfile] = useState(true)
+  const classes = useStyle()
+  const [isMyProfile] = useState(auth.currentUser.uid === user.uid)
   const [inStatusEditState, setStatusEditState] = useState(false)
   const [inInterestEditState, setInterestEditState] = useState(false)
 
-  console.log('render ' + index)
+  const [prevStatusState, setPrevStatusState] = useState('')
+  const [prevInterestState, setPrevInterestState] = useState('')
+
+  const [statusValue, setStatusValue] = useState(user?.status)
+  const [interestValue, setInterestValue] = useState(user?.interested)
+  const imageInput = useRef(null)
+
+  const handleStatusEdit = useCallback(async () => {
+    try {
+      if (prevStatusState === statusValue) {
+        setStatusEditState(false)
+        return
+      }
+      await updateProfileDetail(user.uid, 'status', statusValue)
+    } catch {
+      setStatusValue(prevStatusState)
+    }
+    setStatusEditState(false)
+  }, [prevStatusState, statusValue, user.uid])
+
+  const handleInterestedEdit = useCallback(async () => {
+    try {
+      if (prevInterestState === interestValue) {
+        setInterestEditState(false)
+        return
+      }
+      await updateProfileDetail(user.uid, 'interested', interestValue)
+    } catch {
+      setInterestValue(prevInterestState)
+    }
+    setInterestEditState(false)
+  }, [interestValue, prevInterestState, user.uid])
 
   return (
     <Card className={classes.cardContainer}>
@@ -159,13 +196,19 @@ function ProfileBox({ user, index }) {
           width="40%"
           className={classes.picBox} /////// Box เก็บรูป/////////////////////////////////////
         >
-          <img
+          <Avatar
             className={classes.profilePic}
-            src="https://picsum.photos/200"
+            src={user?.profileUrl}
             alt="display"
-          />
+            variant="square"
+          >
+            {user?.displayName[0].toUpperCase()}
+          </Avatar>
           {isMyProfile ? ( ///////////////////////////// ปุ่มแก้ รูป profile ///////////////////////////////////
-            <BuildIcon className={classes.saveEditButtonPic}></BuildIcon>
+            <BuildIcon
+              className={classes.saveEditButtonPic}
+              onClick={() => imageInput.current.click()}
+            ></BuildIcon>
           ) : null}
         </Box>
 
@@ -175,35 +218,38 @@ function ProfileBox({ user, index }) {
           </Typography>
           <Paper width="100%" className={classes.paper}>
             <Typography variant="h6" className={classes.content}>
-              {user.displayName}
+              {user?.displayName}
             </Typography>
           </Paper>
           <Typography variant="h6" className={classes.topicText}>
             Status :
           </Typography>
           <Paper width="100%" className={classes.paper}>
-            {inStatusEditState ? ( ///////////////////// Input สำหรับใส่ค่า status ใหม่////////////////////////
+            {inStatusEditState ? (
               <InputBase
                 className={classes.allInput}
-                placeholder="single"
-                //onChange={(e) => setStatusEditState(false)}
+                value={statusValue}
+                onChange={(e) => setStatusValue(e.target.value)}
               />
             ) : (
-              <Typography variant="h6" className={classes.content}>
-                {user?.status}
+              <Typography variant="h6" noWrap className={classes.content}>
+                {statusValue}
               </Typography>
             )}
-            {isMyProfile ? ( ///////////////////// ปุ่ม สำหรับ edit฿save status ใหม่///////////////////////////
+            {isMyProfile ? (
               <Box>
                 {inStatusEditState ? (
                   <SaveIcon
                     className={classes.saveEditButton}
-                    onClick={() => setStatusEditState(false)}
+                    onClick={() => handleStatusEdit()}
                   />
                 ) : (
                   <BuildIcon
                     className={classes.saveEditButton}
-                    onClick={() => setStatusEditState(true)}
+                    onClick={() => {
+                      setPrevStatusState(statusValue)
+                      setStatusEditState(true)
+                    }}
                   />
                 )}
               </Box>
@@ -211,29 +257,26 @@ function ProfileBox({ user, index }) {
           </Paper>
         </Box>
       </Box>
-      {
-        ///////////////////////////////////////////// จบ case แรก size จอ > md /////////////////////////////////////////////////////////////
-      }
 
-      {
-        /////////////////////////////////////////////case 2  size < sm ////////////////////////////////////////////////////////////////////
-      }
       <Box
         display="flex"
         className={classes.picNameStaSideLessThanSm}
         marginBottom="15px"
       >
-        <Box
-          width="40%"
-          className={classes.picBox} /////// Box เก็บรูป/////////////////////////////////////
-        >
-          <img
+        <Box width="40%" className={classes.picBox}>
+          <Avatar
             className={classes.profilePic}
-            src="https://picsum.photos/200"
+            src={user?.profileUrl}
             alt="display"
-          />
-          {isMyProfile ? ( ///////////////////////////// ปุ่มแก้ รูป profile ///////////////////////////////////
-            <BuildIcon className={classes.saveEditButtonPic}></BuildIcon>
+            variant="square"
+          >
+            {user?.displayName[0].toUpperCase()}
+          </Avatar>
+          {isMyProfile ? (
+            <BuildIcon
+              className={classes.saveEditButtonPic}
+              onClick={() => imageInput.current.click()}
+            ></BuildIcon>
           ) : null}
         </Box>
         <Box width="60%" marginLeft="15px">
@@ -242,35 +285,38 @@ function ProfileBox({ user, index }) {
           </Typography>
           <Paper width="100%" className={classes.paper}>
             <Typography variant="h6" className={classes.content}>
-              {user.displayName}
+              {user?.displayName}
             </Typography>
           </Paper>
           <Typography variant="h6" className={classes.topicText}>
             Status :
           </Typography>
           <Paper width="100%" className={classes.paper}>
-            {inStatusEditState ? ( ///////////////////// Input สำหรับใส่ค่า status ใหม่/////////////////////////
+            {inStatusEditState ? (
               <InputBase
                 className={classes.allInput}
-                placeholder="single"
-                //onChange={(e) => setStatusEditState(false)}
+                value={statusValue}
+                onChange={(e) => setStatusValue(e.target.value)}
               />
             ) : (
               <Typography variant="h6" className={classes.content}>
-                single
+                {statusValue}
               </Typography>
             )}
             {isMyProfile ? (
               <Box>
-                {inStatusEditState ? ( ///////////////////// ปุ่ม สำหรับ edit฿save status ใหม่/////////////////
+                {inStatusEditState ? (
                   <SaveIcon
                     className={classes.saveEditButton}
-                    onClick={() => setStatusEditState(false)}
+                    onClick={() => handleStatusEdit()}
                   />
                 ) : (
                   <BuildIcon
                     className={classes.saveEditButton}
-                    onClick={() => setStatusEditState(true)}
+                    onClick={() => {
+                      setPrevStatusState(statusValue)
+                      setStatusEditState(true)
+                    }}
                   />
                 )}
               </Box>
@@ -278,54 +324,27 @@ function ProfileBox({ user, index }) {
           </Paper>
         </Box>
       </Box>
-      {
-        ///////////////////////////////////////////// จบ case 2  size < sm /////////////////////////////////////////////////////////////
-      }
 
-      {
-        /////////////////////////////////////////////case 3(สุดท้าย) sm < size < md /////////////////////////////////////////////////////////////
-      }
       <Box
         className={classes.picNameStaCenter}
         display={{ xs: 'none', md: 'block', lg: 'none' }}
       >
         <Box justifyContent="center" display="flex">
-          <Box width="200px" className={classes.picBox}>
-            <img
+          <Box width="200px" height="200px" className={classes.picBox}>
+            <Avatar
               className={classes.profilePic}
-              src="https://picsum.photos/200"
+              src={user?.profileUrl}
               alt="display"
-            />
+              variant="square"
+            >
+              {user?.displayName[0].toUpperCase()}
+            </Avatar>
             {isMyProfile ? (
-              <Box htmlFor="file-input">
+              <Box>
                 <BuildIcon
-                  htmlFor="file-input"
                   className={classes.saveEditButtonPic}
-                >
-                  <Label></Label>
-                </BuildIcon>
-
-                <input
-                  style={{ display: 'none' }}
-                  id="file-input"
-                  accept="image/*"
-                  onChange={(e) => {
-                    if (e.target.files && e.target.files.length > 0) {
-                      const reader = new FileReader()
-                      const file = e.target.files[0]
-
-                      reader.addEventListener('load', () => {
-                        storage.ref()
-                      })
-
-                      reader.readAsArrayBuffer(file)
-                    }
-                  }}
-                  onClick={(e) => {
-                    e.currentTarget.value = ''
-                  }}
-                  type="file"
-                />
+                  onClick={() => imageInput.current.click()}
+                ></BuildIcon>
               </Box>
             ) : null}
           </Box>
@@ -336,47 +355,47 @@ function ProfileBox({ user, index }) {
         </Typography>
         <Paper width="100%" className={classes.paper}>
           <Typography variant="h6" className={classes.content}>
-            {user.displayName}
+            {user?.displayName}
           </Typography>
         </Paper>
         <Typography variant="h6" className={classes.topicText}>
           Status :
         </Typography>
         <Paper width="100%" className={classes.paper}>
-          {inStatusEditState ? ( ///////////////////// Input สำหรับใส่ค่า status ใหม่/////////////////////////
+          {inStatusEditState ? (
             <InputBase
               className={classes.allInput}
-              placeholder="single"
-              //onChange={(e) => setStatusEditState(false)}
+              value={statusValue}
+              onChange={(e) => setStatusValue(e.target.value)}
             />
           ) : (
             <Typography variant="h6" className={classes.content}>
-              single
+              {statusValue}
             </Typography>
           )}
           {isMyProfile ? (
             <Box>
-              {inStatusEditState ? ( ///////////////////// ปุ่ม สำหรับ edit฿save status ใหม่/////////////////
+              {inStatusEditState ? (
                 <SaveIcon
                   className={classes.saveEditButton}
-                  onClick={() => setStatusEditState(false)}
+                  onClick={() => handleStatusEdit()}
                 />
               ) : (
                 <BuildIcon
                   className={classes.saveEditButton}
-                  onClick={() => setStatusEditState(true)}
+                  onClick={() => {
+                    setPrevStatusState(statusValue)
+                    setStatusEditState(true)
+                  }}
                 />
               )}
             </Box>
           ) : null}
         </Paper>
       </Box>
-      {
-        /////////////////////////////////////////////case 3(สุดท้าย) sm < size < md /////////////////////////////////////////////////////////////
-      }
 
       <Typography variant="h6" className={classes.topicText}>
-        Follower : 25,435
+        Follower : {user?.followerCount}
       </Typography>
       <Typography variant="h6" className={classes.topicText}>
         Interested in :
@@ -386,13 +405,14 @@ function ProfileBox({ user, index }) {
           {inInterestEditState ? (
             <InputBase
               className={classes.allInput}
-              placeholder="HEE !"
+              value={interestValue}
+              onChange={(e) => setInterestValue(e.target.value)}
+              multiline={true}
               width="100%"
-              //onChange={(e) => setInterestEditState(false)}
             />
           ) : (
             <Typography variant="h6" className={classes.content}>
-              HEE !
+              {interestValue}
             </Typography>
           )}
         </Box>
@@ -401,17 +421,50 @@ function ProfileBox({ user, index }) {
             {inInterestEditState ? (
               <SaveIcon
                 className={classes.saveEditButton}
-                onClick={() => setInterestEditState(false)}
+                onClick={() => handleInterestedEdit()}
               />
             ) : (
               <BuildIcon
                 className={classes.saveEditButton}
-                onClick={() => setInterestEditState(true)}
+                onClick={() => {
+                  setPrevInterestState(interestValue)
+                  setInterestEditState(true)
+                }}
               />
             )}
           </Box>
         ) : null}
       </Paper>
+      <input
+        style={{ display: 'none' }}
+        id="file-input"
+        accept="image/jpeg,image/png"
+        onChange={(e) => {
+          if (e.target.files && e.target.files.length > 0) {
+            const reader = new FileReader()
+            const file = e.target.files[0]
+
+            reader.addEventListener('load', () => {
+              storage
+                .ref()
+                .child(`/users/${user.uid}/profileImage.png`)
+                .put(reader.result)
+                .on(firebase.storage.TaskEvent.STATE_CHANGED, {
+                  complete: function () {
+                    window.location.reload()
+                  },
+                })
+            })
+
+            reader.readAsArrayBuffer(file)
+          }
+        }}
+        ref={imageInput}
+        onClick={(e) => {
+          e.currentTarget.value = ''
+        }}
+        type="file"
+      />
     </Card>
   )
 }
