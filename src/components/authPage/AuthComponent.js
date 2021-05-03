@@ -85,7 +85,7 @@ function AuthComponent({ isRegister, urlRedirect }) {
     if (isRegisterPage) {
       try {
         if (password !== confirmPassword) {
-          throw new Error('Your Confirm Password is not match')
+          throw new Error('Your confirm password is not match')
         }
 
         if (!displayName) {
