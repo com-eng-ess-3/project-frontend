@@ -16,7 +16,7 @@ import {
 } from '@material-ui/core'
 import React, { useCallback, useContext, useState } from 'react'
 import SearchIcon from '@material-ui/icons/Search'
-import { Link, useHistory } from 'react-router-dom'
+import { Link, useHistory, useLocation } from 'react-router-dom'
 import { auth } from 'utils/firebaseUtil'
 import MenuIcon from '@material-ui/icons/Menu'
 import { AllNotificationCard, NotificationBox } from './Notification'
@@ -156,7 +156,11 @@ const useStyle = makeStyles((theme) => ({
 function NavBar() {
   const history = useHistory()
   const classes = useStyle()
-  const [searchValue, setSearchValue] = useState('')
+  const searchQuery = new URLSearchParams(useLocation().search).get('name')
+
+  console.log(searchQuery)
+
+  const [searchValue, setSearchValue] = useState(searchQuery)
   const [anchorEl, setAnchorEl] = useState(null)
 
   const { user } = useContext(UserContext)
@@ -309,6 +313,7 @@ function NavBar() {
           >
             <InputBase
               className={classes.searchInput}
+              value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
               placeholder="Search"
             ></InputBase>
