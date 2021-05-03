@@ -20,6 +20,7 @@ import {
   unfollowUser,
 } from 'utils/actionUtil'
 import { UserContext } from 'context/userContext'
+import { useHistory } from 'react-router'
 
 const useStyle = makeStyles((theme) => ({
   mainPost: {
@@ -94,6 +95,8 @@ const useStyle = makeStyles((theme) => ({
 
 function MainPost({ data, isLike, postId, isFollow }) {
   const classes = useStyle()
+  const history = useHistory()
+
   const {
     user,
     likePostId,
@@ -208,12 +211,19 @@ function MainPost({ data, isLike, postId, isFollow }) {
           />
           <Hidden xsDown>
             <Box className={classes.authorBox}>
-              <Avatar className={classes.avatarImg} src={data.urlProfile}>
-                {data.displayname[0].toUpperCase()}
-              </Avatar>
-              <Typography className={classes.textLabel} variant="subtitle1">
-                {data.displayname}
-              </Typography>
+              <Box
+                display="flex"
+                alignItems="center"
+                style={{ cursor: 'pointer' }}
+                onClick={() => history.push(`/profile/${data.authorid}`)}
+              >
+                <Avatar className={classes.avatarImg} src={data.urlProfile}>
+                  {data.displayname[0].toUpperCase()}
+                </Avatar>
+                <Typography className={classes.textLabel} variant="subtitle1">
+                  {data.displayname}
+                </Typography>
+              </Box>
               <Hidden smDown>
                 <Typography variant="subtitle2">
                   {epochToDate(data.timeStamp.seconds)}
@@ -224,7 +234,11 @@ function MainPost({ data, isLike, postId, isFollow }) {
         </Box>
         <Box display="flex" flexDirection="column" alignItems="center">
           <Hidden smUp>
-            <Box className={classes.authorBox}>
+            <Box
+              className={classes.authorBox}
+              style={{ cursor: 'pointer' }}
+              onClick={() => history.push(`/profile/${data.authorid}`)}
+            >
               <Avatar className={classes.avatarImg} src={data.urlProfile}>
                 {data.displayname[0].toUpperCase()}
               </Avatar>

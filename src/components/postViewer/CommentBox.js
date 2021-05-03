@@ -9,6 +9,7 @@ import {
 import { ThumbUpAlt, ThumbUpAltOutlined } from '@material-ui/icons'
 import { UserContext } from 'context/userContext'
 import React, { useContext, useState } from 'react'
+import { useHistory } from 'react-router'
 import { handleWhenDislike, handleWhenLike } from 'utils/actionUtil'
 import { epochToDate } from 'utils/getTime'
 
@@ -43,6 +44,7 @@ const useStyle = makeStyles((theme) => ({
 
 function CommentBox({ comment, index, commentId, postId, isLike }) {
   const classes = useStyle()
+  const history = useHistory()
   const { likeCommentId, setLikeCommentId } = useContext(UserContext)
   const [isLiked, setLiked] = useState(isLike)
 
@@ -58,12 +60,19 @@ function CommentBox({ comment, index, commentId, postId, isLike }) {
       <Divider className={classes.hrDivider} />
       <Box display="flex" alignItems="center" justifyContent="space-between">
         <Box display="flex" alignItems="center">
-          <Avatar src={comment.urlProfile}>
-            {comment.displayname[0].toUpperCase()}
-          </Avatar>
-          <Typography className={classes.textLabel} variant="subtitle1">
-            {comment.displayname}
-          </Typography>
+          <Box
+            display="flex"
+            alignItems="center"
+            style={{ cursor: 'pointer' }}
+            onClick={() => history.push(`/profile/${comment.uid}`)}
+          >
+            <Avatar src={comment.urlProfile}>
+              {comment.displayname[0].toUpperCase()}
+            </Avatar>
+            <Typography className={classes.textLabel} variant="subtitle1">
+              {comment.displayname}
+            </Typography>
+          </Box>
           <Typography className={classes.textLabel} variant="subtitle2">
             {epochToDate(comment.timeStamp.seconds)}
           </Typography>
