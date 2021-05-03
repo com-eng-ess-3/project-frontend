@@ -8,7 +8,7 @@ function getFollowUserData(arr) {
     return {
       displayname,
       uid,
-      profileUrl: getImageUrl(uid),
+      profileUrl: await getImageUrl(uid),
     }
   })
 }

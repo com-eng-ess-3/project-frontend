@@ -12,6 +12,7 @@ import { UserContext } from 'context/userContext'
 import React from 'react'
 import { useContext } from 'react'
 import { useState } from 'react'
+import { useHistory } from 'react-router'
 import { followUser } from 'utils/actionUtil'
 
 const useStyle = makeStyles((theme) => ({
@@ -37,11 +38,16 @@ function FollowerSlot({
   isFollowing,
   isLogin,
 }) {
+  const history = useHistory()
   const classes = useStyle()
+
   const { setFollowingList, followingList } = useContext(UserContext)
   const [isFollow, setFollow] = useState(!!isFollowing)
+
+  console.log(value)
+
   return (
-    <ListItem button>
+    <ListItem button onClick={() => history.push(`/profile/${value.uid}`)}>
       <ListItemAvatar>
         <Avatar src={value.profileUrl}>
           {value.displayname[0].toUpperCase()}

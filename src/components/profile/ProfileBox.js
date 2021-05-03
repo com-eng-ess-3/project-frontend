@@ -9,10 +9,10 @@ import {
   Avatar,
 } from '@material-ui/core'
 
-import React, { memo, useCallback, useRef, useState } from 'react'
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
 import BuildIcon from '@material-ui/icons/Build'
 import SaveIcon from '@material-ui/icons/Save'
-import { auth, storage } from 'utils/firebaseUtil'
+import { storage } from 'utils/firebaseUtil'
 import firebase from 'firebase'
 import { updateProfileDetail } from 'utils/profileUtil'
 
@@ -116,9 +116,8 @@ const useStyle = makeStyles((theme) => ({
   profilePic: {
     width: '100%',
     height: '100%',
-    display: 'block',
+    fontSize: '4rem',
     border: 0,
-    objectFit: 'cover',
   },
   saveEditButtonPic: {
     border: `1px solid ${theme.palette.background.dark}`,
@@ -127,18 +126,32 @@ const useStyle = makeStyles((theme) => ({
     position: 'absolute',
     bottom: 5,
     right: 5,
+    cursor: 'pointer',
     [theme.breakpoints.down('sm')]: {
       fontSize: 'small',
     },
   },
   picBox: {
     position: 'relative',
+    width: '175px',
+    height: '175px',
+    [theme.breakpoints.down('md')]: {
+      width: '150px',
+      height: '150px',
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '125px',
+      height: '125px',
+    },
+    [theme.breakpoints.down('xs')]: {
+      width: '100px',
+      height: '100px',
+    },
   },
 }))
 
-function ProfileBox({ user }) {
+function ProfileBox({ user, isMyProfile }) {
   const classes = useStyle()
-  const [isMyProfile] = useState(auth.currentUser?.uid === user.uid)
   const [inStatusEditState, setStatusEditState] = useState(false)
   const [inInterestEditState, setInterestEditState] = useState(false)
 
@@ -175,6 +188,11 @@ function ProfileBox({ user }) {
     setInterestEditState(false)
   }, [interestValue, prevInterestState, user.uid])
 
+  useEffect(() => {
+    setStatusValue(user?.status)
+    setInterestValue(user?.interested)
+  }, [user])
+
   return (
     <Card className={classes.cardContainer}>
       <Box justifyContent="center" display="flex">
@@ -193,14 +211,12 @@ function ProfileBox({ user }) {
         marginBottom="15px"
       >
         <Box
-          width="40%"
           className={classes.picBox} /////// Box เก็บรูป/////////////////////////////////////
         >
           <Avatar
             className={classes.profilePic}
             src={user?.profileUrl}
-            alt="display"
-            variant="square"
+            variant="circle"
           >
             {user?.displayName[0].toUpperCase()}
           </Avatar>
@@ -263,12 +279,11 @@ function ProfileBox({ user }) {
         className={classes.picNameStaSideLessThanSm}
         marginBottom="15px"
       >
-        <Box width="40%" className={classes.picBox}>
+        <Box width="200px" height="200px" className={classes.picBox}>
           <Avatar
             className={classes.profilePic}
             src={user?.profileUrl}
-            alt="display"
-            variant="square"
+            variant="circle"
           >
             {user?.displayName[0].toUpperCase()}
           </Avatar>
@@ -334,8 +349,7 @@ function ProfileBox({ user }) {
             <Avatar
               className={classes.profilePic}
               src={user?.profileUrl}
-              alt="display"
-              variant="square"
+              variant="circle"
             >
               {user?.displayName[0].toUpperCase()}
             </Avatar>

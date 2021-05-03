@@ -44,11 +44,11 @@ const useStyle = makeStyles((theme) => ({
     marginTop: '30px',
     width: '90%',
     [theme.breakpoints.up('md')]: {
-      width: '100%',
+      width: '50%',
       maxWidth: '800px',
       marginLeft: '50px',
       marginBottom: '30px',
-      marginRight: (props) => (props.isLogin ? '40%' : '50px'),
+      marginRight: '40%',
     },
   },
   switchButton: {
@@ -174,10 +174,10 @@ function ProfilePage() {
   const history = useHistory()
   const uid = useParams().id
   const { user, likePostId, followingList } = useContext(UserContext)
-  const classes = useStyle({ isLogin: !!user })
+  const classes = useStyle()
 
   /////////////////////////////////////////////////ตรงนี้ set ไว้เบี้ยงต้นว่าเรากำลังดู profile ตัวเองรึเปล่า/////////////////////////////////////////////
-  const [isMyProfile] = useState(user?.uid === uid)
+  const [isMyProfile, setMyProfile] = useState(false)
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   const [userProfile, setUserProfile] = useState(null)
@@ -224,11 +224,14 @@ function ProfilePage() {
         history.push('/')
       }
       setLoading(false)
+
+      setMyProfile(user?.uid === uid)
     }
 
     getData()
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [uid])
 
   if (isLoading) {
     return <Loading />
@@ -245,7 +248,11 @@ function ProfilePage() {
               className={classes.proFileTop}
             >
               <Box display="flex" justifyContent="center" width="100%">
-                <ProfileBox user={userProfile} uid={user?.uid}></ProfileBox>
+                <ProfileBox
+                  user={userProfile}
+                  uid={user?.uid}
+                  isMyProfile={isMyProfile}
+                ></ProfileBox>
               </Box>
               <Divider className={classes.dividerLine} />
             </Box>
@@ -416,7 +423,11 @@ function ProfilePage() {
           </Box>
         </Box>
         <Box className={classes.proFileSide}>
-          <ProfileBox user={userProfile} uid={user?.uid}></ProfileBox>
+          <ProfileBox
+            user={userProfile}
+            uid={user?.uid}
+            isMyProfile={isMyProfile}
+          ></ProfileBox>
         </Box>
       </Box>
     </Box>

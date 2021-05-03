@@ -66,9 +66,7 @@ const useStyle = makeStyles((theme) => ({
     color: theme.palette.text.secondary,
   },
   pointerCursor: {
-    '&:hover': {
-      cursor: 'pointer',
-    },
+    cursor: 'pointer',
   },
   topicText: {
     marginLeft: theme.spacing(1),
@@ -112,12 +110,19 @@ function CardPost({ user, id, post, isLike, following }) {
     <Card className={classes.cardContainer}>
       <Box className={classes.headerContainer}>
         <Box className={classes.authorBox}>
-          <Avatar className={classes.avatarImg} src={post?.urlProfile}>
-            {post?.displayname[0].toUpperCase()}
-          </Avatar>
-          <Typography className={classes.textLabel} variant="h6">
-            {post?.displayname}
-          </Typography>
+          <Box
+            display="flex"
+            alignItems="center"
+            style={{ cursor: 'pointer' }}
+            onClick={() => history.push(`/profile/${post.authorid}`)}
+          >
+            <Avatar className={classes.avatarImg} src={post?.urlProfile}>
+              {post?.displayname[0].toUpperCase()}
+            </Avatar>
+            <Typography className={classes.textLabel} variant="h6">
+              {post?.displayname}
+            </Typography>
+          </Box>
           <Typography className={classes.textLabel} variant="subtitle2">
             {epochToDate(post?.timeStamp.seconds)}
           </Typography>
