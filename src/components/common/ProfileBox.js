@@ -133,7 +133,6 @@ function ProfileBox({ user, index }) {
   const isFollowed = false
   const classes = useStyle({ isLogin, isFollowed })
   const [isMyProfile] = useState(true)
-  const [inNameEditState, setNameEditState] = useState(false)
   const [inStatusEditState, setStatusEditState] = useState(false)
   const [inInterestEditState, setInterestEditState] = useState(false)
 
@@ -148,21 +147,17 @@ function ProfileBox({ user, index }) {
       </Box>
       <Divider className={classes.dividerLine} />
 
-
-
-
-
-
-
       {
-      /////////////////////////////////////////////case แรก size จอ > lg /////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////case แรก size จอ > lg /////////////////////////////////////////////////////////////
       }
       <Box
         display="flex"
         className={classes.picNameStaSide}
         marginBottom="15px"
       >
-        <Box width="40%" className={classes.picBox}  /////// Box เก็บรูป/////////////////////////////////////
+        <Box
+          width="40%"
+          className={classes.picBox} /////// Box เก็บรูป/////////////////////////////////////
         >
           <img
             className={classes.profilePic}
@@ -198,7 +193,7 @@ function ProfileBox({ user, index }) {
                 {user?.status}
               </Typography>
             )}
-            {isMyProfile ? (  ///////////////////// ปุ่ม สำหรับ edit฿save status ใหม่///////////////////////////
+            {isMyProfile ? ( ///////////////////// ปุ่ม สำหรับ edit฿save status ใหม่///////////////////////////
               <Box>
                 {inStatusEditState ? (
                   <SaveIcon
@@ -217,36 +212,27 @@ function ProfileBox({ user, index }) {
         </Box>
       </Box>
       {
-      ///////////////////////////////////////////// จบ case แรก size จอ > md /////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////// จบ case แรก size จอ > md /////////////////////////////////////////////////////////////
       }
 
-
-
-
-
-
-
-
-
-
-
-
       {
-      /////////////////////////////////////////////case 2  size < sm ////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////case 2  size < sm ////////////////////////////////////////////////////////////////////
       }
       <Box
         display="flex"
         className={classes.picNameStaSideLessThanSm}
         marginBottom="15px"
       >
-        <Box width="40%" className={classes.picBox}  /////// Box เก็บรูป/////////////////////////////////////
+        <Box
+          width="40%"
+          className={classes.picBox} /////// Box เก็บรูป/////////////////////////////////////
         >
           <img
             className={classes.profilePic}
             src="https://picsum.photos/200"
             alt="display"
           />
-          {isMyProfile ? (  ///////////////////////////// ปุ่มแก้ รูป profile ///////////////////////////////////
+          {isMyProfile ? ( ///////////////////////////// ปุ่มแก้ รูป profile ///////////////////////////////////
             <BuildIcon className={classes.saveEditButtonPic}></BuildIcon>
           ) : null}
         </Box>
@@ -263,7 +249,7 @@ function ProfileBox({ user, index }) {
             Status :
           </Typography>
           <Paper width="100%" className={classes.paper}>
-            {inStatusEditState ? (///////////////////// Input สำหรับใส่ค่า status ใหม่/////////////////////////
+            {inStatusEditState ? ( ///////////////////// Input สำหรับใส่ค่า status ใหม่/////////////////////////
               <InputBase
                 className={classes.allInput}
                 placeholder="single"
@@ -276,7 +262,7 @@ function ProfileBox({ user, index }) {
             )}
             {isMyProfile ? (
               <Box>
-                {inStatusEditState ? (///////////////////// ปุ่ม สำหรับ edit฿save status ใหม่/////////////////
+                {inStatusEditState ? ( ///////////////////// ปุ่ม สำหรับ edit฿save status ใหม่/////////////////
                   <SaveIcon
                     className={classes.saveEditButton}
                     onClick={() => setStatusEditState(false)}
@@ -293,24 +279,11 @@ function ProfileBox({ user, index }) {
         </Box>
       </Box>
       {
-      ///////////////////////////////////////////// จบ case 2  size < sm /////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////// จบ case 2  size < sm /////////////////////////////////////////////////////////////
       }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
       {
-      /////////////////////////////////////////////case 3(สุดท้าย) sm < size < md /////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////case 3(สุดท้าย) sm < size < md /////////////////////////////////////////////////////////////
       }
       <Box
         className={classes.picNameStaCenter}
@@ -383,7 +356,7 @@ function ProfileBox({ user, index }) {
           )}
           {isMyProfile ? (
             <Box>
-              {inStatusEditState ? (///////////////////// ปุ่ม สำหรับ edit฿save status ใหม่/////////////////
+              {inStatusEditState ? ( ///////////////////// ปุ่ม สำหรับ edit฿save status ใหม่/////////////////
                 <SaveIcon
                   className={classes.saveEditButton}
                   onClick={() => setStatusEditState(false)}
@@ -399,16 +372,8 @@ function ProfileBox({ user, index }) {
         </Paper>
       </Box>
       {
-      /////////////////////////////////////////////case 3(สุดท้าย) sm < size < md /////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////case 3(สุดท้าย) sm < size < md /////////////////////////////////////////////////////////////
       }
-
-
-
-
-
-
-
-
 
       <Typography variant="h6" className={classes.topicText}>
         Follower : 25,435
