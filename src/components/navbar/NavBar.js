@@ -158,8 +158,6 @@ function NavBar() {
   const classes = useStyle()
   const searchQuery = new URLSearchParams(useLocation().search).get('name')
 
-  console.log(searchQuery)
-
   const [searchValue, setSearchValue] = useState(searchQuery)
   const [anchorEl, setAnchorEl] = useState(null)
 

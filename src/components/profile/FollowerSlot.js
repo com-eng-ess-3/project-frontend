@@ -44,8 +44,6 @@ function FollowerSlot({
   const { setFollowingList, followingList } = useContext(UserContext)
   const [isFollow, setFollow] = useState(!!isFollowing)
 
-  console.log(value)
-
   return (
     <ListItem button onClick={() => history.push(`/profile/${value.uid}`)}>
       <ListItemAvatar>
@@ -73,7 +71,7 @@ function FollowerSlot({
                   setFollowingData([...followingData, value])
                   setFollow(true)
                 } catch (e) {
-                  console.log(e)
+                  console.log(e.message)
                 }
               }}
             >

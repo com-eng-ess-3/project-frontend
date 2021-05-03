@@ -106,7 +106,7 @@ function CommentBox({ comment, index, commentId, postId, isLike }) {
                     likeCommentId.filter((item) => item !== commentId)
                   )
                 } catch (e) {
-                  console.log(e)
+                  console.log(e.message)
                   comment.like += 1
                   setLiked(true)
                 }

@@ -122,8 +122,6 @@ function SearchResult({ name }) {
         return b.like - a.like
       })
 
-      console.log(getByDate, getByLike)
-
       setCurrentData({
         'Sort by date': getByDate,
         'Sort by like': getByLike,
