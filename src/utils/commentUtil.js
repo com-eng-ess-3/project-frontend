@@ -2,74 +2,96 @@ import { firestore, getImageUrl, increment } from './firebaseUtil'
 import { getCurrentTime } from './getTime'
 
 async function createCommentInPost(postId, content, uid, displayname) {
-  const timeStamp = getCurrentTime()
-  const docRef = firestore.collection(`posts`).doc(postId)
+  try {
+    const timeStamp = getCurrentTime()
+    const docRef = firestore.collection(`posts`).doc(postId)
 
-  const indexComment = (await docRef.get()).data().indexComment
+    const indexComment = (await docRef.get()).data().indexComment
 
-  await firestore.collection(`posts/${postId}/comment`).add({
-    timeStamp,
-    content,
-    uid,
-    index: indexComment,
-    displayname,
-    like: 0,
-  })
+    await firestore.collection(`posts/${postId}/comment`).add({
+      timeStamp,
+      content,
+      uid,
+      index: indexComment,
+      displayname,
+      like: 0,
+    })
 
-  await docRef.update({
-    indexComment: increment,
-    currentComment: increment,
-  })
+    await docRef.update({
+      indexComment: increment,
+      currentComment: increment,
+    })
+  } catch (e) {
+    throw new Error(e)
+  }
 }
 
 async function getCommentInPost(postId, lastId) {
-  let queryResult
-  if (typeof lastId !== 'number') {
-    queryResult = (
-      await firestore
-        .collection(`posts/${postId}/comment`)
-        .orderBy('timeStamp', 'desc')
-        .limit(10)
-        .get()
-    ).docs
-  } else {
-    const cursor = (
-      await firestore
-        .collection(`posts/${postId}/comment`)
-        .where('index', '==', lastId)
-        .get()
-    ).docs[0]
-    queryResult = (
-      await firestore
-        .collection(`posts/${postId}/comment`)
-        .orderBy('timeStamp', 'desc')
-        .startAfter(cursor)
-        .limit(10)
-        .get()
-    ).docs
+  try {
+    let queryResult
+    if (typeof lastId !== 'number') {
+      queryResult = (
+        await firestore
+          .collection(`posts/${postId}/comment`)
+          .orderBy('timeStamp', 'asc')
+          .limit(10)
+          .get()
+      ).docs
+    } else {
+      const cursor = (
+        await firestore
+          .collection(`posts/${postId}/comment`)
+          .where('index', '==', lastId)
+          .get()
+      ).docs[0]
+      queryResult = (
+        await firestore
+          .collection(`posts/${postId}/comment`)
+          .orderBy('timeStamp', 'asc')
+          .startAfter(cursor)
+          .limit(10)
+          .get()
+      ).docs
+    }
+    const commentData = await Promise.all(
+      queryResult.map(async (doc) => {
+        const authorUid = doc.data().uid
+        const url = await getImageUrl(authorUid)
+        return {
+          ...doc.data(),
+          commentId: doc.id,
+          urlProfile: url,
+        }
+      })
+    )
+    return commentData
+  } catch (e) {
+    throw new Error(e)
   }
-  const commentData = await Promise.all(
-    queryResult.map(async (doc) => {
-      const authorUid = doc.data().uid
-      const url = await getImageUrl(authorUid)
-      return {
-        ...doc.data(),
-        commentId: doc.id,
-        urlProfile: url,
-      }
-    })
-  )
-  return commentData
 }
 
 async function updateCommentInPost(postId, commentId, content) {
-  await firestore.collection(`posts/${postId}/comment`).doc(commentId).update({
-    content,
-  })
+  try {
+    await firestore
+      .collection(`posts/${postId}/comment`)
+      .doc(commentId)
+      .update({
+        content,
+      })
+  } catch (e) {
+    throw new Error(e)
+  }
 }
 
 async function deleteCommentInPost(postId, commentId) {
-  await firestore.collection(`posts/${postId}/comment`).doc(commentId).delete()
+  try {
+    await firestore
+      .collection(`posts/${postId}/comment`)
+      .doc(commentId)
+      .delete()
+  } catch (e) {
+    throw new Error(e)
+  }
 }
 
 export {

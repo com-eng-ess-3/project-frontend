@@ -1,17 +1,30 @@
-import { Box, Typography, makeStyles, Button, Paper, Divider } from '@material-ui/core'
-import React, { useState, useContext,  } from 'react'
+import {
+  Box,
+  Typography,
+  makeStyles,
+  Button,
+  Paper,
+  Divider,
+  CircularProgress,
+} from '@material-ui/core'
+import React, { useState, useContext, useEffect } from 'react'
 import { UserContext } from 'context/userContext'
 import { CardPost, NavBar } from 'components'
 import CreateRoundedIcon from '@material-ui/icons/CreateRounded'
 import { AccountCircleOutlined } from '@material-ui/icons'
-import { useHistory } from 'react-router'
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import ProfileBox from 'components/common/ProfileBox'
-import Avatar from '@material-ui/core/Avatar';
+import { useHistory, useParams } from 'react-router'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
+import ListItemText from '@material-ui/core/ListItemText'
+import ListItemAvatar from '@material-ui/core/ListItemAvatar'
+import ProfileBox from 'components/profile/ProfileBox'
+import Avatar from '@material-ui/core/Avatar'
+import { getUserProfile } from 'utils/profileUtil'
+import Loading from 'components/common/Loading'
+import { checkElementInsideArray, getFollowerPost } from 'utils/postUtil'
+import InfiniteScroll from 'react-infinite-scroll-component'
+
 const useStyle = makeStyles((theme) => ({
   container: {
     display: 'flex',
@@ -175,218 +188,296 @@ const useStyle = makeStyles((theme) => ({
   amountFollowingWerText: {
     color: theme.palette.background.dark,
     fontWeight: 'bold',
-  }
+  },
 }))
-
 
 function ProfilePage() {
   const history = useHistory()
-  const userState = useContext(UserContext)
-  const classes = useStyle({ isLogin: !!userState?.user })
+  const uid = useParams().id
+  const { user, likePostId, followingList } = useContext(UserContext)
+  const classes = useStyle({ isLogin: !!user })
 
-/////////////////////////////////////////////////ตรงนี้ set ไว้เบี้ยงต้นว่าเรากำลังดู profile ตัวเองรึเปล่า/////////////////////////////////////////////
-  const [isMyProfile] = useState(true) 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////ตรงนี้ set ไว้เบี้ยงต้นว่าเรากำลังดู profile ตัวเองรึเปล่า/////////////////////////////////////////////
+  const [isMyProfile] = useState(user?.uid === uid)
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+  const [userProfile, setUserProfile] = useState({
+    uid: '',
+    profileUrl: '',
+    displayName: '',
+    interested: '',
+    status: '',
+  })
+  const [post, setPost] = useState([])
+  const [followData, setFollowData] = useState({
+    follower: [],
+    following: [],
+  })
+  const [displayFollow, setDisplayFollow] = useState({
+    follower: [],
+    following: [],
+  })
+  const [isMorePost, setMorePost] = useState(true)
   const [selected, setSelected] = useState('Recent Post')
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const fetchData = await getUserProfile(uid, user?.uid === uid)
+        const fetchPost = await getFollowerPost([uid])
+
+        if (!fetchData.displayName) {
+          history.push('/')
+        }
+
+        setUserProfile({
+          uid,
+          profileUrl: fetchData.profileUrl,
+          displayName: fetchData.displayName,
+          interested: fetchData.interested,
+          status: fetchData.status,
+          followerCount: fetchData.follower.length,
+        })
+
+        setFollowData({
+          follower: fetchData.follower,
+          following: fetchData.following,
+        })
+
+        if (fetchPost.length !== 10) {
+          setMorePost(false)
+        }
+
+        setPost(fetchPost)
+      } catch {
+        history.push('/')
+      }
+    }
+
+    getData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  if (!userProfile?.displayName) {
+    return <Loading />
+  }
 
   return (
     <Box>
-      <NavBar user={userState?.user}/>
+      <NavBar />
       <Box className={classes.container}>
-        <Box className={classes.contentBox}>     
+        <Box className={classes.contentBox}>
           <Box className={classes.allPostBox}>
-
-
-
-
-
-            {////////////////////////////////////// เรียก profile box มาโผล่ตรงกลางเมื่อหน้าจอน้อยกว่าเท่ากับ sm /////////////////////////////////////
-            }
-            <Box display={{ sm: 'block', md: 'none'}} className={classes.proFileTop}>
-              <Box display='flex' justifyContent="center" width='100%'>
-                <ProfileBox user={userState?.user}/>
+            <Box
+              display={{ sm: 'block', md: 'none' }}
+              className={classes.proFileTop}
+            >
+              <Box display="flex" justifyContent="center" width="100%">
+                <ProfileBox user={userProfile} uid={user?.uid}></ProfileBox>
               </Box>
               <Divider className={classes.dividerLine} />
             </Box>
-            {///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            }
 
-            
-
-
-
-
-
-            { //////////////////////////switch เลือกระหว่าง (Recent Post) (Following(ถ้าเป็น profile ตัวเอง)) (Followers)///////////////////////
-            }
-            <Box width="100%" display="flex" justifyContent="center" marginBottom='20px'>
+            <Box
+              width="100%"
+              display="flex"
+              justifyContent="center"
+              marginBottom="20px"
+            >
               {['Recent Post', 'Following', 'Followers'].map((value, idx) => {
-                    if (value === 'Following' && !isMyProfile) {
-                      return null
-                    }
-                    return (
-                      <Button
-                        key={idx}
-                        className={
-                          selected === value
-                            ? classes.switchSelectedButton
-                            : classes.switchButton
-                        }
-                        variant="outlined"
-                        onClick={() => setSelected(value)}
-                      >
-                        {value}
-                      </Button>
-                    )
-                })}
-            </Box>
-            {///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            }
-
-
-
-
-
-
-
-
-            { //////////////////////////////////////////////// (เมื่อเรากดเลือก recent post) ////////////////////////////////////////////////////////////
-            }
-            {(selected === 'Recent Post' && isMyProfile) ? ///////// ตรงนี้ดูว่าเราดู profile ตัวเองรำเปล่า ถ้าใช่ เราสามารถสร้าง post จากตรงนี้ได้/////////
-              <Paper className={classes.newPostContainer}>
-                <AccountCircleOutlined fontSize="large" color="primary" />
-                <Paper className={classes.searchPaper} component="form">
-                  <Typography className={classes.description}>
-                    {'What’s on your mind ?'}
-                  </Typography>
-                </Paper>
-                <Button className={classes.createPostBtn} variant="outlined">
-                  <CreateRoundedIcon className={classes.createIcon} />
-                  <Typography
-                    className={classes.createText}
-                    onClick={() => history.push('/create')}
-                  >
-                    {'Create Post'}
-                  </Typography>
-                </Button>
-              </Paper>
-            : null //////////////////////////////////// จบ create new post paper//////////////////////////////////////////////////////////////
-            } 
-            
-            {[0,1,2,3,4,5,6,7,8,9].map((value,idx) => { ////////////// Show recent post /////////////////////////////////////////////////////// 
-                if (selected === 'Recent Post') {
-                  return <CardPost user={userState?.user} />
+                if (value === 'Following' && !isMyProfile) {
+                  return null
                 }
-                return null
-              })////////////////////////////////////////////////////////จบ Show recent post ///////////////////////////////////////////////////
-              }
-            { //////////////////////////////////////////////// จบ (เมื่อเรากดเลือก recent post) ////////////////////////////////////////////////////////////
-            }
-            
-
-
-
-
-
-
-
-            { //////////////////////////////////////////////// (เมื่อเรากดเลือก Following) ////////////////////////////////////////////////////////////
-            }
-            {(selected === 'Following') ? 
-              <Box width='100%' display='flex'>
-                <Typography  className={classes.amountFollowingWerText}>230 Following</Typography> 
-              </Box>
-            :null}
-            {(selected === 'Following') ?
-              <List dense className={classes.followingBox}>
-              {[0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9].map((value) => {
                 return (
-                  <ListItem key={value} button>
-                    <ListItemAvatar>
-                      <Avatar
-                        alt={`Avatar n°${value + 1}`}
-                        src={`https://picsum.photos/200`}
-                      />
-                    </ListItemAvatar>
-                    <ListItemText primary={`follwing ${value + 1}`} />
-                    <ListItemSecondaryAction>
-                      <Button variant="outlined" className={classes.unfollowbtn}>
-                        <Typography className={classes.unfollowtext}>UNFOLLOW</Typography>
-                      </Button>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                );
-              })}
-              </List>
-            : null}
-            { //////////////////////////////////////////////// จบ (เมื่อเรากดเลือก Following) ////////////////////////////////////////////////////////////
-            }
-
-
-
-
-
-
-
-
-            { //////////////////////////////////////////////// (เมื่อเรากดเลือก Followers) ////////////////////////////////////////////////////////////
-            }
-            {(selected === 'Followers') ? 
-              <Box width='100%' display='flex'>
-                <Typography  className={classes.amountFollowingWerText}>230 followers</Typography>
-              </Box>
-            :null}
-            {(selected === 'Followers') ? 
-              <List dense className={classes.followerBox}>
-              {[0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9].map((value) => {
-                //const labelId = `checkbox-list-secondary-label-${value}`;
-                return (
-                  <ListItem key={value} button>
-                    <ListItemAvatar>
-                      <Avatar
-                        alt={`Avatar n°${value + 1}`}
-                        src={`https://picsum.photos/200`}
-                      />
-                    </ListItemAvatar>
-                    <ListItemText primary={`follwing ${value + 1}`} />
-                    {(value % 3 === 0) ? 
-                      <ListItemSecondaryAction>
-                        <Button variant="outlined"  className={classes.followedbtn}>
-                          <Typography  className={classes.followedText}>followed</Typography>
-                        </Button>
-                     </ListItemSecondaryAction>
-                    :
-                      <ListItemSecondaryAction>
-                        <Button variant="outlined" className={classes.followbtn}>
-                          <Typography className={classes.followText}>+ follow</Typography>
-                        </Button>
-                    </ListItemSecondaryAction>
+                  <Button
+                    key={idx}
+                    className={
+                      selected === value
+                        ? classes.switchSelectedButton
+                        : classes.switchButton
                     }
-                  </ListItem>
-                );
+                    variant="outlined"
+                    onClick={() => setSelected(value)}
+                  >
+                    {value}
+                  </Button>
+                )
               })}
-              </List>
-            : null}
-            { //////////////////////////////////////////////// จบ (เมื่อเรากดเลือก Followers) ////////////////////////////////////////////////////////////
+            </Box>
+
+            {
+              //////////////////////////////////////////////// (เมื่อเรากดเลือก recent post) ////////////////////////////////////////////////////////////
             }
+            {
+              selected === 'Recent Post' && isMyProfile ? ( ///////// ตรงนี้ดูว่าเราดู profile ตัวเองรำเปล่า ถ้าใช่ เราสามารถสร้าง post จากตรงนี้ได้/////////
+                <Paper className={classes.newPostContainer}>
+                  <AccountCircleOutlined fontSize="large" color="primary" />
+                  <Paper className={classes.searchPaper} component="form">
+                    <Typography className={classes.description}>
+                      {'What’s on your mind ?'}
+                    </Typography>
+                  </Paper>
+                  <Button className={classes.createPostBtn} variant="outlined">
+                    <CreateRoundedIcon className={classes.createIcon} />
+                    <Typography
+                      className={classes.createText}
+                      onClick={() => history.push('/create')}
+                    >
+                      {'Create Post'}
+                    </Typography>
+                  </Button>
+                </Paper>
+              ) : null //////////////////////////////////// จบ create new post paper//////////////////////////////////////////////////////////////
+            }
+            {selected === 'Recent Post' ? (
+              <Box width="100%">
+                <InfiniteScroll
+                  dataLength={post.length}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    flexDirection: 'column',
+                    overflowY: 'hidden',
+                  }}
+                  loader={<CircularProgress color="primary" disableShrink />}
+                  endMessage={
+                    <Typography variant="h6">
+                      {'You have seen all posts!'}
+                    </Typography>
+                  }
+                  hasMore={isMorePost}
+                  next={async () => {
+                    let newData
+                    const len = post.length
 
+                    if (len > 0) {
+                      newData = await getFollowerPost(
+                        [uid],
+                        post[len - 1].index
+                      )
+                    }
 
+                    if (!newData || newData.length < 10) {
+                      setMorePost(false)
+                    }
 
+                    if (!!newData) {
+                      setPost([...post, ...newData])
+                    }
+                  }}
+                >
+                  {post.map((value) => {
+                    const isFollowing = checkElementInsideArray(
+                      followingList,
+                      value.authorid
+                    )
 
+                    const isLike = checkElementInsideArray(
+                      likePostId,
+                      value.postId
+                    )
+                    return (
+                      <CardPost
+                        user={user}
+                        following={isFollowing}
+                        isLike={isLike}
+                        post={value}
+                        id={value.postId}
+                        key={value.postId}
+                      />
+                    )
+                  })}
+                </InfiniteScroll>
+              </Box>
+            ) : null}
 
+            {selected === 'Following' ? (
+              <Box width="100%" display="flex">
+                <Typography className={classes.amountFollowingWerText}>
+                  {followData.following.length} Following
+                </Typography>
+              </Box>
+            ) : null}
+            {selected === 'Following' ? (
+              <List dense className={classes.followingBox}>
+                {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((value) => {
+                  return (
+                    <ListItem key={value} button>
+                      <ListItemAvatar>
+                        <Avatar
+                          alt={`Avatar n°${value + 1}`}
+                          src={`https://picsum.photos/200`}
+                        />
+                      </ListItemAvatar>
+                      <ListItemText primary={`follwing ${value + 1}`} />
+                      <ListItemSecondaryAction>
+                        <Button
+                          variant="outlined"
+                          className={classes.unfollowbtn}
+                        >
+                          <Typography className={classes.unfollowtext}>
+                            {'Unfollow'}
+                          </Typography>
+                        </Button>
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                  )
+                })}
+              </List>
+            ) : null}
+            {selected === 'Followers' ? (
+              <Box width="100%" display="flex">
+                <Typography className={classes.amountFollowingWerText}>
+                  {followData.follower.length} Followers
+                </Typography>
+              </Box>
+            ) : null}
+            {selected === 'Followers' ? (
+              <List dense className={classes.followerBox}>
+                {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((value) => {
+                  return (
+                    <ListItem key={value} button>
+                      <ListItemAvatar>
+                        <Avatar
+                          alt={`Avatar n°${value + 1}`}
+                          src={`https://picsum.photos/200`}
+                        />
+                      </ListItemAvatar>
+                      <ListItemText primary={`follwing ${value + 1}`} />
+                      {value % 3 === 0 ? (
+                        <ListItemSecondaryAction>
+                          <Button
+                            variant="outlined"
+                            className={classes.followedbtn}
+                          >
+                            <Typography className={classes.followedText}>
+                              followed
+                            </Typography>
+                          </Button>
+                        </ListItemSecondaryAction>
+                      ) : (
+                        <ListItemSecondaryAction>
+                          <Button
+                            variant="outlined"
+                            className={classes.followbtn}
+                          >
+                            <Typography className={classes.followText}>
+                              + follow
+                            </Typography>
+                          </Button>
+                        </ListItemSecondaryAction>
+                      )}
+                    </ListItem>
+                  )
+                })}
+              </List>
+            ) : null}
           </Box>
         </Box>
-        {////////////////////////////////////// เรียก profile box มาโผล่ทางขวามือ เมือ่ size จอใหญ่กว่า sm ขึ้นไป /////////////////////////////////
-        }
         <Box className={classes.proFileSide}>
-          <ProfileBox user={userState?.user} ></ProfileBox>
+          <ProfileBox user={userProfile} uid={user?.uid}></ProfileBox>
         </Box>
-        {//////////////////////////////////////ฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝฝ/////////////////////////////////
-        }
-
-
-
       </Box>
     </Box>
   )
