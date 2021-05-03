@@ -1,15 +1,20 @@
-import { Box, Typography, makeStyles, Button, Divider } from '@material-ui/core'
-import { NavBar,CardPost } from 'components'
+import {
+  Box,
+  Typography,
+  makeStyles,
+  Button,
+  Divider,
+  CircularProgress,
+} from '@material-ui/core'
+import { NavBar, CardPost } from 'components'
 
 import { UserContext } from 'context/userContext'
 import React, { useContext, useEffect, useState } from 'react'
 import { useHistory } from 'react-router'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import { getSearchResult, checkElementInsideArray } from 'utils/postUtil'
 
-
-
-const useStyle = makeStyles((theme) =>({
-
+const useStyle = makeStyles((theme) => ({
   container: {
     display: 'flex',
     height: '100%',
@@ -64,146 +69,162 @@ const useStyle = makeStyles((theme) =>({
     backgroundColor: theme.palette.background.dark,
   },
   searchResultPostBox: {
-    maxWidth: "830px",
+    maxWidth: '830px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    width: "100%",
+    width: '100%',
   },
   amountPostResult: {
     marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
     color: theme.palette.background.dark,
     fontWeight: 'bold',
   },
   dividerLine: {
     marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),  
+    marginBottom: theme.spacing(1),
   },
 }))
 
-
 function SearchResult({ name }) {
-  const userState = useContext(UserContext)
+  const { user, followingList, likePostId } = useContext(UserContext)
   const history = useHistory()
   const classes = useStyle()
-  const [arr, setArr] = useState([])
 
-  const [selected, setSelected] = useState('Sort by Date')
+  const [currentData, setCurrentData] = useState({
+    'Sort by date': [],
+    'Sort by like': [],
+  })
+
+  const [displayData, setDisplayData] = useState({
+    'Sort by date': [],
+    'Sort by like': [],
+  })
+
+  const [selected, setSelected] = useState('Sort by date')
 
   const tmp = []
   for (let i = 0; i < 10; i++) {
     tmp.push(i)
   }
   useEffect(() => {
-    setArr(tmp)
+    const getData = async () => {
+      const queryData = await getSearchResult(name)
+
+      const getByDate = [...queryData]
+      getByDate.sort((a, b) => {
+        return b.timeStamp.seconds - a.timeStamp.seconds
+      })
+
+      const getByLike = [...queryData]
+      getByLike.sort((a, b) => {
+        return b.like - a.like
+      })
+
+      console.log(getByDate, getByLike)
+
+      setCurrentData({
+        'Sort by date': getByDate,
+        'Sort by like': getByLike,
+      })
+
+      setDisplayData({
+        'Sort by date': getByDate.slice(0, 10),
+        'Sort by like': getByLike.slice(0, 10),
+      })
+    }
+
+    getData()
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [name])
   if (name === '') {
     history.push('/')
     return null
   }
 
   return (
-    <Box  justifyContent="center" display='flex'>
-      <NavBar user={userState?.user} />
-      <Box className={classes.container} >
+    <Box justifyContent="center" display="flex">
+      <NavBar />
+      <Box className={classes.container}>
         <Box className={classes.contentBox}>
           <Box className={classes.allPostBox}>
-            { /////////////////////////////////////////////switch เลือกระหว่าง Sort by Date ฿ Sort by Like}/////////////////////////////////
-            }
             <Box className={classes.switchContainer}>
-                {['Sort by Date', 'Sort by Like'].map((value) => {
-                  return (
-                    <Button
-                      className={
-                        selected === value
-                          ? classes.switchSelectedButton
-                          : classes.switchButton
-                      }
-                      variant="outlined"
-                      onClick={() => setSelected(value)}
-                    >
-                      {value}
-                    </Button>
-                  )
-                })}
+              {['Sort by date', 'Sort by like'].map((value) => {
+                return (
+                  <Button
+                    className={
+                      selected === value
+                        ? classes.switchSelectedButton
+                        : classes.switchButton
+                    }
+                    variant="outlined"
+                    onClick={() => setSelected(value)}
+                  >
+                    {value}
+                  </Button>
+                )
+              })}
             </Box>
-            {/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            }
-
 
             <Divider className={classes.dividerLine} />
-            <Box className={classes.searchResultPostBox}> 
+            <Box className={classes.searchResultPostBox}>
+              <Typography className={classes.amountPostResult}>
+                {`${currentData[selected].length} Post${
+                  currentData[selected].length > 1 ? 's' : ''
+                } Result`}
+              </Typography>
 
-              <Typography  className={classes.amountPostResult}>230 Posts Result</Typography> 
+              <InfiniteScroll
+                dataLength={currentData[selected].length}
+                style={{
+                  width: '90vw',
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexDirection: 'column',
+                  overflowY: 'hidden',
+                }}
+                loader={<CircularProgress color="primary" disableShrink />}
+                endMessage={
+                  <Typography variant="h6">{'End of search result'}</Typography>
+                }
+                hasMore={
+                  displayData[selected].length !== currentData[selected].length
+                }
+                next={() => {
+                  const newLen = displayData[selected].length + 10
+                  setDisplayData({
+                    ...displayData,
+                    [selected]: displayData[selected].slice(0, newLen),
+                  })
+                }}
+              >
+                {currentData[selected].map((value) => {
+                  const isFollowing = checkElementInsideArray(
+                    followingList,
+                    value.authorid
+                  )
 
-
-              {////////////////////////////////////////////////////////ที่ใส่ post result ถ้า useState == Sort by Date/////////////////////////
-               }
-               { (selected === 'Sort by Date') ?
-                <InfiniteScroll
-                  dataLength={arr.length}
-                  style={{
-                    width: '90vw',
-                    display: 'flex',
-                    alignItems: 'center',
-                    flexDirection: 'column',
-                  }}
-                  hasMore={true}
-                  next={() => {
-                    console.log(arr.length)
-                    const tmp2 = []
-                    for (let i = 0; i < 10; i++) {
-                      tmp2.push(i)
-                    }
-                    setArr([...arr, ...tmp2])
-                  }}
-                >
-                  {arr.map((_value, idx) => {
-                    return <CardPost user={userState?.user}/>
-                  })}
-                </InfiniteScroll>
-                :null}
-              {/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-              }
-
-
-
-              {////////////////////////////////////////////////////////ที่ใส่ post result ถ้า useState == Sort by Date/////////////////////////
-              }
-              { (selected === 'Sort by Like') ?
-                <InfiniteScroll
-                  dataLength={arr.length}
-                  style={{
-                    width: '90vw',
-                    display: 'flex',
-                    alignItems: 'center',
-                    flexDirection: 'column',
-                  }}
-                  hasMore={true}
-                  next={() => {
-                    console.log(arr.length)
-                    const tmp2 = []
-                    for (let i = 0; i < 10; i++) {
-                      tmp2.push(i)
-                    }
-                    setArr([...arr, ...tmp2])
-                  }}
-                >
-                  {arr.map((_value, idx) => {
-                    return <CardPost user={userState?.user}/>
-                  })}
-                </InfiniteScroll>
-              :null}
-              {/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-              }
-
-
-
-
+                  const isLike = checkElementInsideArray(
+                    likePostId,
+                    value.postId
+                  )
+                  return (
+                    <CardPost
+                      user={user}
+                      following={isFollowing}
+                      isLike={isLike}
+                      post={value}
+                      id={value.postId}
+                      key={value.postId}
+                    />
+                  )
+                })}
+              </InfiniteScroll>
             </Box>
           </Box>
-        </Box>        
+        </Box>
       </Box>
     </Box>
   )
