@@ -31,8 +31,6 @@ async function getUserProfile(userId, isAuthor) {
       )
     }
 
-    console.log(thisProfile)
-
     return {
       displayName: thisProfile.displayName,
       interested: thisProfile.interested,

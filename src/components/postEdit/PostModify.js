@@ -270,10 +270,7 @@ function PostModify({ mode, id }) {
               <Typography className={classes.boldTypo}>{'Delete'}</Typography>
             </Button>
           ) : null}
-          <Button
-            className={classes.addBtn}
-            onClick={() => console.log(contentRef.current.value.split('\n'))}
-          >
+          <Button className={classes.addBtn}>
             <Typography
               className={classes.boldTypo}
               onClick={() => {

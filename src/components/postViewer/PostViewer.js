@@ -107,7 +107,6 @@ function PostViewer({ id }) {
     const getPost = async () => {
       try {
         const postData = await getPostById(id)
-        console.log(postData)
         if (!postData) {
           return
         } else {
