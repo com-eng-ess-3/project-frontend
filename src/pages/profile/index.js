@@ -14,16 +14,13 @@ import CreateRoundedIcon from '@material-ui/icons/CreateRounded'
 import { AccountCircleOutlined } from '@material-ui/icons'
 import { useHistory, useParams } from 'react-router'
 import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
-import ListItemText from '@material-ui/core/ListItemText'
-import ListItemAvatar from '@material-ui/core/ListItemAvatar'
 import ProfileBox from 'components/profile/ProfileBox'
-import Avatar from '@material-ui/core/Avatar'
 import { getUserProfile } from 'utils/profileUtil'
 import Loading from 'components/common/Loading'
 import { checkElementInsideArray, getFollowerPost } from 'utils/postUtil'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import FollowingSlot from 'components/profile/FollowingSlot'
+import FollowerSlot from 'components/profile/FollowerSlot'
 
 const useStyle = makeStyles((theme) => ({
   container: {
@@ -161,30 +158,12 @@ const useStyle = makeStyles((theme) => ({
     width: '100%',
     backgroundColor: '#ffffff',
   },
-  unfollowbtn: {
-    borderColor: '#f50057',
-  },
-  unfollowtext: {
-    color: '#f50057',
-  },
   followerBox: {
     marginTop: theme.spacing(1),
     width: '100%',
     backgroundColor: '#ffffff',
   },
-  followedbtn: {
-    borderColor: '#c8e6c9',
-  },
-  followedText: {
-    color: '#c8e6c9',
-  },
 
-  followbtn: {
-    borderColor: theme.palette.success.main,
-  },
-  followText: {
-    color: theme.palette.success.main,
-  },
   amountFollowingWerText: {
     color: theme.palette.background.dark,
     fontWeight: 'bold',
@@ -201,24 +180,17 @@ function ProfilePage() {
   const [isMyProfile] = useState(user?.uid === uid)
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  const [userProfile, setUserProfile] = useState({
-    uid: '',
-    profileUrl: '',
-    displayName: '',
-    interested: '',
-    status: '',
-  })
+  const [userProfile, setUserProfile] = useState(null)
   const [post, setPost] = useState([])
-  const [followData, setFollowData] = useState({
+  const [followerData, setFollowerData] = useState({
     follower: [],
     following: [],
   })
-  const [displayFollow, setDisplayFollow] = useState({
-    follower: [],
-    following: [],
-  })
+  const [followingData, setFollowingData] = useState([])
   const [isMorePost, setMorePost] = useState(true)
   const [selected, setSelected] = useState('Recent Post')
+
+  const [isLoading, setLoading] = useState(true)
 
   useEffect(() => {
     const getData = async () => {
@@ -239,26 +211,26 @@ function ProfilePage() {
           followerCount: fetchData.follower.length,
         })
 
-        setFollowData({
-          follower: fetchData.follower,
-          following: fetchData.following,
-        })
+        setFollowerData(fetchData.follower)
+        setFollowingData(fetchData.following)
 
         if (fetchPost.length !== 10) {
           setMorePost(false)
         }
 
         setPost(fetchPost)
-      } catch {
+      } catch (e) {
+        console.log(e.message)
         history.push('/')
       }
+      setLoading(false)
     }
 
     getData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  if (!userProfile?.displayName) {
+  if (isLoading) {
     return <Loading />
   }
 
@@ -393,85 +365,53 @@ function ProfilePage() {
             ) : null}
 
             {selected === 'Following' ? (
-              <Box width="100%" display="flex">
-                <Typography className={classes.amountFollowingWerText}>
-                  {followData.following.length} Following
-                </Typography>
-              </Box>
-            ) : null}
-            {selected === 'Following' ? (
-              <List dense className={classes.followingBox}>
-                {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((value) => {
-                  return (
-                    <ListItem key={value} button>
-                      <ListItemAvatar>
-                        <Avatar
-                          alt={`Avatar n°${value + 1}`}
-                          src={`https://picsum.photos/200`}
-                        />
-                      </ListItemAvatar>
-                      <ListItemText primary={`follwing ${value + 1}`} />
-                      <ListItemSecondaryAction>
-                        <Button
-                          variant="outlined"
-                          className={classes.unfollowbtn}
-                        >
-                          <Typography className={classes.unfollowtext}>
-                            {'Unfollow'}
-                          </Typography>
-                        </Button>
-                      </ListItemSecondaryAction>
-                    </ListItem>
-                  )
-                })}
-              </List>
+              <React.Fragment>
+                <Box width="100%" display="flex">
+                  <Typography className={classes.amountFollowingWerText}>
+                    {followingData.length} Following
+                  </Typography>
+                </Box>
+                <List dense className={classes.followingBox}>
+                  {followingData.map((value) => {
+                    return (
+                      <FollowingSlot
+                        key={value.uid}
+                        value={value}
+                        isLogin={!!user}
+                        followingData={followingData}
+                        setFollowingData={setFollowingData}
+                      />
+                    )
+                  })}
+                </List>
+              </React.Fragment>
             ) : null}
             {selected === 'Followers' ? (
-              <Box width="100%" display="flex">
-                <Typography className={classes.amountFollowingWerText}>
-                  {followData.follower.length} Followers
-                </Typography>
-              </Box>
-            ) : null}
-            {selected === 'Followers' ? (
-              <List dense className={classes.followerBox}>
-                {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((value) => {
-                  return (
-                    <ListItem key={value} button>
-                      <ListItemAvatar>
-                        <Avatar
-                          alt={`Avatar n°${value + 1}`}
-                          src={`https://picsum.photos/200`}
-                        />
-                      </ListItemAvatar>
-                      <ListItemText primary={`follwing ${value + 1}`} />
-                      {value % 3 === 0 ? (
-                        <ListItemSecondaryAction>
-                          <Button
-                            variant="outlined"
-                            className={classes.followedbtn}
-                          >
-                            <Typography className={classes.followedText}>
-                              followed
-                            </Typography>
-                          </Button>
-                        </ListItemSecondaryAction>
-                      ) : (
-                        <ListItemSecondaryAction>
-                          <Button
-                            variant="outlined"
-                            className={classes.followbtn}
-                          >
-                            <Typography className={classes.followText}>
-                              + follow
-                            </Typography>
-                          </Button>
-                        </ListItemSecondaryAction>
-                      )}
-                    </ListItem>
-                  )
-                })}
-              </List>
+              <React.Fragment>
+                <Box width="100%" display="flex">
+                  <Typography className={classes.amountFollowingWerText}>
+                    {followerData.length} Followers
+                  </Typography>
+                </Box>
+                <List dense className={classes.followerBox}>
+                  {followerData.map((value) => {
+                    const isFollowing = checkElementInsideArray(
+                      followingList,
+                      value.uid
+                    )
+                    return (
+                      <FollowerSlot
+                        key={value.uid}
+                        value={value}
+                        isFollowing={isFollowing}
+                        followingData={followingData}
+                        setFollowingData={setFollowingData}
+                        isLogin={!!user}
+                      />
+                    )
+                  })}
+                </List>
+              </React.Fragment>
             ) : null}
           </Box>
         </Box>

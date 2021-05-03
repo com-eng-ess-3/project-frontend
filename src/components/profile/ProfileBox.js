@@ -136,9 +136,9 @@ const useStyle = makeStyles((theme) => ({
   },
 }))
 
-function ProfileBox({ user, index }) {
+function ProfileBox({ user }) {
   const classes = useStyle()
-  const [isMyProfile] = useState(auth.currentUser.uid === user.uid)
+  const [isMyProfile] = useState(auth.currentUser?.uid === user.uid)
   const [inStatusEditState, setStatusEditState] = useState(false)
   const [inInterestEditState, setInterestEditState] = useState(false)
 

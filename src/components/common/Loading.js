@@ -1,18 +1,18 @@
-import { Backdrop, Box, CircularProgress } from '@material-ui/core'
+import { Box, CircularProgress } from '@material-ui/core'
 import React from 'react'
 
 function Loading() {
   return (
     <Box
+      bgcolor="background.default"
       display="flex"
       alignItems="center"
       justifyContent="center"
-      width="100%"
+      width="100vw"
       height="100vh"
+      zIndex={99}
     >
-      <Backdrop open={true}>
-        <CircularProgress color="primary" disableShrink />
-      </Backdrop>
+      <CircularProgress color="secondary" disableShrink />
     </Box>
   )
 }

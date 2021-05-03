@@ -6,13 +6,13 @@ import { UserProvider } from 'context/userContext'
 
 function App() {
   return (
-    <UserProvider>
-      <Router>
-        <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme}>
+      <UserProvider>
+        <Router>
           <PageRouting />
-        </ThemeProvider>
-      </Router>
-    </UserProvider>
+        </Router>
+      </UserProvider>
+    </ThemeProvider>
   )
 }
 
