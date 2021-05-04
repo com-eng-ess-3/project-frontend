@@ -402,7 +402,7 @@ function ProfileBox({ user, isMyProfile }) {
               onChange={(e) => handleStatusChange(e.target.value)}
             />
           ) : (
-            <Typography variant="subtitle1" noWrap className={classes.content}>
+            <Typography variant="h6" noWrap className={classes.content}>
               {statusValue}
             </Typography>
           )}
