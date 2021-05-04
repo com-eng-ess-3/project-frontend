@@ -97,7 +97,7 @@ function CommentBox({ comment, index, commentId, postId, isLike, isLogin }) {
                 try {
                   if (!isLogin) {
                     setNewErrorMsg('Please login first')
-                    history.replace(`/login`)
+                    history.push(`/login`)
                     return
                   }
                   comment.like += 1
