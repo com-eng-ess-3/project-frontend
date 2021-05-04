@@ -8,6 +8,7 @@ import {
   makeStyles,
   Typography,
 } from '@material-ui/core'
+import { ErrorContext } from 'context/ErrorContext'
 import { UserContext } from 'context/userContext'
 import React, { useContext } from 'react'
 import { useHistory } from 'react-router'
@@ -29,6 +30,7 @@ function FollowingSlot({ value, setFollowingData, followingData, isLogin }) {
   const classes = useStyle()
   const history = useHistory()
   const { setFollowingList, followingList } = useContext(UserContext)
+  const { setNewErrorMsg } = useContext(ErrorContext)
 
   return (
     <ListItem button onClick={() => history.push(`/profile/${value.uid}`)}>
@@ -52,7 +54,9 @@ function FollowingSlot({ value, setFollowingData, followingData, isLogin }) {
                 setFollowingData(
                   followingData.filter((item) => item.uid !== value.uid)
                 )
-              } catch {}
+              } catch {
+                setNewErrorMsg('Failed to unfollow user')
+              }
             }}
           >
             <Typography className={classes.unfollowtext}>

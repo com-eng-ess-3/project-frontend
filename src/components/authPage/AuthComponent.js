@@ -1,5 +1,6 @@
 import { Box, Button, Divider, makeStyles, Typography } from '@material-ui/core'
 import { Banner, TextFieldStyled } from 'components'
+import Loading from 'components/common/Loading'
 import { UserContext } from 'context/userContext'
 import React, { useContext, useEffect, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
@@ -78,6 +79,7 @@ function AuthComponent({ isRegister, urlRedirect }) {
   const [confirmPassword, setConfirmPassword] = useState('')
 
   const [errorMsg, setErrorMsg] = useState('')
+  const [isFinish, setFinish] = useState(true)
 
   const userAuth = useContext(UserContext)
 
@@ -130,6 +132,7 @@ function AuthComponent({ isRegister, urlRedirect }) {
         } else {
           setErrorMsg(e.message)
         }
+        setFinish(true)
         return
       }
     } else {
@@ -145,7 +148,10 @@ function AuthComponent({ isRegister, urlRedirect }) {
           code === 'auth/user-not-found'
         ) {
           setErrorMsg('Your email or password is not correct')
+        } else {
+          setErrorMsg('Unknown Error')
         }
+        setFinish(true)
         return
       }
     }
@@ -165,6 +171,10 @@ function AuthComponent({ isRegister, urlRedirect }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  if (!isFinish) {
+    return <Loading />
+  }
 
   return (
     <Box className={classes.pageContainer}>
@@ -206,7 +216,10 @@ function AuthComponent({ isRegister, urlRedirect }) {
           ) : null}
           <Button
             className={classes.loginButton}
-            onClick={handleAuthAction}
+            onClick={() => {
+              setFinish(false)
+              handleAuthAction()
+            }}
             variant="contained"
           >
             {isRegisterPage ? 'Register' : 'Sign in'}

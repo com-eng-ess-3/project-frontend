@@ -7,6 +7,7 @@ import {
   Typography,
 } from '@material-ui/core'
 import { ThumbUpAlt, ThumbUpAltOutlined } from '@material-ui/icons'
+import { ErrorContext } from 'context/ErrorContext'
 import { UserContext } from 'context/userContext'
 import React, { useContext, useState } from 'react'
 import { useHistory } from 'react-router'
@@ -53,6 +54,9 @@ const useStyle = makeStyles((theme) => ({
 function CommentBox({ comment, index, commentId, postId, isLike, isLogin }) {
   const classes = useStyle()
   const history = useHistory()
+
+  const { setNewErrorMsg } = useContext(ErrorContext)
+
   const { likeCommentId, setLikeCommentId } = useContext(UserContext)
   const [isLiked, setLiked] = useState(isLike)
 
@@ -91,6 +95,11 @@ function CommentBox({ comment, index, commentId, postId, isLike, isLogin }) {
               className={`${classes.clickableNode} `}
               onClick={async () => {
                 try {
+                  if (!isLogin) {
+                    setNewErrorMsg('Please login first')
+                    history.replace(`/login`)
+                    return
+                  }
                   comment.like += 1
                   setLiked(true)
                   await handleWhenLike(postId, commentId)
@@ -114,7 +123,7 @@ function CommentBox({ comment, index, commentId, postId, isLike, isLogin }) {
                     likeCommentId.filter((item) => item !== commentId)
                   )
                 } catch (e) {
-                  console.log(e.message)
+                  setNewErrorMsg('Failed to do dislike action')
                   comment.like += 1
                   setLiked(true)
                 }

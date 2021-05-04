@@ -21,6 +21,7 @@ import {
 } from 'utils/actionUtil'
 import { UserContext } from 'context/userContext'
 import { useHistory } from 'react-router'
+import { ErrorContext } from 'context/ErrorContext'
 
 const useStyle = makeStyles((theme) => ({
   mainPost: {
@@ -115,6 +116,8 @@ function MainPost({ data, isLike, postId, isFollow, isLogin }) {
     followingList,
     setFollowingList,
   } = useContext(UserContext)
+
+  const { setNewErrorMsg } = useContext(ErrorContext)
   const [isLiked, setLiked] = useState(isLike)
   const [isFollowing, setFollowing] = useState(isFollow)
 
@@ -178,11 +181,17 @@ function MainPost({ data, isLike, postId, isFollow, isLogin }) {
                   className={classes.clickableNode}
                   onClick={async () => {
                     try {
+                      if (!isLogin) {
+                        setNewErrorMsg('Please login first')
+                        history.push(`/login`)
+                        return
+                      }
                       data.like += 1
                       setLiked(true)
                       await handleWhenLike(postId)
                       setLikePostId([...likePostId, postId])
                     } catch (e) {
+                      setNewErrorMsg('Failed to do like action')
                       data.like -= 1
                       setLiked(false)
                     }
@@ -200,6 +209,7 @@ function MainPost({ data, isLike, postId, isFollow, isLogin }) {
                         likePostId.filter((item) => item !== postId)
                       )
                     } catch {
+                      setNewErrorMsg('Failed to do dislike action')
                       setLiked(true)
                       data.like += 1
                     }
@@ -278,6 +288,7 @@ function MainPost({ data, isLike, postId, isFollow, isLogin }) {
                     )
                   }
                 } catch (e) {
+                  setNewErrorMsg('Failed to do follow / unfollow action')
                   console.log(e.message)
                   setFollowing(prevState)
                 }

@@ -8,6 +8,7 @@ import {
 } from '@material-ui/core'
 import { ChipTag, TextFieldStyled } from 'components'
 import Loading from 'components/common/Loading'
+import { ErrorContext } from 'context/ErrorContext'
 import { UserContext } from 'context/userContext'
 import React, { useContext, useEffect, useState } from 'react'
 import { useHistory } from 'react-router'
@@ -88,6 +89,8 @@ function PostModify({ mode, id }) {
   const classes = useStyle()
   const history = useHistory()
 
+  const { setNewErrorMsg } = useContext(ErrorContext)
+
   const [topicData, setTopicData] = useState('')
   const [contentData, setContentData] = useState('')
   const [isFinish, setFinish] = useState(false)
@@ -125,7 +128,7 @@ function PostModify({ mode, id }) {
       await editPostById(topic, content, tag, id)
       history.push(`/post/${id}`)
     } catch (e) {
-      console.log(e.message)
+      setNewErrorMsg('Failed to edit post')
       setFinish(true)
     }
   }
@@ -158,7 +161,7 @@ function PostModify({ mode, id }) {
 
       history.push(`/post/${id}`)
     } catch (e) {
-      console.log(e.message)
+      setNewErrorMsg('Failed to add post')
       setFinish(true)
     }
   }
@@ -167,9 +170,11 @@ function PostModify({ mode, id }) {
     const getData = async () => {
       const postData = await getPostById(id)
       if (!postData) {
+        setNewErrorMsg('Failed to fetch post data')
         history.push('/')
         return
       } else if (postData.authorid !== user.uid) {
+        setNewErrorMsg('Permission denied')
         history.push('/')
         return
       }
@@ -184,7 +189,13 @@ function PostModify({ mode, id }) {
     } else {
       setFinish(true)
     }
-  }, [history, id, mode, user?.uid])
+  }, [history, id, mode, setNewErrorMsg, user?.uid])
+
+  if (!user) {
+    setNewErrorMsg('Please login first')
+    history.replace('/login')
+    return null
+  }
 
   if (!isFinish) {
     return <Loading />
@@ -281,6 +292,7 @@ function PostModify({ mode, id }) {
                   await deletePost(id)
                   history.push('/')
                 } catch (e) {
+                  setNewErrorMsg('Failed to delete post')
                   setFinish(true)
                 }
               }}

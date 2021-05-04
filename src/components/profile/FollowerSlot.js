@@ -8,6 +8,7 @@ import {
   makeStyles,
   Typography,
 } from '@material-ui/core'
+import { ErrorContext } from 'context/ErrorContext'
 import { UserContext } from 'context/userContext'
 import React from 'react'
 import { useContext } from 'react'
@@ -46,6 +47,7 @@ function FollowerSlot({
   const classes = useStyle()
 
   const { setFollowingList, followingList } = useContext(UserContext)
+  const { setNewErrorMsg } = useContext(ErrorContext)
   const [isFollow, setFollow] = useState(!!isFollowing)
 
   return (
@@ -70,11 +72,17 @@ function FollowerSlot({
               className={classes.followbtn}
               onClick={async () => {
                 try {
+                  if (!isLogin) {
+                    setNewErrorMsg('Please Login First')
+                    history.push('/login')
+                    return
+                  }
                   await followUser(value.uid)
                   setFollowingList([...followingList, value.uid])
                   setFollowingData([...followingData, value])
                   setFollow(true)
                 } catch (e) {
+                  setNewErrorMsg('Failed to follow user')
                   console.log(e.message)
                 }
               }}
