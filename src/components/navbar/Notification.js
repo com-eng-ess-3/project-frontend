@@ -85,9 +85,9 @@ const AllNotificationCard = React.memo(({ isSideBar }) => {
   return (
     <Box
       padding={isSideBar ? 1 : 2}
-      height={isSideBar ? height * 0.7 : height * 0.9}
+      height={isSideBar ? height * 0.7 : height * 0.8}
       overflow="auto"
-      width={'200px'}
+      width={isSideBar ? '200px' : '250px'}
       style={{ backgroundColor: '#FFF' }}
     >
       <Typography
@@ -102,9 +102,16 @@ const AllNotificationCard = React.memo(({ isSideBar }) => {
         Notification
       </Typography>
       <Divider />
-      <Box width={'200px'}>
+      <Box width={isSideBar ? '200px' : '250px'}>
         {notificationList.map((value, idx) => {
-          return <NotificationCard type={value.type} data={value} key={idx} />
+          return (
+            <NotificationCard
+              isSideBar={isSideBar}
+              type={value.type}
+              data={value}
+              key={idx}
+            />
+          )
         })}
       </Box>
     </Box>

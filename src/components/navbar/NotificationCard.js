@@ -18,7 +18,7 @@ const useStyle = makeStyles((theme) => ({
   content: {
     wordBreak: 'break-word',
     color: theme.palette.secondary.main,
-    width: '170px',
+    width: (props) => (props.isSideBar ? '170px' : '220px'),
   },
   newAdd: {
     border: `2px solid ${theme.palette.error.main}`,
@@ -36,8 +36,8 @@ const useStyle = makeStyles((theme) => ({
   },
 }))
 
-function NotificationCard({ type, data }) {
-  const classes = useStyle()
+function NotificationCard({ type, data, isSideBar }) {
+  const classes = useStyle({ isSideBar: !!isSideBar })
   const history = useHistory()
 
   if (!data) {
@@ -65,11 +65,6 @@ function NotificationCard({ type, data }) {
               {data.topic}
             </Typography>
           </React.Fragment>
-        ) : type === 'Follow' ? (
-          <Typography noWrap={true}>
-            HelloWorld
-            fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
-          </Typography>
         ) : null}
         {isNewNotification(data.timeStamp) ? (
           <Box display="flex">
