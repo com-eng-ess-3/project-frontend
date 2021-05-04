@@ -11,6 +11,7 @@ import CommentIcon from '@material-ui/icons/Comment'
 import { ChipTag } from 'components'
 import FollowBtn from 'components/common/FollowBtn'
 import ModifyButtonSet from 'components/common/ModifyButtonSet'
+import { ErrorContext } from 'context/ErrorContext'
 import { UserContext } from 'context/userContext'
 import React, { memo, useContext, useEffect, useState } from 'react'
 import { useHistory } from 'react-router'
@@ -98,6 +99,8 @@ function CardPost({ user, id, post, isLike, following }) {
     setFollowingList,
     followingList,
   } = useContext(UserContext)
+
+  const { setNewErrorMsg } = useContext(ErrorContext)
   const [isLiked, setLiked] = useState(isLike)
   const [isFollowing, setFollowing] = useState(following)
 
@@ -192,11 +195,17 @@ function CardPost({ user, id, post, isLike, following }) {
                 className={classes.pointerCursor}
                 onClick={async () => {
                   try {
+                    if (!user) {
+                      setNewErrorMsg('Please login first')
+                      history.push(`/login`)
+                      return
+                    }
                     post.like += 1
                     setLiked(true)
                     await handleWhenLike(id)
                     setLikePostId([...likePostId, id])
                   } catch (e) {
+                    setNewErrorMsg('Failed to do like action')
                     post.like = Math.max(post.like - 1, 0)
                     setLiked(false)
                   }
@@ -212,6 +221,7 @@ function CardPost({ user, id, post, isLike, following }) {
                     await handleWhenDislike(id)
                     setLikePostId(likePostId.filter((item) => item !== id))
                   } catch (e) {
+                    setNewErrorMsg('Failed to do dislike action')
                     post.like += 1
                     setLiked(true)
                   }

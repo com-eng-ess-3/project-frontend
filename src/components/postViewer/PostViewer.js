@@ -10,6 +10,7 @@ import {
 } from '@material-ui/core'
 import { TextFieldStyled } from 'components'
 import Loading from 'components/common/Loading'
+import { ErrorContext } from 'context/ErrorContext'
 import { UserContext } from 'context/userContext'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
@@ -98,6 +99,8 @@ function PostViewer({ id }) {
   const { user, likePostId, likeCommentId, followingList } = useContext(
     UserContext
   )
+  const { setNewErrorMsg } = useContext(ErrorContext)
+
   const commentField = useRef(null)
 
   const [mainPost, setMainPost] = useState(null)
@@ -114,7 +117,7 @@ function PostViewer({ id }) {
           setMainPost(postData)
         }
       } catch (e) {
-        console.log(e.message)
+        setNewErrorMsg('Failed to fetch post data')
         return
       }
     }
@@ -131,16 +134,21 @@ function PostViewer({ id }) {
           setMoreComment(false)
         }
       } catch (e) {
-        console.log(e.message)
+        setNewErrorMsg('Failed to fetch comment data')
       }
     }
 
     getPost()
     getComment()
-  }, [history, id])
+  }, [history, id, setNewErrorMsg])
 
   const handleAddComment = async () => {
     try {
+      if (!user) {
+        setNewErrorMsg('Please login first')
+        history.push(`/login`)
+        return
+      }
       const comment = commentField.current.value
       if (comment.length === 0) {
         return
@@ -148,7 +156,7 @@ function PostViewer({ id }) {
       await createCommentInPost(id, comment, user.uid, user.displayName)
       window.location.reload()
     } catch (e) {
-      console.log(e.message)
+      setNewErrorMsg('Failed to create comment')
     }
   }
 
@@ -193,14 +201,18 @@ function PostViewer({ id }) {
           className={`${classes.rootBox} ${classes.commentBox}`}
           hasMore={moreComment}
           next={async () => {
-            const nextComment = await getCommentInPost(
-              id,
-              comment[comment.length - 1].index
-            )
-            if (nextComment.length < 10) {
-              setMoreComment(false)
+            try {
+              const nextComment = await getCommentInPost(
+                id,
+                comment[comment.length - 1].index
+              )
+              if (nextComment.length < 10) {
+                setMoreComment(false)
+              }
+              setComment([...comment, ...nextComment])
+            } catch {
+              setNewErrorMsg('Failed to fetch comment data')
             }
-            setComment([...comment, ...nextComment])
           }}
         >
           {comment.map((value, idx) => {

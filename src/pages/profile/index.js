@@ -21,6 +21,7 @@ import { checkElementInsideArray, getFollowerPost } from 'utils/postUtil'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import FollowingSlot from 'components/profile/FollowingSlot'
 import FollowerSlot from 'components/profile/FollowerSlot'
+import { ErrorContext } from 'context/ErrorContext'
 
 const useStyle = makeStyles((theme) => ({
   container: {
@@ -174,6 +175,7 @@ function ProfilePage() {
   const history = useHistory()
   const uid = useParams().id
   const { user, likePostId, followingList } = useContext(UserContext)
+  const { setNewErrorMsg } = useContext(ErrorContext)
   const classes = useStyle()
 
   /////////////////////////////////////////////////ตรงนี้ set ไว้เบี้ยงต้นว่าเรากำลังดู profile ตัวเองรึเปล่า/////////////////////////////////////////////
@@ -220,7 +222,7 @@ function ProfilePage() {
 
         setPost(fetchPost)
       } catch (e) {
-        console.log(e.message)
+        setNewErrorMsg('Failed to fetch user profile')
         history.push('/')
       }
       setLoading(false)
@@ -412,7 +414,7 @@ function ProfilePage() {
                     return (
                       <FollowerSlot
                         key={value.uid}
-                        isMyself={value.uid === user.uid}
+                        isMyself={value?.uid === user?.uid}
                         value={value}
                         isFollowing={isFollowing}
                         followingData={followingData}

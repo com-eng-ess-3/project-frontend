@@ -9,11 +9,19 @@ import {
   Avatar,
 } from '@material-ui/core'
 
-import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
+import React, {
+  memo,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import BuildIcon from '@material-ui/icons/Build'
 import SaveIcon from '@material-ui/icons/Save'
 import { storage, firebase } from 'utils/firebaseUtil'
 import { updateProfileDetail } from 'utils/profileUtil'
+import { ErrorContext } from 'context/ErrorContext'
 
 const useStyle = makeStyles((theme) => ({
   cardContainer: {
@@ -152,6 +160,8 @@ const useStyle = makeStyles((theme) => ({
 
 function ProfileBox({ user, isMyProfile }) {
   const classes = useStyle()
+  const { setNewErrorMsg } = useContext(ErrorContext)
+
   const [inStatusEditState, setStatusEditState] = useState(false)
   const [inInterestEditState, setInterestEditState] = useState(false)
 
@@ -170,10 +180,11 @@ function ProfileBox({ user, isMyProfile }) {
       }
       await updateProfileDetail(user.uid, 'status', statusValue)
     } catch {
+      setNewErrorMsg('Failed to update status')
       setStatusValue(prevStatusState)
     }
     setStatusEditState(false)
-  }, [prevStatusState, statusValue, user.uid])
+  }, [prevStatusState, setNewErrorMsg, statusValue, user.uid])
 
   const handleInterestedEdit = useCallback(async () => {
     try {
@@ -183,10 +194,11 @@ function ProfileBox({ user, isMyProfile }) {
       }
       await updateProfileDetail(user.uid, 'interested', interestValue)
     } catch {
+      setNewErrorMsg('Failed to update interested')
       setInterestValue(prevInterestState)
     }
     setInterestEditState(false)
-  }, [interestValue, prevInterestState, user.uid])
+  }, [interestValue, prevInterestState, setNewErrorMsg, user.uid])
 
   useEffect(() => {
     setStatusValue(user?.status)
@@ -458,6 +470,11 @@ function ProfileBox({ user, isMyProfile }) {
             const reader = new FileReader()
             const file = e.target.files[0]
 
+            if (file.length >= 5 * 1024 * 1024) {
+              setNewErrorMsg('This image file is too large (More than 5 MB)')
+              return
+            }
+
             reader.addEventListener('load', () => {
               storage
                 .ref()
@@ -466,6 +483,9 @@ function ProfileBox({ user, isMyProfile }) {
                 .on(firebase.storage.TaskEvent.STATE_CHANGED, {
                   complete: function () {
                     window.location.reload()
+                  },
+                  error: function () {
+                    setNewErrorMsg('Failed to upload image')
                   },
                 })
             })
