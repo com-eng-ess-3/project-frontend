@@ -200,6 +200,13 @@ function ProfileBox({ user, isMyProfile }) {
     setInterestEditState(false)
   }, [interestValue, prevInterestState, setNewErrorMsg, user.uid])
 
+  const handleStatusChange = useCallback((newStatus) => {
+    if (newStatus.length > 25) {
+      return
+    }
+    setStatusValue(newStatus)
+  }, [])
+
   useEffect(() => {
     setStatusValue(user?.status)
     setInterestValue(user?.interested)
@@ -257,7 +264,7 @@ function ProfileBox({ user, isMyProfile }) {
               <InputBase
                 className={classes.allInput}
                 value={statusValue}
-                onChange={(e) => setStatusValue(e.target.value)}
+                onChange={(e) => handleStatusChange(e.target.value)}
               />
             ) : (
               <Typography variant="h6" noWrap className={classes.content}>
@@ -323,10 +330,10 @@ function ProfileBox({ user, isMyProfile }) {
               <InputBase
                 className={classes.allInput}
                 value={statusValue}
-                onChange={(e) => setStatusValue(e.target.value)}
+                onChange={(e) => handleStatusChange(e.target.value)}
               />
             ) : (
-              <Typography variant="h6" className={classes.content}>
+              <Typography variant="h6" noWrap className={classes.content}>
                 {statusValue}
               </Typography>
             )}
@@ -392,10 +399,10 @@ function ProfileBox({ user, isMyProfile }) {
             <InputBase
               className={classes.allInput}
               value={statusValue}
-              onChange={(e) => setStatusValue(e.target.value)}
+              onChange={(e) => handleStatusChange(e.target.value)}
             />
           ) : (
-            <Typography variant="h6" className={classes.content}>
+            <Typography variant="subtitle1" noWrap className={classes.content}>
               {statusValue}
             </Typography>
           )}

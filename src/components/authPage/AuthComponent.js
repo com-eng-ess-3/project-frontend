@@ -94,6 +94,10 @@ function AuthComponent({ isRegister, urlRedirect }) {
           throw new Error('Your display name cannot be empty')
         }
 
+        if (displayName.length > 20) {
+          throw new Error('Your display name is longer than 20 characters')
+        }
+
         const userAuth = await auth.createUserWithEmailAndPassword(
           email,
           password
