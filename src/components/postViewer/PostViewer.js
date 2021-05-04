@@ -186,7 +186,7 @@ function PostViewer({ id }) {
               {'You have seen all comments!'}
             </Typography>
           }
-          loader={<CircularProgress color="primary" disableShrink />}
+          loader={<CircularProgress color="secondary" disableShrink />}
           dataLength={comment.length}
           className={`${classes.rootBox} ${classes.commentBox}`}
           hasMore={moreComment}
