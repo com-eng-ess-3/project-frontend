@@ -311,7 +311,7 @@ function NavBar() {
           >
             <InputBase
               className={classes.searchInput}
-              value={searchValue}
+              value={!!searchValue ? searchValue : ''}
               onChange={(e) => setSearchValue(e.target.value)}
               placeholder="Search"
             ></InputBase>

@@ -1,5 +1,4 @@
-import { firestore, increment, decrement, auth } from './firebaseUtil'
-import firebase from 'firebase'
+import { firestore, increment, decrement, auth, firebase } from './firebaseUtil'
 
 async function handleWhenLike(postId, commentId) {
   const uid = auth.currentUser.uid

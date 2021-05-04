@@ -12,8 +12,7 @@ import {
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
 import BuildIcon from '@material-ui/icons/Build'
 import SaveIcon from '@material-ui/icons/Save'
-import { storage } from 'utils/firebaseUtil'
-import firebase from 'firebase'
+import { storage, firebase } from 'utils/firebaseUtil'
 import { updateProfileDetail } from 'utils/profileUtil'
 
 const useStyle = makeStyles((theme) => ({
