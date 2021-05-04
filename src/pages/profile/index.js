@@ -412,6 +412,7 @@ function ProfilePage() {
                     return (
                       <FollowerSlot
                         key={value.uid}
+                        isMyself={value.uid === user.uid}
                         value={value}
                         isFollowing={isFollowing}
                         followingData={followingData}
