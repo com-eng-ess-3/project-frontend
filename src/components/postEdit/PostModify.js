@@ -7,8 +7,9 @@ import {
   withStyles,
 } from '@material-ui/core'
 import { ChipTag, TextFieldStyled } from 'components'
+import Loading from 'components/common/Loading'
 import { UserContext } from 'context/userContext'
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useHistory } from 'react-router'
 import { getColor } from 'utils/chipColorUtil'
 import {
@@ -86,8 +87,10 @@ const ContentText = withStyles((theme) => ({
 function PostModify({ mode, id }) {
   const classes = useStyle()
   const history = useHistory()
-  const topicRef = useRef(null)
-  const contentRef = useRef(null)
+
+  const [topicData, setTopicData] = useState('')
+  const [contentData, setContentData] = useState('')
+  const [isFinish, setFinish] = useState(false)
   const [tagLabel, setTagLabel] = useState('')
 
   const { user } = useContext(UserContext)
@@ -112,8 +115,8 @@ function PostModify({ mode, id }) {
   }
 
   const handleEditPost = async () => {
-    const topic = topicRef.current.value
-    const content = contentRef.current.value
+    const topic = topicData
+    const content = contentData
     const tag = chipData.map((value) => ({
       color: value.color,
       label: value.label,
@@ -123,12 +126,13 @@ function PostModify({ mode, id }) {
       history.push(`/post/${id}`)
     } catch (e) {
       console.log(e.message)
+      setFinish(true)
     }
   }
 
   const handleAddPost = async () => {
-    const topic = topicRef.current.value
-    const content = contentRef.current.value
+    const topic = topicData
+    const content = contentData
 
     if (topic === '') {
       return
@@ -155,6 +159,7 @@ function PostModify({ mode, id }) {
       history.push(`/post/${id}`)
     } catch (e) {
       console.log(e.message)
+      setFinish(true)
     }
   }
 
@@ -168,14 +173,22 @@ function PostModify({ mode, id }) {
         history.push('/')
         return
       }
-      topicRef.current.value = postData.topic
-      contentRef.current.value = postData.content
+      setTopicData(postData.topic)
+      setContentData(postData.content)
       setChipData(postData.tag.map((value, idx) => ({ ...value, key: idx })))
+      setFinish(true)
     }
     if (mode === 'Edit') {
+      setFinish(false)
       getData()
+    } else {
+      setFinish(true)
     }
   }, [history, id, mode, user?.uid])
+
+  if (!isFinish) {
+    return <Loading />
+  }
 
   return (
     <Box className={classes.rootBox} display="flex" justifyContent="center">
@@ -189,7 +202,12 @@ function PostModify({ mode, id }) {
             <Typography className={classes.textLabel} variant="subtitle1">
               {'Topic Name:'}
             </Typography>
-            <TextFieldStyled inputRef={topicRef} fullWidth variant="outlined" />
+            <TextFieldStyled
+              value={topicData}
+              onChange={(e) => setTopicData(e.target.value)}
+              fullWidth
+              variant="outlined"
+            />
           </Box>
           <Box>
             <Box display="flex" alignItems="center" flexWrap="wrap">
@@ -236,7 +254,8 @@ function PostModify({ mode, id }) {
             <ContentText
               fullWidth
               variant="outlined"
-              inputRef={contentRef}
+              value={contentData}
+              onChange={(e) => setContentData(e.target.value)}
               multiline
               rows={10}
               rowsMax={10}
@@ -248,11 +267,7 @@ function PostModify({ mode, id }) {
           <Button
             className={classes.cancelBtn}
             onClick={() => {
-              if (mode === 'Edit') {
-                history.goBack()
-              } else if (mode === 'Create') {
-                history.push('/')
-              }
+              history.push('/')
             }}
           >
             <Typography className={classes.boldTypo}>{'Cancel'}</Typography>
@@ -262,9 +277,12 @@ function PostModify({ mode, id }) {
               className={`${classes.deleteBtn}`}
               onClick={async () => {
                 try {
+                  setFinish(false)
                   await deletePost(id)
                   history.push('/')
-                } catch (e) {}
+                } catch (e) {
+                  setFinish(true)
+                }
               }}
             >
               <Typography className={classes.boldTypo}>{'Delete'}</Typography>
@@ -274,6 +292,7 @@ function PostModify({ mode, id }) {
             <Typography
               className={classes.boldTypo}
               onClick={() => {
+                setFinish(false)
                 if (mode === 'Edit') {
                   handleEditPost()
                 } else {
