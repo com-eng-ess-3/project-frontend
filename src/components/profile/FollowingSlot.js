@@ -20,6 +20,9 @@ const useStyle = makeStyles((theme) => ({
   unfollowtext: {
     color: '#f50057',
   },
+  avatarImg: {
+    color: theme.palette.common.black,
+  },
 }))
 
 function FollowingSlot({ value, setFollowingData, followingData, isLogin }) {
@@ -30,7 +33,7 @@ function FollowingSlot({ value, setFollowingData, followingData, isLogin }) {
   return (
     <ListItem button onClick={() => history.push(`/profile/${value.uid}`)}>
       <ListItemAvatar>
-        <Avatar src={value.profileUrl}>
+        <Avatar src={value.profileUrl} className={classes.avatarImg}>
           {value?.displayname[0].toUpperCase()}
         </Avatar>
       </ListItemAvatar>

@@ -45,6 +45,9 @@ const useStyle = makeStyles((theme) => ({
     display: 'flex',
     color: theme.palette.text.secondary,
   },
+  avatarImg: {
+    color: theme.palette.common.black,
+  },
 }))
 
 function CommentBox({ comment, index, commentId, postId, isLike }) {
@@ -71,7 +74,7 @@ function CommentBox({ comment, index, commentId, postId, isLike }) {
             style={{ cursor: 'pointer' }}
             onClick={() => history.push(`/profile/${comment.uid}`)}
           >
-            <Avatar src={comment.urlProfile}>
+            <Avatar src={comment.urlProfile} className={classes.avatarImg}>
               {comment.displayname[0].toUpperCase()}
             </Avatar>
             <Typography className={classes.textLabel} variant="subtitle1">
