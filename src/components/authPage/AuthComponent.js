@@ -104,6 +104,7 @@ function AuthComponent({ isRegister, urlRedirect }) {
           interested: '',
           status: '',
           displayName,
+          profileUrl: '',
         })
 
         await firestore
