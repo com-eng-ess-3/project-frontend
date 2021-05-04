@@ -219,9 +219,7 @@ function MainPost({ data, isLike, postId, isFollow, isLogin }) {
               <Typography className={classes.textLabel}>{data.like}</Typography>
             </Box>
             <Box className={classes.actionBox}>
-              <CommentIcon
-                className={`${classes.clickableNode} ${classes.commentCountBox}`}
-              />
+              <CommentIcon className={`${classes.commentCountBox}`} />
               <Typography className={classes.textLabel}>
                 {data.currentComment}
               </Typography>
