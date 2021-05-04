@@ -64,6 +64,7 @@ const useStyle = makeStyles((theme) => ({
   textLabel: {
     marginLeft: theme.spacing(1),
     color: theme.palette.text.secondary,
+    textAlign: 'center',
   },
   pointerCursor: {
     cursor: 'pointer',

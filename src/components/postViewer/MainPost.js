@@ -43,6 +43,8 @@ const useStyle = makeStyles((theme) => ({
   textLabel: {
     marginLeft: theme.spacing(0.75),
     marginRight: theme.spacing(1),
+    color: theme.palette.text.secondary,
+    fontWeight: 'bold',
     [theme.breakpoints.up('md')]: {
       marginLeft: theme.spacing(1),
     },
@@ -90,6 +92,14 @@ const useStyle = makeStyles((theme) => ({
       width: '80%',
       marginTop: theme.spacing(0.5),
     },
+  },
+  likeCountBox: {
+    display: 'flex',
+    color: theme.palette.text.secondary,
+  },
+  commentCountBox: {
+    display: 'flex',
+    color: theme.palette.text.secondary,
   },
 }))
 
@@ -161,7 +171,7 @@ function MainPost({ data, isLike, postId, isFollow }) {
           height="100%"
         >
           <Box className={classes.actionRoot}>
-            <Box display="flex">
+            <Box display="flex" className={classes.likeCountBox}>
               {!isLiked ? (
                 <ThumbUpAltOutlined
                   className={classes.clickableNode}
@@ -198,7 +208,9 @@ function MainPost({ data, isLike, postId, isFollow }) {
               <Typography className={classes.textLabel}>{data.like}</Typography>
             </Box>
             <Box className={classes.actionBox}>
-              <CommentIcon className={classes.clickableNode} />
+              <CommentIcon
+                className={`${classes.clickableNode} ${classes.commentCountBox}`}
+              />
               <Typography className={classes.textLabel}>
                 {data.currentComment}
               </Typography>

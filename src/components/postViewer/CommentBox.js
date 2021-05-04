@@ -25,6 +25,7 @@ const useStyle = makeStyles((theme) => ({
   },
   textLabel: {
     marginLeft: theme.spacing(0.75),
+    color: theme.palette.text.secondary,
     fontWeight: 'bold',
   },
   hrDivider: {
@@ -39,6 +40,10 @@ const useStyle = makeStyles((theme) => ({
   },
   clickableNode: {
     cursor: 'pointer',
+  },
+  likeCountBox: {
+    display: 'flex',
+    color: theme.palette.text.secondary,
   },
 }))
 
@@ -77,10 +82,10 @@ function CommentBox({ comment, index, commentId, postId, isLike }) {
             {epochToDate(comment.timeStamp.seconds)}
           </Typography>
         </Box>
-        <Box display="flex">
+        <Box display="flex" className={classes.likeCountBox}>
           {!isLiked ? (
             <ThumbUpAltOutlined
-              className={classes.clickableNode}
+              className={`${classes.clickableNode} `}
               onClick={async () => {
                 try {
                   comment.like += 1
