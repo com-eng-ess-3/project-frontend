@@ -26,14 +26,15 @@ export const UserProvider = (props) => {
         const likePostId = data?.post
         const likeCommentId = data?.comment
 
+        setLikePostId(!!likePostId ? likePostId : [])
+        setLikeCommentId(!!likeCommentId ? likeCommentId : [])
+        setFollowingList(!!followingData ? followingData : [])
+
         setUser({
           uid: userAuth.uid,
           displayName: userAuth.displayName,
           profileUrl: url,
         })
-        setLikePostId(!!likePostId ? likePostId : [])
-        setLikeCommentId(!!likeCommentId ? likeCommentId : [])
-        setFollowingList(!!followingData ? followingData : [])
       } else {
         setUser(null)
         setLikePostId([])
