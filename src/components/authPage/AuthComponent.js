@@ -193,7 +193,12 @@ function AuthComponent({ isRegister, urlRedirect }) {
               variant="outlined"
               placeholder="Display Name"
               value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
+              onChange={(e) => {
+                if (e.target.value.length > 20) {
+                  return
+                }
+                setDisplayName(e.target.value)
+              }}
             />
           ) : null}
           <TextFieldStyled

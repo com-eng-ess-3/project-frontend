@@ -201,7 +201,7 @@ function ProfileBox({ user, isMyProfile }) {
   }, [interestValue, prevInterestState, setNewErrorMsg, user.uid])
 
   const handleStatusChange = useCallback((newStatus) => {
-    if (newStatus.length > 25) {
+    if (newStatus.length > 20) {
       return
     }
     setStatusValue(newStatus)
