@@ -187,7 +187,7 @@ function CardPost({ user, id, post, isLike, following }) {
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Box className={classes.actionBox}>
           <Box className={classes.likeCountBox}>
-            {!isLiked ? (
+            {!isLiked || !user ? (
               <ThumbUpAltOutlined
                 className={classes.pointerCursor}
                 onClick={async () => {

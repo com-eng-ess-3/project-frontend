@@ -161,6 +161,7 @@ function PostViewer({ id }) {
         isLike={checkElementInsideArray(likePostId, id)}
         isFollow={checkElementInsideArray(followingList, mainPost.authorid)}
         postId={id}
+        isLogin={!!user}
         data={mainPost}
       />
       <Divider />
@@ -204,6 +205,7 @@ function PostViewer({ id }) {
           {comment.map((value, idx) => {
             return (
               <CommentBox
+                isLogin={!!user}
                 comment={value}
                 index={idx}
                 postId={id}

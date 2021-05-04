@@ -50,7 +50,7 @@ const useStyle = makeStyles((theme) => ({
   },
 }))
 
-function CommentBox({ comment, index, commentId, postId, isLike }) {
+function CommentBox({ comment, index, commentId, postId, isLike, isLogin }) {
   const classes = useStyle()
   const history = useHistory()
   const { likeCommentId, setLikeCommentId } = useContext(UserContext)
@@ -86,7 +86,7 @@ function CommentBox({ comment, index, commentId, postId, isLike }) {
           </Typography>
         </Box>
         <Box display="flex" className={classes.likeCountBox}>
-          {!isLiked ? (
+          {!isLiked || !isLogin ? (
             <ThumbUpAltOutlined
               className={`${classes.clickableNode} `}
               onClick={async () => {

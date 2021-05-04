@@ -104,7 +104,7 @@ const useStyle = makeStyles((theme) => ({
   },
 }))
 
-function MainPost({ data, isLike, postId, isFollow }) {
+function MainPost({ data, isLike, postId, isFollow, isLogin }) {
   const classes = useStyle()
   const history = useHistory()
 
@@ -173,7 +173,7 @@ function MainPost({ data, isLike, postId, isFollow }) {
         >
           <Box className={classes.actionRoot}>
             <Box display="flex" className={classes.likeCountBox}>
-              {!isLiked ? (
+              {!isLiked || !isLogin ? (
                 <ThumbUpAltOutlined
                   className={classes.clickableNode}
                   onClick={async () => {
