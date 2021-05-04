@@ -231,7 +231,7 @@ function CardPost({ user, id, post, isLike, following }) {
             <Typography className={classes.textLabel}>{post?.like}</Typography>
           </Box>
           <Box className={classes.commentCountBox}>
-            <CommentIcon className={classes.pointerCursor} />
+            <CommentIcon />
             <Typography className={classes.textLabel}>
               {post?.currentComment}
             </Typography>

@@ -158,6 +158,7 @@ function SearchResult({ name }) {
                         : classes.switchButton
                     }
                     variant="outlined"
+                    key={value}
                     onClick={() => setSelected(value)}
                   >
                     {value}
