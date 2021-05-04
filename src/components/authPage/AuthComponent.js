@@ -124,7 +124,7 @@ function AuthComponent({ isRegister, urlRedirect }) {
         await auth.signOut()
         await auth.signInWithEmailAndPassword(email, password)
 
-        history.push(!!urlRedirect ? `${urlRedirect}` : '/')
+        history.replace(!!urlRedirect ? `${urlRedirect}` : '/')
       } catch (e) {
         const code = e?.code
         if (code === 'auth/email-already-in-use') {
@@ -142,7 +142,7 @@ function AuthComponent({ isRegister, urlRedirect }) {
     } else {
       try {
         await auth.signInWithEmailAndPassword(email, password)
-        history.push(!!urlRedirect ? `${urlRedirect}` : '/')
+        history.replace(!!urlRedirect ? `${urlRedirect}` : '/')
       } catch (e) {
         const code = e?.code
         if (code === 'auth/invalid-email') {
@@ -171,7 +171,7 @@ function AuthComponent({ isRegister, urlRedirect }) {
 
   useEffect(() => {
     if (userAuth.user !== null) {
-      history.push(!!urlRedirect ? `${urlRedirect}` : '/')
+      history.replace(!!urlRedirect ? `${urlRedirect}` : '/')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

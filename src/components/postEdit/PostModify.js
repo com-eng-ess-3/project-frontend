@@ -137,11 +137,13 @@ function PostModify({ mode, id }) {
     const topic = topicData
     const content = contentData
 
-    if (topic === '') {
+    if (!topic) {
+      setNewErrorMsg('Topic cannot be empty')
       return
     }
 
-    if (content === '') {
+    if (!content) {
+      setNewErrorMsg('Content cannot be empty')
       return
     }
 
@@ -149,6 +151,8 @@ function PostModify({ mode, id }) {
       color: value.color,
       label: value.label,
     }))
+
+    setFinish(false)
 
     try {
       const id = await createPost(
@@ -304,7 +308,6 @@ function PostModify({ mode, id }) {
             <Typography
               className={classes.boldTypo}
               onClick={() => {
-                setFinish(false)
                 if (mode === 'Edit') {
                   handleEditPost()
                 } else {

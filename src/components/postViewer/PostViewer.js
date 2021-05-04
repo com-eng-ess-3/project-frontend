@@ -150,7 +150,8 @@ function PostViewer({ id }) {
         return
       }
       const comment = commentField.current.value
-      if (comment.length === 0) {
+      if (!comment.length) {
+        setNewErrorMsg('Comment cannot be empty')
         return
       }
       await createCommentInPost(id, comment, user.uid, user.displayName)
