@@ -1,5 +1,6 @@
 import { Box, Button, makeStyles, Typography } from '@material-ui/core'
 import React from 'react'
+import { use100vh } from 'react-div-100vh'
 import { Link } from 'react-router-dom'
 
 const useStyle = makeStyles((theme) => ({
@@ -8,7 +9,7 @@ const useStyle = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    height: '100vh',
+    height: (props) => props?.height,
   },
   linkBack: {
     '&:hover': {
@@ -21,7 +22,8 @@ const useStyle = makeStyles((theme) => ({
 }))
 
 function NotFound() {
-  const classes = useStyle()
+  const height = use100vh()
+  const classes = useStyle({ height })
 
   return (
     <Box className={classes.root}>

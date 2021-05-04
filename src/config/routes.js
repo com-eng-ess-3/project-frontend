@@ -7,19 +7,21 @@ import ProfilePage from 'pages/profile'
 import RegisterPage from 'pages/register'
 import SearchResult from 'pages/search'
 import React from 'react'
+import { use100vh } from 'react-div-100vh'
 import { Route, Switch, useLocation, Redirect } from 'react-router-dom'
 import ScrollToTop from './ScrollToTop'
 
 const useStyle = makeStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.background.default,
-    height: '100vh',
+    height: (props) => props?.height,
   },
 }))
 
 function PageRouting() {
   const query = new URLSearchParams(useLocation().search)
-  const classes = useStyle()
+  const height = use100vh()
+  const classes = useStyle({ height })
   return (
     <React.Fragment>
       <Box className={classes.root}>

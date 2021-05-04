@@ -11,6 +11,7 @@ import {
 } from '@material-ui/core'
 import NotificationCard from './NotificationCard'
 import { UserContext } from 'context/userContext'
+import { use100vh } from 'react-div-100vh'
 
 const useStyle = makeStyles((theme) => ({
   notificationIcon: {
@@ -79,11 +80,12 @@ const NotificationBox = React.memo(() => {
 
 const AllNotificationCard = React.memo(({ isSideBar }) => {
   const { notificationList } = useContext(UserContext)
+  const height = use100vh()
 
   return (
     <Box
       padding={isSideBar ? 1 : 2}
-      height={isSideBar ? '77vh' : '80vh'}
+      height={isSideBar ? height * 0.7 : height * 0.9}
       overflow="auto"
       width={'200px'}
       style={{ backgroundColor: '#FFF' }}
