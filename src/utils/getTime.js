@@ -1,4 +1,4 @@
-import firebase from 'firebase'
+import { firebase } from 'utils/firebaseUtil'
 
 const limitNewPost = 60 * 60
 const limitNotification = 60 * 60 * 24
