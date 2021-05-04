@@ -40,6 +40,7 @@ function FollowerSlot({
   followingData,
   isFollowing,
   isLogin,
+  isMyself,
 }) {
   const history = useHistory()
   const classes = useStyle()
@@ -55,7 +56,7 @@ function FollowerSlot({
         </Avatar>
       </ListItemAvatar>
       <ListItemText primary={value.displayname} />
-      {isLogin ? (
+      {isLogin && !isMyself ? (
         isFollow ? (
           <ListItemSecondaryAction>
             <Button variant="outlined" className={classes.followedbtn}>

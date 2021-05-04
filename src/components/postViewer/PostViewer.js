@@ -73,6 +73,7 @@ const useStyle = makeStyles((theme) => ({
   avatarIcon: {
     width: theme.spacing(4),
     height: theme.spacing(4),
+    color: theme.palette.common.black,
     [theme.breakpoints.down('xs')]: {
       marginRight: theme.spacing(1),
     },

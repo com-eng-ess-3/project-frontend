@@ -116,7 +116,6 @@ const useStyle = makeStyles((theme) => ({
   },
   avatarImg: {
     color: theme.palette.common.black,
-    marginRight: 10,
   },
   displayText: {
     [theme.breakpoints.down('xs')]: {
@@ -342,7 +341,7 @@ function NavBar() {
           <Hidden smUp>
             <Avatar
               src={user?.profileUrl}
-              className={classes.clickableNode}
+              className={`${classes.clickableNode} ${classes.avatarImg}`}
               fontSize="large"
               onClick={() => handleToggleDrawer('right', true)}
             >
@@ -366,7 +365,11 @@ function NavBar() {
                 className={classes.clickableNode}
                 onClick={(e) => setAnchorEl(e.currentTarget)}
               >
-                <Avatar fontSize="large" src={user?.profileUrl}>
+                <Avatar
+                  fontSize="large"
+                  src={user?.profileUrl}
+                  className={classes.avatarImg}
+                >
                   {user.displayName[0].toUpperCase()}
                 </Avatar>
                 <Typography
