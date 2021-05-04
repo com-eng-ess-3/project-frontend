@@ -226,10 +226,11 @@ function ProfilePage() {
       setLoading(false)
 
       setMyProfile(user?.uid === uid)
+      setSelected('Recent Post')
     }
 
     getData()
-
+    setLoading(true)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uid])
 

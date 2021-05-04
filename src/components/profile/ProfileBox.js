@@ -118,6 +118,7 @@ const useStyle = makeStyles((theme) => ({
     height: '100%',
     fontSize: '4rem',
     border: 0,
+    color: theme.palette.common.black,
   },
   saveEditButtonPic: {
     border: `1px solid ${theme.palette.background.dark}`,

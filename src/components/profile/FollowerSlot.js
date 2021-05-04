@@ -29,6 +29,9 @@ const useStyle = makeStyles((theme) => ({
   followText: {
     color: theme.palette.success.main,
   },
+  avatarImg: {
+    color: theme.palette.common.black,
+  },
 }))
 
 function FollowerSlot({
@@ -47,7 +50,7 @@ function FollowerSlot({
   return (
     <ListItem button onClick={() => history.push(`/profile/${value.uid}`)}>
       <ListItemAvatar>
-        <Avatar src={value.profileUrl}>
+        <Avatar src={value.profileUrl} className={classes.avatarImg}>
           {value.displayname[0].toUpperCase()}
         </Avatar>
       </ListItemAvatar>

@@ -68,6 +68,7 @@ const useStyle = makeStyles((theme) => ({
     alignItems: 'center',
   },
   avatarImg: {
+    color: theme.palette.common.black,
     [theme.breakpoints.down('xs')]: {
       width: '30px',
       height: '30px',

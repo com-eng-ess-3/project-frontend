@@ -51,7 +51,7 @@ const useStyle = makeStyles((theme) => ({
   },
   likeCountBox: {
     display: 'flex',
-    marginRight: theme.spacing(3),
+    marginRight: theme.spacing(2),
     color: theme.palette.text.secondary,
   },
   commentCountBox: {
