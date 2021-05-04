@@ -322,7 +322,7 @@ function ProfilePage() {
                     flexDirection: 'column',
                     overflowY: 'hidden',
                   }}
-                  loader={<CircularProgress color="primary" disableShrink />}
+                  loader={<CircularProgress color="secondary" disableShrink />}
                   endMessage={
                     <Typography variant="h6">
                       {'You have seen all posts!'}

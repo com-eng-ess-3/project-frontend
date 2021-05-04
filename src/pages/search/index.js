@@ -183,7 +183,7 @@ function SearchResult({ name }) {
                   flexDirection: 'column',
                   overflowY: 'hidden',
                 }}
-                loader={<CircularProgress color="primary" disableShrink />}
+                loader={<CircularProgress color="secondary" disableShrink />}
                 endMessage={
                   <Typography variant="h6">{'End of search result'}</Typography>
                 }

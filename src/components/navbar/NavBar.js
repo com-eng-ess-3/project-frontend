@@ -21,6 +21,7 @@ import { auth } from 'utils/firebaseUtil'
 import MenuIcon from '@material-ui/icons/Menu'
 import { AllNotificationCard, NotificationBox } from './Notification'
 import { UserContext } from 'context/userContext'
+import AddCircleIcon from '@material-ui/icons/AddCircle'
 
 const useStyle = makeStyles((theme) => ({
   root: {
@@ -327,7 +328,16 @@ function NavBar() {
         </Box>
         <Box className={classes.userBox}>
           <Hidden xsDown>
-            {!!user ? <NotificationBox user={user} /> : null}
+            {!!user ? (
+              <React.Fragment>
+                <AddCircleIcon
+                  className={classes.clickableNode}
+                  fontSize="large"
+                  onClick={() => history.push('/create')}
+                />
+                <NotificationBox user={user} />
+              </React.Fragment>
+            ) : null}
           </Hidden>
           <Hidden smUp>
             <Avatar
