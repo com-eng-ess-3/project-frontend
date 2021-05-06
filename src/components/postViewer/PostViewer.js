@@ -106,6 +106,7 @@ function PostViewer({ id }) {
   const [mainPost, setMainPost] = useState(null)
   const [moreComment, setMoreComment] = useState(true)
   const [comment, setComment] = useState([])
+  const [isAddProcess, setAddProcess] = useState(false)
 
   useEffect(() => {
     const getPost = async () => {
@@ -157,6 +158,7 @@ function PostViewer({ id }) {
       await createCommentInPost(id, comment, user.uid, user.displayName)
       window.location.reload()
     } catch (e) {
+      setAddProcess(false)
       setNewErrorMsg('Failed to create comment')
     }
   }
@@ -185,7 +187,14 @@ function PostViewer({ id }) {
           placeholder="Add some comment?"
           variant="outlined"
         />
-        <Button className={classes.sendBtn} onClick={handleAddComment}>
+        <Button
+          disabled={isAddProcess}
+          className={classes.sendBtn}
+          onClick={() => {
+            setAddProcess(true)
+            handleAddComment()
+          }}
+        >
           {'Send'}
         </Button>
       </Paper>
