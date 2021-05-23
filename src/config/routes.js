@@ -1,4 +1,5 @@
 import { Box, makeStyles } from '@material-ui/core'
+import { NavBar } from 'components'
 import { LandingPage, LoginPage, NotFound } from 'pages'
 import CreatePost from 'pages/createPost'
 import EditPost from 'pages/editPost'
@@ -20,12 +21,17 @@ const useStyle = makeStyles((theme) => ({
 
 function PageRouting() {
   const query = new URLSearchParams(useLocation().search)
+  const location = useLocation()
   const height = use100vh()
   const classes = useStyle({ height })
   return (
     <React.Fragment>
       <Box className={classes.root}>
         <ScrollToTop />
+        {['/register', '/login'].indexOf(location.pathname) === -1 ? (
+          <NavBar />
+        ) : null}
+
         <Switch>
           <Route exact path="/post/:id">
             <ViewPostPage />

@@ -1,5 +1,5 @@
 import { Box } from '@material-ui/core'
-import { NavBar, PostModify } from 'components'
+import { PostModify } from 'components'
 import React from 'react'
 import { useHistory, useParams } from 'react-router'
 
@@ -14,7 +14,6 @@ function EditPost() {
 
   return (
     <Box height="100%" display="flex" justifyContent="center">
-      <NavBar />
       <Box height="100%" width="100%">
         <PostModify mode="Edit" id={id} />
       </Box>

@@ -7,7 +7,7 @@ import {
   Typography,
 } from '@material-ui/core'
 import { AccountCircleOutlined } from '@material-ui/icons'
-import { CardPost, NavBar } from 'components'
+import { CardPost } from 'components'
 import { UserContext } from 'context/userContext'
 import React, { useContext, useEffect, useState } from 'react'
 import CreateRoundedIcon from '@material-ui/icons/CreateRounded'
@@ -131,9 +131,6 @@ function LandingPage() {
     Newest: [],
     Following: [],
   })
-  // const [popularPost, setPopularPost] = useState([])
-  // const [newestPost, setNewestPost] = useState([])
-  // const [followingPost, setFollowingPost] = useState([])
 
   const { user, likePostId, followingList } = useContext(UserContext)
   const classes = useStyle({ isLogin: !!user })
@@ -163,7 +160,6 @@ function LandingPage() {
 
   return (
     <Box>
-      <NavBar isHomepage />
       <Box className={classes.container}>
         <Box className={classes.contentBox}>
           <Box className={classes.allPostBox}>

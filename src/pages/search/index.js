@@ -6,7 +6,7 @@ import {
   Divider,
   CircularProgress,
 } from '@material-ui/core'
-import { NavBar, CardPost } from 'components'
+import { CardPost } from 'components'
 
 import { UserContext } from 'context/userContext'
 import React, { useContext, useEffect, useState } from 'react'
@@ -144,7 +144,6 @@ function SearchResult({ name }) {
 
   return (
     <Box justifyContent="center" display="flex">
-      <NavBar />
       <Box className={classes.container}>
         <Box className={classes.contentBox}>
           <Box className={classes.allPostBox}>

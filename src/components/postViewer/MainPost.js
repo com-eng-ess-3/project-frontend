@@ -13,12 +13,7 @@ import React, { useContext, useState } from 'react'
 import CommentIcon from '@material-ui/icons/Comment'
 import FollowBtn from 'components/common/FollowBtn'
 import { epochToDate } from 'utils/getTime'
-import {
-  followUser,
-  handleWhenDislike,
-  handleWhenLike,
-  unfollowUser,
-} from 'utils/actionUtil'
+import { handleWhenDislike, handleWhenLike } from 'utils/actionUtil'
 import { UserContext } from 'context/userContext'
 import { useHistory } from 'react-router'
 import { ErrorContext } from 'context/ErrorContext'
@@ -109,17 +104,10 @@ function MainPost({ data, isLike, postId, isFollow, isLogin }) {
   const classes = useStyle()
   const history = useHistory()
 
-  const {
-    user,
-    likePostId,
-    setLikePostId,
-    followingList,
-    setFollowingList,
-  } = useContext(UserContext)
+  const { user, likePostId, setLikePostId } = useContext(UserContext)
 
   const { setNewErrorMsg } = useContext(ErrorContext)
   const [isLiked, setLiked] = useState(isLike)
-  const [isFollowing, setFollowing] = useState(isFollow)
 
   return (
     <Paper className={classes.mainPost}>
@@ -269,29 +257,7 @@ function MainPost({ data, isLike, postId, isFollow, isLogin }) {
             </Box>
           </Hidden>
           {!!user && user?.uid !== data.authorid ? (
-            <FollowBtn
-              isFollowed={isFollowing}
-              setFollowed={async () => {
-                let prevState = isFollowing
-                try {
-                  if (!isFollowing) {
-                    setFollowing(true)
-                    await followUser(data?.authorid)
-                    setFollowingList([...followingList, data?.authorid])
-                  } else {
-                    setFollowing(false)
-                    await unfollowUser(data?.authorid)
-                    setFollowingList(
-                      followingList.filter((item) => item !== data?.authorid)
-                    )
-                  }
-                } catch (e) {
-                  setNewErrorMsg('Failed to do follow / unfollow action')
-                  console.log(e.message)
-                  setFollowing(prevState)
-                }
-              }}
-            />
+            <FollowBtn isFollowed={isFollow} authorId={data?.authorid} />
           ) : null}
         </Box>
       </Box>

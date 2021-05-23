@@ -13,14 +13,9 @@ import FollowBtn from 'components/common/FollowBtn'
 import ModifyButtonSet from 'components/common/ModifyButtonSet'
 import { ErrorContext } from 'context/ErrorContext'
 import { UserContext } from 'context/userContext'
-import React, { memo, useContext, useEffect, useState } from 'react'
+import React, { memo, useContext, useState } from 'react'
 import { useHistory } from 'react-router'
-import {
-  followUser,
-  handleWhenDislike,
-  handleWhenLike,
-  unfollowUser,
-} from 'utils/actionUtil'
+import { handleWhenDislike, handleWhenLike } from 'utils/actionUtil'
 import { epochToDate } from 'utils/getTime'
 
 const useStyle = makeStyles((theme) => ({
@@ -93,22 +88,12 @@ const useStyle = makeStyles((theme) => ({
 
 function CardPost({ user, id, post, isLike, following }) {
   const history = useHistory()
-  const {
-    setLikePostId,
-    likePostId,
-    setFollowingList,
-    followingList,
-  } = useContext(UserContext)
+  const { setLikePostId, likePostId } = useContext(UserContext)
 
   const { setNewErrorMsg } = useContext(ErrorContext)
   const [isLiked, setLiked] = useState(isLike)
-  const [isFollowing, setFollowing] = useState(following)
 
   const classes = useStyle()
-
-  useEffect(() => {
-    setFollowing(following)
-  }, [following])
 
   return (
     <Card className={classes.cardContainer}>
@@ -132,28 +117,7 @@ function CardPost({ user, id, post, isLike, following }) {
           </Typography>
         </Box>
         {user && user.uid !== post?.authorid ? (
-          <FollowBtn
-            isFollowed={isFollowing}
-            setFollowed={async () => {
-              let prevState = isFollowing
-              try {
-                if (!isFollowing) {
-                  setFollowing(true)
-                  await followUser(post?.authorid)
-                  setFollowingList([...followingList, post?.authorid])
-                } else {
-                  setFollowing(false)
-                  await unfollowUser(post?.authorid)
-                  setFollowingList(
-                    followingList.filter((item) => item !== post?.authorid)
-                  )
-                }
-              } catch (e) {
-                console.log(e.message)
-                setFollowing(prevState)
-              }
-            }}
-          />
+          <FollowBtn isFollowed={following} authorId={post?.authorid} />
         ) : null}
       </Box>
       <Divider className={classes.dividerLine} />

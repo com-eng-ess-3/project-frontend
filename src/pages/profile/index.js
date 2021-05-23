@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core'
 import React, { useState, useContext, useEffect } from 'react'
 import { UserContext } from 'context/userContext'
-import { CardPost, NavBar } from 'components'
+import { CardPost } from 'components'
 import CreateRoundedIcon from '@material-ui/icons/CreateRounded'
 import { AccountCircleOutlined } from '@material-ui/icons'
 import { useHistory, useParams } from 'react-router'
@@ -244,7 +244,6 @@ function ProfilePage() {
 
   return (
     <Box>
-      <NavBar />
       <Box className={classes.container}>
         <Box className={classes.contentBox}>
           <Box className={classes.allPostBox}>
